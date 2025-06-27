@@ -30,7 +30,7 @@ header {
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
-  margin-right: 50px;
+  margin-left: 50px;
   border: 2px solid #333;
 }
 
