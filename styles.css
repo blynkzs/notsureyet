@@ -9,16 +9,16 @@ header {
   margin-bottom: 20px;
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  max-width: 700px;
-  margin: 0 auto;
+.sidebar {
+  width: 200px;
+  background-color: #ddd;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #aaa;
 }
 
 .sidebar {
-  background-color: #ddd;
+  background-color: #fefefe;
   padding: 20px;
   width: 200px;
   border-radius: 5px;
