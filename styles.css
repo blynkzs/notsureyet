@@ -9,11 +9,28 @@ header {
   margin-bottom: 20px;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  background-color: #ddd;
+  padding: 20px;
+  width: 200px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #aaa;
+  text-align: left;
+}
+
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
-  margin: 0 auto;
+  margin-left: 50px;
   border: 2px solid #333;
 }
 
