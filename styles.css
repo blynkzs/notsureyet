@@ -9,17 +9,17 @@ header {
   margin-bottom: 20px;
 }
 
-.sidebar {
-  width: 200px;
-  background-color: #ddd;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 5px #aaa;
-}
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  padding-left: 0;
+  margin: 0; 
 
 .sidebar {
   background-color: #fefefe;
   padding: 20px;
+  height: 100vh;
   width: 200px;
   border-radius: 5px;
   box-shadow: 0 0 5px #aaa;
