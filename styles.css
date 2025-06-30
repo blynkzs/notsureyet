@@ -1,79 +1,88 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+body {
+font-family: Arial, sans-serif;
+text-align: center;
+background-color: #1a1a1a;
+margin: 20px;
+}
+
+header {
+margin-bottom: 20px;
+color: #fefefe
+}
+.logo {
+width: 80px;
+height: auto;
+margin: auto;
 }
 
 .container {
-  display: flex;
-  min-height: 100vh;
+display: flex;
+align-items: center;  
+gap: 40px;                
+height: 100vh;             
+margin: 0;
+padding: 0;
 }
-
 .sidebar {
-  width: 200px;
-  padding: 20px;
-  flex-shrink: 0;
-}
-
-.logo {
-  width: 100px;
-  height: auto;
-  margin-bottom: 20px;
+background-color: #fefefe;
+padding: 20px;
+height: 100vh;
+width: 200px;
+margin-top: 80px;
+border-radius: 5px;
+box-shadow: 0 0 5px #aaa;
+text-align: left;
 }
 
 .nav-button {
-  display: block;
-  margin: 8px 0;
-  text-decoration: none;
-  padding: 8px 10px;
-  border-radius: 4px;
+display: block;
+background-color: #4CAF50;
+color: black;
+text-decoration: none;
+padding: 10px 15px;
+margin: 10px 0;
+border-radius: 5px;
+text-align: center;
+font-weight: bold;
+transition: background-color 0.2s ease;
 }
 
-.board-area {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  padding: 40px;
-  flex-wrap: wrap;
-}
-
-#chessboard {
-  width: 400px;
-  height: 400px;
-  border-radius: 8px;
+.nav-button:hover {
+background-color: #3e8e41;
 }
 
 .captured-box {
   width: 120px;
   height: 400px;
+  background-color: #e6e6e6;
   padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
   text-align: center;
-  border-radius: 8px;
 }
 
-.captured-box h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
+
+#chessboard {
+display: grid;
+grid-template-columns: repeat(8, 60px);
+grid-template-rows: repeat(8, 60px);
+margin-left: 650px;
+border: 2px solid #333;
 }
 
-.captured-pieces {
-  height: 320px;
-  padding: 5px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
+.square {
+width: 60px;
+height: 60px;
+line-height: 60px;
+font-size: 40px;
+cursor: pointer;
+user-select: none;
 }
 
-header {
-  padding: 20px;
-  width: 100%;
+.square.light {
+background-color: #9a9a9a;
 }
 
-header h1 {
-  font-size: 28px;
-}
-
-main p {
-  line-height: 1.6;
-  margin-bottom: 20px;
+.square.dark {
+background-color: #0b0b0b;
 }
