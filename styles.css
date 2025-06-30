@@ -10,7 +10,7 @@ header {
    color: #fefefe
 }
 .logo {
-  width: 40px;
+  width: 80px;
   height: auto;
   margin: auto;
 }
@@ -55,7 +55,7 @@ header {
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
-  margin-left: 800px;
+  margin-left: 650px;
   border: 2px solid #333;
 }
 
