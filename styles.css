@@ -56,7 +56,17 @@ transition: background-color 0.2s ease;
 background-color: #3e8e41;
 }
 
+.content-area {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
 
+.content-area p {
+  flex: 1;
+  color: white;
+  max-width: 500px; /* optional max width */
+}
 
 p {
   color: white;
