@@ -18,7 +18,8 @@ margin: auto;
 .container {
 display: flex;
 align-items: center;  
-gap: 40px;                
+flex-direction: row; 
+gap: 20px;                
 height: 100vh;             
 margin: 0;
 padding: 0;
@@ -32,6 +33,10 @@ margin-top: 80px;
 border-radius: 5px;
 box-shadow: 0 0 5px #aaa;
 text-align: left;
+}
+
+.main-content {
+  flex: 1;
 }
 
 .nav-button {
