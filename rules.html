@@ -7,14 +7,10 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Da Rules</h1>
-  </header>
-
-  <main class="container">
+  <div class="layout">
     <aside class="sidebar">
       <a href="index.html">
-          <img src="logo.jpg" alt="Chess Logo" class="logo" />
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
       </a>
       <h2>Menu</h2>
       <a href="games.html" class="nav-button">Games</a>
@@ -22,20 +18,34 @@
       <a href="puzzle.html" class="nav-button">Puzzles</a>
       <a href="matchhistory.html" class="nav-button">Match History</a>
     </aside>
-    <p> Goal of the Game
-The main goal is to checkmate your opponent’s king by putting them in a position to be captured  with no way to escape.
- The Board
-The chessboard has 8 rows (1–8) and 8 columns (a–h).
-Each player starts with 16 pieces:
-1 King
-1 Queen
-2 Rooks
-2 Bishops
-2 Knights
-8 Pawns
-White moves first, and then players take turns.</p>
-    <div id="chessboard"></div>
-  </main>
+
+    <div class="main-content">
+      <header>
+        <h1>Da Rules</h1>
+      </header>
+
+      <main>
+        <p>
+          <strong>Goal of the Game</strong><br>
+          The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
+
+          <strong>The Board</strong><br>
+          The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
+          Each player starts with 16 pieces:<br>
+          1 King<br>
+          1 Queen<br>
+          2 Rooks<br>
+          2 Bishops<br>
+          2 Knights<br>
+          8 Pawns<br><br>
+
+          White moves first, and then players take turns.
+        </p>
+
+        <div id="chessboard"></div>
+      </main>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
