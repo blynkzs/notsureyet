@@ -1,44 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Chess Website</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple Chess Website</title>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <h1>Maybe Chess</h1>
-  </header>
+<header>
+<h1>Maybe Chess</h1>
+</header>
 
 <main class="container">
-  <aside class="sidebar">
-    <a href="index.html">
-      <img src="logo.jpg" alt="Chess Logo" class="logo" />
-    </a>
-    <h2>Menu</h2>
-    <a href="games.html" class="nav-button">Games</a>
-    <a href="rules.html" class="nav-button">Rules</a>
-    <a href="puzzle.html" class="nav-button">Puzzles</a>
-    <a href="matchhistory.html" class="nav-button">Match History</a>
-  </aside>
+<aside class="sidebar">
+<a href="index.html">
+<img src="logo.jpg" alt="Chess Logo" class="logo" />
+</a>
+<h2>Menu</h2>
+<a href="games.html" class="nav-button">Games</a>
+<a href="rules.html" class="nav-button">Rules</a>
+<a href="puzzle.html" class="nav-button">Puzzles</a>
+<a href="matchhistory.html" class="nav-button">Match History</a>
+</aside>
 
-  <div class="board-area">
+<div class="board-area">
     <div class="captured-box white-captured">
       <h3>White Captured</h3>
       <div class="captured-pieces" id="white-captured"></div>
     </div>
-
-    <div id="chessboard"></div>
+  <div class="captured-box white-captured">
+    <h3>White Captured</h3>
+    <div class="captured-pieces" id="white-captured"></div>
+  </div>
 
     <div class="captured-box black-captured">
       <h3>Black Captured</h3>
       <div class="captured-pieces" id="black-captured"></div>
     </div>
-  </div> 
+  <div id="chessboard"></div>
 
+    <div id="chessboard"></div>
+  <div class="captured-box black-captured">
+    <h3>Black Captured</h3>
+    <div class="captured-pieces" id="black-captured"></div>
+  </div>
 </main>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
