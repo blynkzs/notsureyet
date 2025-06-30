@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="layout">
+  <div class="container">
     <aside class="sidebar">
       <a href="index.html">
         <img src="logo.jpg" alt="Chess Logo" class="logo" />
@@ -24,26 +24,36 @@
         <h1>Da Rules</h1>
       </header>
 
-      <main>
-        <p>
-          <strong>Goal of the Game</strong><br>
-          The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
+      <p>
+        <strong>Goal of the Game</strong><br>
+        The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
 
-          <strong>The Board</strong><br>
-          The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
-          Each player starts with 16 pieces:<br>
-          1 King<br>
-          1 Queen<br>
-          2 Rooks<br>
-          2 Bishops<br>
-          2 Knights<br>
-          8 Pawns<br><br>
+        <strong>The Board</strong><br>
+        The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
+        Each player starts with 16 pieces:<br>
+        1 King<br>
+        1 Queen<br>
+        2 Rooks<br>
+        2 Bishops<br>
+        2 Knights<br>
+        8 Pawns<br><br>
 
-          White moves first, and then players take turns.
-        </p>
+        White moves first, and then players take turns.
+      </p>
+
+      <div class="board-area">
+        <div class="captured-box white-captured">
+          <h3>White Captured</h3>
+          <div class="captured-pieces" id="white-captured"></div>
+        </div>
 
         <div id="chessboard"></div>
-      </main>
+
+        <div class="captured-box black-captured">
+          <h3>Black Captured</h3>
+          <div class="captured-pieces" id="black-captured"></div>
+        </div>
+      </div>
     </div>
   </div>
 
