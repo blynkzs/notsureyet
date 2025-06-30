@@ -51,6 +51,17 @@ header {
   background-color: #3e8e41;
 }
 
+.captured-box {
+  width: 120px;
+  height: 400px;
+  background-color: #e6e6e6;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  text-align: center;
+}
+
+
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 60px);
