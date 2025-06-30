@@ -65,7 +65,7 @@ background-color: #3e8e41;
 .content-area p {
   flex: 1;
   color: white;
-  max-width: 500px; /* optional max width */
+  max-width: 500px; 
 }
 
 p {
