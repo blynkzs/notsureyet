@@ -52,17 +52,18 @@ background-color: #3e8e41;
 }
 
 .captured-box {
-width: 400px;
-height: 120px;
-background-color: #e6e6e6;
-padding: 10px;
-box-sizing: border-box;
-font-size: 14px;
-text-align: center;
+  width: 400px;
+  height: 120px;
+  background-color: #e6e6e6;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  text-align: center;
 }
 
+
 p {
-  color: white;
+color: white;
 }
 
 #chessboard {
@@ -71,6 +72,34 @@ grid-template-columns: repeat(8, 60px);
 grid-template-rows: repeat(8, 60px);
 margin-left: 650px;
 border: 2px solid #333;
+.board-area {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.captured-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#white-captured-box {
+  width: 400px;  
+  height: 120px; 
+   background-color: #e6e6e6;
+  text-align: center;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+#black-captured-box {
+  width: 400px;  
+  height: 120px; 
+  background-color: #e6e6e6;
+  text-align: center;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 .square {
