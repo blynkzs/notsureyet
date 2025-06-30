@@ -9,6 +9,10 @@ header {
   margin-bottom: 20px;
    color: #fefefe
 }
+.logo {
+  width: 80px;
+  height: auto;
+}
 
 .container {
   display: flex;
