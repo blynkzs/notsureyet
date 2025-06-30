@@ -2,6 +2,7 @@ body {
   font-family: Arial, sans-serif;
   text-align: center;
   background-color: #1a1a1a;
+  color: #fefefe; 
   margin: 20px;
 }
 
@@ -30,7 +31,7 @@ header {
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
-  margin-left: 200px;
+  margin-left: 300px;
   border: 2px solid #333;
 }
 
