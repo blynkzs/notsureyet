@@ -5,10 +5,6 @@
   font-family: sans-serif;
 }
 
-body {
-  background-color: #fafafa;
-}
-
 .container {
   display: flex;
   min-height: 100vh;
@@ -16,10 +12,7 @@ body {
 
 .sidebar {
   width: 200px;
-  background-color: #fefefe;
   padding: 20px;
-  box-shadow: 0 0 5px #aaa;
-  border-radius: 5px 0 0 5px;
   flex-shrink: 0;
 }
 
@@ -33,15 +26,8 @@ body {
   display: block;
   margin: 8px 0;
   text-decoration: none;
-  color: #333;
-  background-color: #ddd;
   padding: 8px 10px;
   border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.nav-button:hover {
-  background-color: #ccc;
 }
 
 .board-area {
@@ -55,19 +41,15 @@ body {
 #chessboard {
   width: 400px;
   height: 400px;
-  background-color: lightgray;
-  border: 2px solid #888;
   border-radius: 8px;
 }
 
 .captured-box {
   width: 120px;
   height: 400px;
-  background-color: #eee;
   padding: 10px;
   text-align: center;
   border-radius: 8px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .captured-box h3 {
@@ -77,16 +59,13 @@ body {
 
 .captured-pieces {
   height: 320px;
-  background-color: white;
-  border: 1px solid #ccc;
   padding: 5px;
   overflow-y: auto;
+  border: 1px solid #ccc;
 }
 
 header {
   padding: 20px;
-  background-color: #eaeaea;
-  border-bottom: 1px solid #ccc;
   width: 100%;
 }
 
