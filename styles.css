@@ -32,6 +32,8 @@ margin-top: 80px;
 border-radius: 5px;
 box-shadow: 0 0 5px #aaa;
 text-align: left;
+box-sizing: border-box;
+overflow-y: auto;
 }
 
 .nav-button {
@@ -66,6 +68,32 @@ p {
 color: white;
 }
 
+.layout {
+  display: flex;
+  height: 100vh;
+  gap: 20px;
+}
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.content-area {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.content-area p {
+  flex: 1;
+  max-width: 400px;
+}
+
 #chessboard {
 display: grid;
 grid-template-columns: repeat(8, 60px);
@@ -76,6 +104,8 @@ border: 2px solid #333;
   display: flex;
   gap: 20px;
   align-items: flex-start;
+  flex: 1;
+  max-width: 480px;
 }
 
 .captured-stack {
