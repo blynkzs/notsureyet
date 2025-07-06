@@ -111,7 +111,7 @@ border: 2px solid #333;
 .captured-stack {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
 #white-captured-box {
