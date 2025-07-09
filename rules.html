@@ -5,49 +5,151 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    .chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      margin-top: 20px;
+      border: 2px solid black;
+    }
+    .square {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .white { background-color: #f0d9b5; }
+    .black { background-color: #b58863; }
+    .controls {
+      margin-top: 20px;
+    }
+    .arrow {
+      color: red;
+      font-size: 20px;
+    }
+  </style>
 </head>
 <body>
-  <div class="layout">
-    <aside class="sidebar">
+  <div class="layout" style="display: flex;">
+    <aside class="sidebar" style="padding: 20px; background: #333; color: white; width: 200px;">
       <a href="index.html">
-        <img src="logo.jpg" alt="Chess Logo" class="logo" />
+        <img src="logo.jpg" alt="Chess Logo" class="logo" style="width: 100%;" />
       </a>
       <h2>Menu</h2>
-      <a href="games.html" class="nav-button">Games</a>
-      <a href="rules.html" class="nav-button">Rules</a>
-      <a href="puzzle.html" class="nav-button">Puzzles</a>
+      <a href="games.html" class="nav-button">Games</a><br>
+      <a href="rules.html" class="nav-button">Rules</a><br>
+      <a href="puzzle.html" class="nav-button">Puzzles</a><br>
       <a href="matchhistory.html" class="nav-button">Match History</a>
     </aside>
 
-   <div class="main-content">
-  <header>
-    <h1>Da Rules</h1>
-  </header>
+    <div class="main-content" style="padding: 20px; flex: 1;">
+      <header>
+        <h1>Da Rules</h1>
+      </header>
 
-  <main>
-    <div class="content-area">
-      <p>
-        <strong>Goal of the Game</strong><br>
-        The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
+      <main>
+        <div class="content-area">
+          <p>
+            <strong>Goal of the Game</strong><br>
+            The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
 
-        <strong>The Board</strong><br>
-        The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
-        Each player starts with 16 pieces:<br>
-        1 King<br>
-        1 Queen<br>
-        2 Rooks<br>
-        2 Bishops<br>
-        2 Knights<br>
-        8 Pawns<br><br>
+            <strong>The Board</strong><br>
+            The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
+            Each player starts with 16 pieces:<br>
+            1 King<br>
+            1 Queen<br>
+            2 Rooks<br>
+            2 Bishops<br>
+            2 Knights<br>
+            8 Pawns<br><br>
 
-        White moves first, and then players take turns.
-      </p>
+            White moves first, and then players take turns.
+          </p>
 
-      <div id="chessboard"></div>
+          <div id="chessboard" class="chessboard"></div>
+
+          <div class="controls">
+            <button onclick="previousPiece()">&#8592; Prev</button>
+            <span id="pieceName">Pawn</span>
+            <button onclick="nextPiece()">Next &#8594;</button>
+          </div>
+        </div>
+      </main>
     </div>
-  </main>
-   </div>
-    
-  <script src="script.js"></script>
+  </div>
+
+  <script>
+    const board = document.getElementById('chessboard');
+    const pieceName = document.getElementById('pieceName');
+
+    const pieces = [
+      {
+        name: 'Pawn',
+        moves: [[1, 0], [2, 0], [1, 1], [1, -1]]
+      },
+      {
+        name: 'Rook',
+        moves: [...Array(8).fill().map((_, i) => [i + 1, 0]), ...Array(8).fill().map((_, i) => [0, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, 0]), ...Array(8).fill().map((_, i) => [0, -i - 1])]
+      },
+      {
+        name: 'Knight',
+        moves: [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
+      },
+      {
+        name: 'Bishop',
+        moves: [...Array(8).fill().map((_, i) => [i + 1, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]), ...Array(8).fill().map((_, i) => [i + 1, -i - 1]), ...Array(8).fill().map((_, i) => [-i - 1, i + 1])]
+      },
+      {
+        name: 'Queen',
+        moves: []
+      },
+      {
+        name: 'King',
+        moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
+      }
+    ];
+    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves); // Queen = Rook + Bishop
+
+    let currentPieceIndex = 0;
+
+    function drawBoard() {
+      board.innerHTML = '';
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const square = document.createElement('div');
+          square.className = 'square ' + ((row + col) % 2 === 0 ? 'white' : 'black');
+
+          // Draw center piece
+          if (row === 3 && col === 3) {
+            square.textContent = '♙';
+          } else {
+            for (const move of pieces[currentPieceIndex].moves) {
+              if (row === 3 + move[0] && col === 3 + move[1]) {
+                square.innerHTML = '<span class="arrow">→</span>';
+              }
+            }
+          }
+
+          board.appendChild(square);
+        }
+      }
+      pieceName.textContent = pieces[currentPieceIndex].name;
+    }
+
+    function previousPiece() {
+      currentPieceIndex = (currentPieceIndex - 1 + pieces.length) % pieces.length;
+      drawBoard();
+    }
+
+    function nextPiece() {
+      currentPieceIndex = (currentPieceIndex + 1) % pieces.length;
+      drawBoard();
+    }
+
+    drawBoard();
+  </script>
 </body>
 </html>
