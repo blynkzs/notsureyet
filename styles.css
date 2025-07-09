@@ -19,10 +19,11 @@ header {
 
 .container {
   display: flex;
-  gap: 20px;
   align-items: flex-start;
+  gap: 20px;
   height: 100vh;
-  padding: 20px;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -56,36 +57,11 @@ header {
   background-color: #3e8e41;
 }
 
-.captured-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 160px;
-}
-
-.captured-box {
-  width: 160px;
-  height: auto;
-  background-color: #e6e6e6;
-  padding: 10px;
-  font-size: 24px;
-  color: black;
-  border-radius: 6px;
-  margin-bottom: 15px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.captured-pieces {
-  font-size: 30px;
-  line-height: 1;
-}
-
 .board-area {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 10px;
+  align-items: center;
 }
 
 #chessboard {
@@ -95,16 +71,13 @@ header {
   border: 2px solid #333;
   background-color: #333;
   user-select: none;
-  gap: 1px;
 }
 
 .square {
   width: 60px;
   height: 60px;
   line-height: 60px;
-  font-size: 48px;
-  color: #f0f0f0;
-  text-shadow: 0 0 5px black;
+  font-size: 40px;
   cursor: pointer;
   user-select: none;
   display: flex;
@@ -120,10 +93,29 @@ header {
   background-color: #0b0b0b;
 }
 
+.captured-box {
+  width: 400px;
+  height: 120px;
+  background-color: #e6e6e6;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  text-align: center;
+  color: black;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.captured-pieces {
+  font-size: 30px;
+  line-height: 1;
+}
+
 .move-log-area {
   width: 220px;
   background-color: #222;
-  border-radius: 6px;
+  border-radius: 5px;
   padding: 10px;
   box-sizing: border-box;
   color: white;
@@ -165,23 +157,33 @@ header {
 }
 
 .controls {
+  margin-top: 10px;
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-top: 10px;
+  align-items: center;
+  gap: 10px;
 }
 
-.controls button {
-  padding: 8px 14px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 6px;
-  border: none;
-  background-color: #4caf50;
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: red;
+  border-radius: 50%;
+  margin: auto;
+  display: block;
+}
+
+.piece-display {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
   color: black;
-  transition: background-color 0.2s ease;
+  max-width: 220px;
+  margin: 0 auto 20px auto;
+  text-align: center;
 }
 
-.controls button:hover {
-  background-color: #3e8e41;
+.piece-symbol {
+  font-size: 60px;
+  margin-bottom: 10px;
 }
