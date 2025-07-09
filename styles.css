@@ -21,22 +21,23 @@ header {
   display: flex;
   gap: 20px;
   align-items: flex-start;
-  height: 100vh;
+  min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .sidebar {
+  flex-shrink: 0;
+  width: 200px;
   background-color: #fefefe;
   padding: 20px;
-  height: 100vh;
-  width: 200px;
-  margin-top: 80px;
   border-radius: 5px;
   box-shadow: 0 0 5px #aaa;
+  margin-top: 80px;
   text-align: left;
-  box-sizing: border-box;
   overflow-y: auto;
+  height: calc(100vh - 80px);
+  box-sizing: border-box;
 }
 
 .nav-button {
@@ -62,10 +63,14 @@ header {
   gap: 10px;
   width: 160px;
   flex-shrink: 0;
+  background-color: #e6e6e6;
+  padding: 10px;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 .captured-box {
-  background-color: #e6e6e6;
+  background-color: #d4d4d4;
   padding: 10px;
   font-size: 24px;
   color: black;
@@ -167,13 +172,4 @@ header {
   margin: 0;
   flex-grow: 1;
   overflow-y: auto;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  background-color: red;
-  border-radius: 50%;
-  margin: auto;
-  display: block;
 }
