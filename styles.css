@@ -170,4 +170,20 @@ header {
   background-color: red;
   border-radius: 50%;
   margin: auto;
+  display: block;
+}
+
+.piece-display {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  color: black;
+  max-width: 220px;
+  margin: 0 auto 20px auto;
+  text-align: center;
+}
+
+.piece-symbol {
+  font-size: 60px;
+  margin-bottom: 10px;
 }
