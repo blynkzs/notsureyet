@@ -1,56 +1,58 @@
 body {
-font-family: Arial, sans-serif;
-text-align: center;
-background-color: #1a1a1a;
-margin: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #1a1a1a;
+  margin: 20px;
 }
 
 header {
-margin-bottom: 20px;
-color: #fefefe
+  margin-bottom: 20px;
+  color: #fefefe;
 }
+
 .logo {
-width: 80px;
-height: auto;
-margin: auto;
+  width: 80px;
+  height: auto;
+  margin: auto;
 }
 
 .container {
-display: flex;
-align-items: center;  
-gap: 40px;                
-height: 100vh;             
-margin: 0;
-padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
 }
+
 .sidebar {
-background-color: #fefefe;
-padding: 20px;
-height: 100vh;
-width: 200px;
-margin-top: 80px;
-border-radius: 5px;
-box-shadow: 0 0 5px #aaa;
-text-align: left;
-box-sizing: border-box;
-overflow-y: auto;
+  background-color: #fefefe;
+  padding: 20px;
+  height: 100vh;
+  width: 200px;
+  margin-top: 80px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #aaa;
+  text-align: left;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .nav-button {
-display: block;
-background-color: #4CAF50;
-color: black;
-text-decoration: none;
-padding: 10px 15px;
-margin: 10px 0;
-border-radius: 5px;
-text-align: center;
-font-weight: bold;
-transition: background-color 0.2s ease;
+  display: block;
+  background-color: #4CAF50;
+  color: black;
+  text-decoration: none;
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
 }
 
 .nav-button:hover {
-background-color: #3e8e41;
+  background-color: #3e8e41;
 }
 
 .captured-box {
@@ -63,9 +65,8 @@ background-color: #3e8e41;
   text-align: center;
 }
 
-
 p {
-color: white;
+  color: white;
 }
 
 .layout {
@@ -73,6 +74,7 @@ color: white;
   height: 100vh;
   gap: 20px;
 }
+
 .main-content {
   flex: 1;
   display: flex;
@@ -84,22 +86,26 @@ color: white;
 
 .content-area {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   align-items: flex-start;
   margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .content-area p {
   flex: 1;
-  max-width: 200px;
+  max-width: 180px;
 }
 
 #chessboard {
-display: grid;
-grid-template-columns: repeat(8, 60px);
-grid-template-rows: repeat(8, 60px);
-margin-left: 650px;
-border: 2px solid #333;
+  display: grid;
+  grid-template-columns: repeat(8, 60px);
+  grid-template-rows: repeat(8, 60px);
+  margin: 0 auto;
+  border: 2px solid #333;
+}
+
 .board-area {
   display: flex;
   gap: 20px;
@@ -114,18 +120,10 @@ border: 2px solid #333;
   gap: 5px;
 }
 
-#white-captured-box {
-  width: 400px;  
-  height: 120px; 
-   background-color: #e6e6e6;
-  text-align: center;
-  font-size: 14px;
-  box-sizing: border-box;
-}
-
+#white-captured-box,
 #black-captured-box {
-  width: 400px;  
-  height: 120px; 
+  width: 400px;
+  height: 120px;
   background-color: #e6e6e6;
   text-align: center;
   font-size: 14px;
@@ -133,18 +131,45 @@ border: 2px solid #333;
 }
 
 .square {
-width: 60px;
-height: 60px;
-line-height: 60px;
-font-size: 40px;
-cursor: pointer;
-user-select: none;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 40px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .square.light {
-background-color: #9a9a9a;
+  background-color: #9a9a9a;
 }
 
 .square.dark {
-background-color: #0b0b0b;
+  background-color: #0b0b0b;
+}
+
+.piece-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.piece-symbol {
+  font-size: 60px;
+}
+
+.controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: red;
+  border-radius: 50%;
+  margin: auto;
 }
