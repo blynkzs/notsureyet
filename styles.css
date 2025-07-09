@@ -3,6 +3,7 @@ body {
   text-align: center;
   background-color: #1a1a1a;
   margin: 20px;
+  color: white;
 }
 
 header {
@@ -18,11 +19,12 @@ header {
 
 .container {
   display: flex;
-  align-items: center;
-  gap: 40px;
+  align-items: flex-start;
+  gap: 20px;
   height: 100vh;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 .sidebar {
@@ -55,79 +57,20 @@ header {
   background-color: #3e8e41;
 }
 
-.captured-box {
-  width: 400px;
-  height: 120px;
-  background-color: #e6e6e6;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-  text-align: center;
-}
-
-p {
-  color: white;
-}
-
-.layout {
-  display: flex;
-  height: 100vh;
-  gap: 20px;
-}
-
-.main-content {
-  flex: 1;
+.board-area {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.content-area {
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
-  margin-top: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.content-area p {
-  flex: 1;
-  max-width: 180px;
+  gap: 10px;
+  align-items: center;
 }
 
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 60px);
   grid-template-rows: repeat(8, 60px);
-  margin: 0 auto;
   border: 2px solid #333;
-}
-
-.board-area {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  flex: 1;
-  max-width: 480px;
-}
-
-.captured-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-#white-captured-box,
-#black-captured-box {
-  width: 400px;
-  height: 120px;
-  background-color: #e6e6e6;
-  text-align: center;
-  font-size: 14px;
-  box-sizing: border-box;
+  background-color: #333;
+  user-select: none;
 }
 
 .square {
@@ -137,6 +80,9 @@ p {
   font-size: 40px;
   cursor: pointer;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .square.light {
@@ -147,15 +93,67 @@ p {
   background-color: #0b0b0b;
 }
 
-.piece-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+.captured-box {
+  width: 400px;
+  height: 120px;
+  background-color: #e6e6e6;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  text-align: center;
+  color: black;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-.piece-symbol {
-  font-size: 60px;
+.captured-pieces {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.move-log-area {
+  width: 220px;
+  background-color: #222;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+  color: white;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.move-log-area h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.move-log-area ol {
+  padding-left: 20px;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.move-log-area button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: black;
+}
+
+.move-log-area button:hover {
+  background-color: #3e8e41;
 }
 
 .controls {
