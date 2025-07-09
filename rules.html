@@ -6,46 +6,44 @@
   <title>Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    .chessboard {
-      display: grid;
-      grid-template-columns: repeat(8, 50px);
-      grid-template-rows: repeat(8, 50px);
-      margin-top: 20px;
-      border: 2px solid black;
-    }
-    .square {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .arrow {
+      color: red;
       font-size: 24px;
     }
-    .white { background-color: #f0d9b5; }
-    .black { background-color: #b58863; }
     .controls {
       margin-top: 20px;
     }
-    .arrow {
-      color: red;
-      font-size: 20px;
+    .piece-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-left: 40px;
+    }
+    .piece-symbol {
+      font-size: 80px;
+      margin-bottom: 10px;
+    }
+    .piece-description {
+      color: white;
+      max-width: 200px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <div class="layout" style="display: flex;">
-    <aside class="sidebar" style="padding: 20px; background: #333; color: white; width: 200px;">
+  <div class="layout">
+    <aside class="sidebar">
       <a href="index.html">
-        <img src="logo.jpg" alt="Chess Logo" class="logo" style="width: 100%;" />
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
       </a>
       <h2>Menu</h2>
-      <a href="games.html" class="nav-button">Games</a><br>
-      <a href="rules.html" class="nav-button">Rules</a><br>
-      <a href="puzzle.html" class="nav-button">Puzzles</a><br>
+      <a href="games.html" class="nav-button">Games</a>
+      <a href="rules.html" class="nav-button">Rules</a>
+      <a href="puzzle.html" class="nav-button">Puzzles</a>
       <a href="matchhistory.html" class="nav-button">Match History</a>
     </aside>
 
-    <div class="main-content" style="padding: 20px; flex: 1;">
+    <div class="main-content">
       <header>
         <h1>Da Rules</h1>
       </header>
@@ -69,12 +67,21 @@
             White moves first, and then players take turns.
           </p>
 
-          <div id="chessboard" class="chessboard"></div>
-
-          <div class="controls">
-            <button onclick="previousPiece()">&#8592; Prev</button>
-            <span id="pieceName">Pawn</span>
-            <button onclick="nextPiece()">Next &#8594;</button>
+          <div style="display: flex; gap: 40px;">
+            <div class="piece-display">
+              <div id="pieceSymbol" class="piece-symbol">♙</div>
+              <div class="piece-description" id="pieceDescription">
+                Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+              </div>
+            </div>
+            <div>
+              <div id="chessboard"></div>
+              <div class="controls">
+                <button onclick="previousPiece()">&#8592; Prev</button>
+                <span id="pieceName" style="color:white">Pawn</span>
+                <button onclick="nextPiece()">Next &#8594;</button>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -84,34 +91,48 @@
   <script>
     const board = document.getElementById('chessboard');
     const pieceName = document.getElementById('pieceName');
+    const pieceSymbol = document.getElementById('pieceSymbol');
+    const pieceDescription = document.getElementById('pieceDescription');
 
     const pieces = [
       {
         name: 'Pawn',
+        symbol: '♙',
+        description: 'Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.',
         moves: [[1, 0], [2, 0], [1, 1], [1, -1]]
       },
       {
         name: 'Rook',
+        symbol: '♖',
+        description: 'Rooks move any number of squares vertically or horizontally.',
         moves: [...Array(8).fill().map((_, i) => [i + 1, 0]), ...Array(8).fill().map((_, i) => [0, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, 0]), ...Array(8).fill().map((_, i) => [0, -i - 1])]
       },
       {
         name: 'Knight',
+        symbol: '♘',
+        description: 'Knights move in an L-shape: two squares in one direction, then one square perpendicular.',
         moves: [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
       },
       {
         name: 'Bishop',
+        symbol: '♗',
+        description: 'Bishops move diagonally any number of squares.',
         moves: [...Array(8).fill().map((_, i) => [i + 1, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]), ...Array(8).fill().map((_, i) => [i + 1, -i - 1]), ...Array(8).fill().map((_, i) => [-i - 1, i + 1])]
       },
       {
         name: 'Queen',
+        symbol: '♕',
+        description: 'The queen moves any number of squares in any direction: horizontally, vertically, or diagonally.',
         moves: []
       },
       {
         name: 'King',
+        symbol: '♔',
+        description: 'The king moves one square in any direction.',
         moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
       }
     ];
-    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves); // Queen = Rook + Bishop
+    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves);
 
     let currentPieceIndex = 0;
 
@@ -120,11 +141,10 @@
       for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
           const square = document.createElement('div');
-          square.className = 'square ' + ((row + col) % 2 === 0 ? 'white' : 'black');
+          square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
 
-          // Draw center piece
           if (row === 3 && col === 3) {
-            square.textContent = '♙';
+            square.textContent = pieces[currentPieceIndex].symbol;
           } else {
             for (const move of pieces[currentPieceIndex].moves) {
               if (row === 3 + move[0] && col === 3 + move[1]) {
@@ -137,6 +157,8 @@
         }
       }
       pieceName.textContent = pieces[currentPieceIndex].name;
+      pieceSymbol.textContent = pieces[currentPieceIndex].symbol;
+      pieceDescription.textContent = pieces[currentPieceIndex].description;
     }
 
     function previousPiece() {
