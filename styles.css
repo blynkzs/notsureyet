@@ -20,7 +20,7 @@ header {
   background-color: #222;
 }
 
-/* === layout for rules page === */
+/* === layout for Rules page === */
 .layout {
   display: flex;
   height: 100vh;
@@ -38,7 +38,7 @@ header {
   margin: 0 auto;
 }
 
-/* === container layout for games page === */
+/* === layout for Games page === */
 .container {
   display: flex;
   flex-direction: row;
@@ -93,7 +93,6 @@ header {
   overflow-y: auto;
 }
 
-/* New container inside board-area for left side boxes */
 .left-panel {
   display: flex;
   flex-direction: column;
@@ -127,7 +126,8 @@ header {
 }
 
 .captured-box {
-  width: 200px;
+  width: 160px;
+  height: 140px;
   background-color: #e6e6e6;
   padding: 10px;
   font-size: 14px;
@@ -151,6 +151,16 @@ header {
   width: 200px;
   max-height: 500px;
   overflow-y: auto;
+}
+
+#move-log-container h3 {
+  margin-top: 0;
+}
+
+#move-log-list {
+  list-style: decimal;
+  padding-left: 20px;
+  text-align: left;
 }
 
 .piece-display {
