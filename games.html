@@ -24,19 +24,23 @@
     </aside>
 
     <div class="board-area">
-      <div class="captured-box white-captured">
-        <h3>White Captured</h3>
-        <div class="captured-pieces" id="white-captured"></div>
+      <div class="left-panel">
+        <div class="captured-box white-captured">
+          <h3>White Captured</h3>
+          <div class="captured-pieces" id="white-captured"></div>
+        </div>
+        <div class="captured-box black-captured">
+          <h3>Black Captured</h3>
+          <div class="captured-pieces" id="black-captured"></div>
+        </div>
       </div>
 
       <div id="chessboard"></div>
 
-      <div class="captured-box black-captured">
-        <h3>Black Captured</h3>
-        <div class="captured-pieces" id="black-captured"></div>
+      <div id="move-log-container">
+        <h3>Move Log</h3>
+        <ol id="move-log-list"></ol>
       </div>
-
-      <div id="move-log-container"></div>
     </div> 
   </main>
 
