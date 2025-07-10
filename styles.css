@@ -1,43 +1,36 @@
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
   background-color: #1a1a1a;
-  margin: 20px;
   color: white;
-}
-
-header {
-  margin-bottom: 20px;
-  color: #fefefe;
-}
-
-.logo {
-  width: 80px;
-  height: auto;
-  margin: auto;
-}
-
-.container {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  height: 100vh;
   margin: 0;
   padding: 0;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.layout {
+  display: flex;
+  height: 100vh;
   box-sizing: border-box;
 }
 
 .sidebar {
   background-color: #fefefe;
   padding: 20px;
-  height: 100vh;
   width: 200px;
-  margin-top: 80px;
+  height: 100%;
   border-radius: 5px;
   box-shadow: 0 0 5px #aaa;
   text-align: left;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+  margin: 0 auto 20px auto;
+  display: block;
 }
 
 .nav-button {
@@ -57,11 +50,22 @@ header {
   background-color: #3e8e41;
 }
 
-.board-area {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+header {
+  margin-bottom: 20px;
+  color: #fefefe;
+  text-align: center;
+}
+
+.content-area {
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 #chessboard {
@@ -79,7 +83,6 @@ header {
   line-height: 60px;
   font-size: 40px;
   cursor: pointer;
-  user-select: none;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,97 +96,43 @@ header {
   background-color: #0b0b0b;
 }
 
-.captured-box {
-  width: 400px;
-  height: 120px;
-  background-color: #e6e6e6;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-  text-align: center;
-  color: black;
-  border-radius: 5px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.captured-pieces {
-  font-size: 30px;
-  line-height: 1;
-}
-
-.move-log-area {
-  width: 220px;
-  background-color: #222;
-  border-radius: 5px;
-  padding: 10px;
-  box-sizing: border-box;
-  color: white;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  max-height: 600px;
-  overflow-y: auto;
-}
-
-.move-log-area h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  text-align: center;
-}
-
-.move-log-area ol {
-  padding-left: 20px;
-  margin: 0;
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-.move-log-area button {
-  margin-top: 10px;
-  padding: 8px 12px;
-  background-color: #4CAF50;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  color: black;
-}
-
-.move-log-area button:hover {
-  background-color: #3e8e41;
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: red;
+  border-radius: 50%;
+  display: block;
+  margin: auto;
 }
 
 .controls {
-  margin-top: 10px;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
 }
 
-.dot {
-  width: 12px;
-  height: 12px;
-  background-color: red;
-  border-radius: 50%;
-  margin: auto;
-  display: block;
-}
-
 .piece-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 40px;
   background-color: white;
   padding: 15px;
   border-radius: 8px;
   color: black;
   max-width: 220px;
-  margin: 0 auto 20px auto;
   text-align: center;
 }
 
 .piece-symbol {
-  font-size: 60px;
+  font-size: 80px;
   margin-bottom: 10px;
+}
+
+.piece-description {
+  color: black;
+  max-width: 200px;
+  text-align: left;
 }
