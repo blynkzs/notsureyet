@@ -133,7 +133,7 @@ header {
 }
 
 .piece-description {
-  color: black;
+  color: black !important;
+  text-align: left !important;
   max-width: 200px;
-  text-align: left;
 }
