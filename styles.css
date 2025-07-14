@@ -199,3 +199,48 @@ header {
   display: block;
   margin: auto;
 }
+
+
+
+
+
+
+.puzzle-board {
+  width: 480px;
+  height: 480px;
+  background-color: #444;
+  margin: 20px auto;
+  border: 3px solid #222;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 24px;
+}
+
+.puzzle-controls {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.puzzle-controls button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #4CAF50;
+  color: black;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.puzzle-controls button:hover {
+  background-color: #3e8e41;
+}
+
+.content-area h2,
+.content-area p {
+  text-align: center;
+}
