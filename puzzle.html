@@ -13,9 +13,7 @@
 
   <div class="layout">
     <aside class="sidebar">
-      <a href="index.html">
-        <img src="logo.jpg" alt="Chess Logo" class="logo" />
-      </a>
+      <a href="index.html"><img src="logo.jpg" alt="Chess Logo" class="logo" /></a>
       <h2>Menu</h2>
       <a href="games.html" class="nav-button">Games</a>
       <a href="rules.html" class="nav-button">Rules</a>
@@ -25,13 +23,24 @@
 
     <div class="main-content">
       <div class="content-area">
-        <h2>Puzzle 1: White to move and mate in 1</h2>
-        <div style="width: fit-content; margin: 20px auto; padding: 20px; background: #eee; color: black; border-radius: 8px;">
-          <p><strong>Position:</strong> White King on e1, Queen on h5, Black King on g8</p>
-          <p><strong>Best Move:</strong> Qh7#</p>
+        <h2 id="puzzleTitle">Puzzle 1: White to move and mate in 1</h2>
+        <p id="puzzleDescription">
+          White King on e1, Queen on h5, Black King on g8. Solution: Qh7#
+        </p>
+
+        <div class="puzzle-board">
+          Board Placeholder
+        </div>
+
+        <div class="puzzle-controls">
+          <button id="prevPuzzleBtn">← Previous</button>
+          <button id="nextPuzzleBtn">Next →</button>
         </div>
       </div>
     </div>
   </div>
+
+ 
+  <script src="script.js"></script>
 </body>
 </html>
