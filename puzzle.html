@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Chess Website</title>
+  <title>Chess Puzzles</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <header>
-    <h1>Idk some chess puzzles</h1>
+    <h1>idk some puzzles</h1>
   </header>
 
-  <main class="container">
+  <div class="layout">
     <aside class="sidebar">
       <a href="index.html">
-          <img src="logo.jpg" alt="Chess Logo" class="logo" />
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
       </a>
       <h2>Menu</h2>
       <a href="games.html" class="nav-button">Games</a>
@@ -23,9 +23,15 @@
       <a href="matchhistory.html" class="nav-button">Match History</a>
     </aside>
 
-    <div id="chessboard"></div>
-  </main>
-
-  <script src="script.js"></script>
+    <div class="main-content">
+      <div class="content-area">
+        <h2>Puzzle 1: White to move and mate in 1</h2>
+        <div style="width:fit-content; margin:auto; padding:20px; background:#eee; color:black; border-radius:8px;">
+          <p><strong>Position:</strong> King on e1, Queen on h5, Black King on g8</p>
+          <p><strong>Best Move:</strong> Qh7#</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
