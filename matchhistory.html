@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Chess Website</title>
+  <title>Match History</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -11,10 +11,10 @@
     <h1>Match History</h1>
   </header>
 
-  <main class="container">
+  <div class="layout">
     <aside class="sidebar">
       <a href="index.html">
-          <img src="logo.jpg" alt="Chess Logo" class="logo" />
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
       </a>
       <h2>Menu</h2>
       <a href="games.html" class="nav-button">Games</a>
@@ -22,9 +22,30 @@
       <a href="puzzle.html" class="nav-button">Puzzles</a>
       <a href="matchhistory.html" class="nav-button">Match History</a>
     </aside>
-    <div id="chessboard"></div>
-  </main>
 
-  <script src="script.js"></script>
+    <div class="main-content">
+      <div class="content-area">
+        <table style="width:100%; background:#fff; color:#000; border-collapse: collapse;">
+          <thead>
+            <tr style="background:#ddd;">
+              <th style="padding:10px; border:1px solid #aaa;">Player 1</th>
+              <th style="padding:10px; border:1px solid #aaa;">Player 2</th>
+              <th style="padding:10px; border:1px solid #aaa;">Winner</th>
+              <th style="padding:10px; border:1px solid #aaa;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:10px; border:1px solid #aaa;">Alice</td>
+              <td style="padding:10px; border:1px solid #aaa;">Bob</td>
+              <td style="padding:10px; border:1px solid #aaa;">Alice</td>
+              <td style="padding:10px; border:1px solid #aaa;">2025-07-10</td>
+            </tr>
+            <!-- Add more rows as needed -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
