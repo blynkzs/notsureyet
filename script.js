@@ -22,6 +22,8 @@ let turn = 'white';
 let captured = { white: [], black: [] };
 let moveHistory = [];
 let draggingPiece = null;
+let mouseX = 0;
+let mouseY = 0;
 
 function isUpper(piece) {
   return piece && piece === piece.toUpperCase();
@@ -109,14 +111,22 @@ function renderBoard() {
     boardElem.appendChild(dragDiv);
 
     draggingPiece.elem = dragDiv;
+
+    // Position dragged piece at current mouse position
+    const boardRect = boardElem.getBoundingClientRect();
+    const x = mouseX - boardRect.left - 30;
+    const y = mouseY - boardRect.top - 30;
+    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
 }
 
 window.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
   if(draggingPiece && draggingPiece.elem) {
     const boardRect = boardElem.getBoundingClientRect();
-    const x = e.clientX - boardRect.left - 30;
-    const y = e.clientY - boardRect.top - 30;
+    const x = mouseX - boardRect.left - 30;
+    const y = mouseY - boardRect.top - 30;
     draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
 });
