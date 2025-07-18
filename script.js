@@ -1,4 +1,9 @@
 const boardElem = document.getElementById('chessboard');
+const whiteCapturedElem = document.getElementById('white-captured');
+const blackCapturedElem = document.getElementById('black-captured');
+const moveLogList = document.getElementById('move-log-list');
+
+const files = ['a','b','c','d','e','f','g','h'];
 
 let board = [
   ['r','n','b','q','k','b','n','r'],
@@ -13,132 +18,161 @@ let board = [
 
 let turn = 'white';
 let selected = null;
-let draggingPiece = null;
-let mouseX = 0;
-let mouseY = 0;
+let legalMoves = [];
+let captured = { white: [], black: [] };
+let moveHistory = [];
 
-function isUpper(char) {
-  return char === char.toUpperCase();
+const pieceUnicode = {
+  'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
+  'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
+};
+
+function isUpper(c) { return c === c.toUpperCase(); }
+function isLower(c) { return c === c.toLowerCase(); }
+function isEmpty(r, c) { return board[r][c] === ''; }
+function oppositeColor(piece1, piece2) {
+  return (isUpper(piece1) && isLower(piece2)) || (isLower(piece1) && isUpper(piece2));
 }
 
-function isLower(char) {
-  return char === char.toLowerCase();
+function onBoard(r, c) {
+  return r >=0 && r < 8 && c >=0 && c < 8;
 }
 
-function unicodeForPiece(piece) {
-  const map = {
-    'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
-    'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
-  };
-  return map[piece] || '';
-}
+const rookDirs = [[1,0],[-1,0],[0,1],[0,-1]];
+const bishopDirs = [[1,1],[1,-1],[-1,1],[-1,-1]];
+const knightMoves = [[2,1],[2,-1],[-2,1],[-2,-1],[1,2],[1,-2],[-1,2],[-1,-2]];
 
-function canMove(r1, c1, r2, c2) {
-  return true; // placeholder for logic
-}
+let kingPositions = { white: [7,4], black: [0,4] };
+let castlingRights = {
+  white: { kingside: true, queenside: true },
+  black: { kingside: true, queenside: true }
+};
+let halfMoveClock = 0;
+let fullMoveNumber = 1;
 
-function movePiece(r1, c1, r2, c2) {
-  board[r2][c2] = board[r1][c1];
-  board[r1][c1] = '';
-}
+// Generate legal moves for piece at (r,c)
+function generateMoves(r, c) {
+  const piece = board[r][c];
+  if (!piece) return [];
 
-function renderBoard() {
-  boardElem.innerHTML = '';
-  boardElem.style.display = 'grid';
-  boardElem.style.gridTemplateColumns = 'repeat(8, 60px)';
-  boardElem.style.gridTemplateRows = 'repeat(8, 60px)';
-  boardElem.style.gap = '1px';
-  boardElem.style.position = 'relative';
+  const moves = [];
+  const isWhite = isUpper(piece);
 
-  for(let r = 0; r < 8; r++) {
-    for(let c = 0; c < 8; c++) {
-      const square = document.createElement('div');
-      const light = (r + c) % 2 === 0;
-      square.className = 'square ' + (light ? 'light' : 'dark');
-      square.style.width = '60px';
-      square.style.height = '60px';
-      square.style.display = 'flex';
-      square.style.justifyContent = 'center';
-      square.style.alignItems = 'center';
-      square.style.fontSize = '40px';
+  function tryMove(tr, tc, canCapture = true) {
+    if (!onBoard(tr, tc)) return;
+    const target = board[tr][tc];
+    if (target === '') {
+      moves.push([tr, tc]);
+    } else if (canCapture && oppositeColor(piece, target)) {
+      moves.push([tr, tc]);
+    }
+  }
 
-      square.dataset.r = r;
-      square.dataset.c = c;
+  switch (piece.toLowerCase()) {
+    case 'p': {
+      const dir = isWhite ? -1 : 1;
+      const startRow = isWhite ? 6 : 1;
 
-      const piece = board[r][c];
-      if (piece) {
-        if (draggingPiece && draggingPiece.r === r && draggingPiece.c === c) {
-          square.textContent = '';
-        } else {
-          square.textContent = unicodeForPiece(piece);
+      // Forward one
+      if (onBoard(r+dir, c) && board[r+dir][c] === '') {
+        moves.push([r+dir, c]);
+        // Forward two from start
+        if (r === startRow && board[r+2*dir][c] === '') {
+          moves.push([r+2*dir, c]);
         }
       }
-
-      if (selected && selected.r === r && selected.c === c) {
-        square.style.outline = '3px solid yellow';
+      // Captures
+      for (const dc of [-1,1]) {
+        const tr = r+dir, tc = c+dc;
+        if (onBoard(tr, tc)) {
+          if (board[tr][tc] !== '' && oppositeColor(piece, board[tr][tc])) {
+            moves.push([tr, tc]);
+          }
+          // EN PASSANT REMOVED
+        }
       }
-
-      square.addEventListener('click', () => onSquareClick(r, c));
-      boardElem.appendChild(square);
+      break;
+    }
+    case 'n': {
+      for (const [dr, dc] of knightMoves) {
+        const tr = r+dr, tc = c+dc;
+        if (!onBoard(tr, tc)) continue;
+        const target = board[tr][tc];
+        if (target === '' || oppositeColor(piece, target)) {
+          moves.push([tr, tc]);
+        }
+      }
+      break;
+    }
+    case 'b': {
+      for (const [dr, dc] of bishopDirs) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') {
+            moves.push([tr, tc]);
+          } else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'r': {
+      for (const [dr, dc] of rookDirs) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') {
+            moves.push([tr, tc]);
+          } else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'q': {
+      for (const [dr, dc] of [...rookDirs, ...bishopDirs]) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') {
+            moves.push([tr, tc]);
+          } else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'k': {
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const tr = r+dr, tc = c+dc;
+          if (!onBoard(tr, tc)) continue;
+          const target = board[tr][tc];
+          if (target === '' || oppositeColor(piece, target)) {
+            moves.push([tr, tc]);
+          }
+        }
+      }
+      // Castling check remains
+      if (!isInCheck(turn)) {
+        if (castlingRights[turn].kingside && canCastleKingside(turn)) {
+          moves.push([turn === 'white' ? 7 : 0, 6]);
+        }
+        if (castlingRights[turn].queenside && canCastleQueenside(turn)) {
+          moves.push([turn === 'white' ? 7 : 0, 2]);
+        }
+      }
+      break;
     }
   }
-
-  if (draggingPiece) {
-    const drag = document.createElement('div');
-    drag.className = 'dragging-piece';
-    drag.textContent = unicodeForPiece(draggingPiece.piece);
-    drag.style.position = 'absolute';
-    drag.style.fontSize = '40px';
-    drag.style.width = '60px';
-    drag.style.height = '60px';
-    drag.style.textAlign = 'center';
-    drag.style.lineHeight = '60px';
-    drag.style.pointerEvents = 'none';
-    drag.style.zIndex = '1000';
-    const rect = boardElem.getBoundingClientRect();
-    drag.style.transform = `translate(${mouseX - rect.left - 30}px, ${mouseY - rect.top - 30}px)`;
-    boardElem.appendChild(drag);
-    draggingPiece.elem = drag;
-  }
+  // Filter out moves that put own king in check
+  return moves.filter(m => !wouldBeCheck(r, c, m[0], m[1]));
 }
-
-function onSquareClick(r, c) {
-  const clickedPiece = board[r][c];
-  if (draggingPiece) {
-    if (canMove(draggingPiece.r, draggingPiece.c, r, c)) {
-      movePiece(draggingPiece.r, draggingPiece.c, r, c);
-      turn = (turn === 'white') ? 'black' : 'white';
-      draggingPiece = null;
-      selected = null;
-      renderBoard();
-    } else {
-      draggingPiece = null;
-      renderBoard();
-    }
-  } else {
-    if (clickedPiece && (
-      (turn === 'white' && isUpper(clickedPiece)) ||
-      (turn === 'black' && isLower(clickedPiece))
-    )) {
-      draggingPiece = { r, c, piece: clickedPiece };
-      selected = { r, c };
-      renderBoard();
-    } else {
-      selected = null;
-      renderBoard();
-    }
-  }
-}
-
-window.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if (draggingPiece && draggingPiece.elem) {
-    const rect = boardElem.getBoundingClientRect();
-    const x = mouseX - rect.left - 30;
-    const y = mouseY - rect.top - 30;
-    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
-  }
-});
-
-renderBoard();
