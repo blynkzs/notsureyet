@@ -44,6 +44,7 @@ function unicodeForPiece(p) {
     default: return '';
   }
 }
+
 function renderBoard() {
   boardElem.innerHTML = '';
   boardElem.style.gridTemplateColumns = 'repeat(8, 60px)';
@@ -52,8 +53,8 @@ function renderBoard() {
   boardElem.style.gap = '1px';
   boardElem.style.backgroundColor = '#333';
 
-  for(let r=0; r<8; r++) {
-    for(let c=0; c<8; c++) {
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
       const square = document.createElement('div');
       const isLight = (r + c) % 2 === 0;
       square.className = 'square ' + (isLight ? 'light' : 'dark');
@@ -67,49 +68,50 @@ function renderBoard() {
       square.dataset.r = r;
       square.dataset.c = c;
 
-      let piece = board[r][c];
-      if(piece) square.textContent = unicodeForPiece(piece);
+      const piece = board[r][c];
+      if (piece) {
+        const pieceElem = document.createElement('span');
+        pieceElem.textContent = unicodeForPiece(piece);
+        pieceElem.draggable = true;
+        pieceElem.dataset.r = r;
+        pieceElem.dataset.c = c;
 
-      if(selected && selected.r === r && selected.c === c) {
-        square.style.outline = '3px solid yellow';
+        pieceElem.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', `${r},${c}`);
+        });
+
+        square.appendChild(pieceElem);
       }
 
-      square.addEventListener('click', () => onSquareClick(r,c));
+      square.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      square.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const [fromR, fromC] = e.dataTransfer.getData('text/plain').split(',').map(Number);
+        const toR = parseInt(square.dataset.r);
+        const toC = parseInt(square.dataset.c);
+        if (canMove(fromR, fromC, toR, toC)) {
+          movePiece(fromR, fromC, toR, toC);
+          turn = turn === 'white' ? 'black' : 'white';
+          selected = null;
+          renderBoard();
+          updateCaptured();
+          updateMoveLog();
+        }
+      });
+
       boardElem.appendChild(square);
     }
   }
 }
-function onSquareClick(r,c) {
-  const piece = board[r][c];
-  if(selected) {
-    if(canMove(selected.r, selected.c, r, c)) {
-      movePiece(selected.r, selected.c, r, c);
-      selected = null;
-      turn = turn === 'white' ? 'black' : 'white';
-      renderBoard();
-      updateCaptured();
-      updateMoveLog();
-    } else {
-      if(piece && ((turn === 'white' && isUpper(piece)) || (turn === 'black' && isLower(piece)))) {
-        selected = {r,c};
-        renderBoard();
-      } else {
-        selected = null;
-        renderBoard();
-      }
-    }
-  } else {
-    if(piece && ((turn === 'white' && isUpper(piece)) || (turn === 'black' && isLower(piece)))) {
-      selected = {r,c};
-      renderBoard();
-    }
-  }
-}
+
 function canMove(sr, sc, tr, tc) {
   const piece = board[sr][sc];
-  if(!piece) return false;
+  if (!piece) return false;
   const target = board[tr][tc];
-  if(target && ((isUpper(piece) && isUpper(target)) || (isLower(piece) && isLower(target)))) return false;
+  if (target && ((isUpper(piece) && isUpper(target)) || (isLower(piece) && isLower(target)))) return false;
 
   const dr = tr - sr;
   const dc = tc - sc;
@@ -119,26 +121,26 @@ function canMove(sr, sc, tr, tc) {
   switch(piece.toLowerCase()) {
     case 'p': {
       let direction = isUpper(piece) ? -1 : 1;
-      if(dc === 0 && dr === direction && !target) return true;
-      if(dc === 0 && dr === 2*direction && !target && ((sr === 6 && isUpper(piece)) || (sr === 1 && isLower(piece)))) {
-        if(board[sr + direction][sc] === '') return true;
+      if (dc === 0 && dr === direction && !target) return true;
+      if (dc === 0 && dr === 2*direction && !target && ((sr === 6 && isUpper(piece)) || (sr === 1 && isLower(piece)))) {
+        if (board[sr + direction][sc] === '') return true;
       }
-      if(absDc === 1 && dr === direction && target) return true;
+      if (absDc === 1 && dr === direction && target) return true;
       return false;
     }
     case 'r': {
-      if(dr !== 0 && dc !== 0) return false;
+      if (dr !== 0 && dc !== 0) return false;
       return clearPath(sr, sc, tr, tc);
     }
     case 'n': {
       return (absDr === 2 && absDc === 1) || (absDr === 1 && absDc === 2);
     }
     case 'b': {
-      if(absDr !== absDc) return false;
+      if (absDr !== absDc) return false;
       return clearPath(sr, sc, tr, tc);
     }
     case 'q': {
-      if(dr === 0 || dc === 0 || absDr === absDc) {
+      if (dr === 0 || dc === 0 || absDr === absDc) {
         return clearPath(sr, sc, tr, tc);
       }
       return false;
@@ -149,18 +151,20 @@ function canMove(sr, sc, tr, tc) {
   }
   return false;
 }
+
 function clearPath(sr, sc, tr, tc) {
   const dr = Math.sign(tr - sr);
   const dc = Math.sign(tc - sc);
   let r = sr + dr;
   let c = sc + dc;
-  while(r !== tr || c !== tc) {
-    if(board[r][c] !== '') return false;
+  while (r !== tr || c !== tc) {
+    if (board[r][c] !== '') return false;
     r += dr;
     c += dc;
   }
   return true;
 }
+
 function movePiece(sr, sc, tr, tc) {
   const piece = board[sr][sc];
   const target = board[tr][tc];
@@ -170,17 +174,19 @@ function movePiece(sr, sc, tr, tc) {
     turn,
     move: {from: {r: sr, c: sc}, to: {r: tr, c: tc}, piece, captured: target}
   });
-  if(target) {
-    if(isUpper(target)) captured.black.push(target);
+  if (target) {
+    if (isUpper(target)) captured.black.push(target);
     else captured.white.push(target);
   }
   board[tr][tc] = piece;
   board[sr][sc] = '';
 }
+
 function updateCaptured() {
   whiteCapturedElem.textContent = captured.white.map(p => unicodeForPiece(p)).join(' ');
   blackCapturedElem.textContent = captured.black.map(p => unicodeForPiece(p)).join(' ');
 }
+
 function updateMoveLog() {
   moveLogContainer.innerHTML = '';
   const title = document.createElement('h3');
@@ -188,13 +194,15 @@ function updateMoveLog() {
   title.style.marginTop = '0';
   title.style.color = 'white';
   moveLogContainer.appendChild(title);
+
   const movesList = document.createElement('ol');
   movesList.style.paddingLeft = '20px';
   movesList.style.maxHeight = '400px';
   movesList.style.overflowY = 'auto';
   movesList.style.color = 'white';
   moveLogContainer.appendChild(movesList);
-  for(let i = 0; i < moveHistory.length; i++) {
+
+  for (let i = 0; i < moveHistory.length; i++) {
     const m = moveHistory[i].move;
     const from = files[m.from.c] + (8 - m.from.r);
     const to = files[m.to.c] + (8 - m.to.r);
@@ -205,6 +213,7 @@ function updateMoveLog() {
     li.textContent = moveText;
     movesList.appendChild(li);
   }
+
   const undoBtn = document.createElement('button');
   undoBtn.textContent = 'Undo';
   undoBtn.style.marginTop = '10px';
@@ -213,8 +222,9 @@ function updateMoveLog() {
   undoBtn.addEventListener('click', undoMove);
   moveLogContainer.appendChild(undoBtn);
 }
+
 function undoMove() {
-  if(moveHistory.length === 0) return;
+  if (moveHistory.length === 0) return;
   const last = moveHistory.pop();
   board = JSON.parse(JSON.stringify(last.board));
   captured = JSON.parse(JSON.stringify(last.captured));
@@ -224,6 +234,7 @@ function undoMove() {
   updateCaptured();
   updateMoveLog();
 }
+
 renderBoard();
 updateCaptured();
 updateMoveLog();
