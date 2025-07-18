@@ -21,6 +21,7 @@ let selected = null;
 let turn = 'white';
 let captured = { white: [], black: [] };
 let moveHistory = [];
+let draggingPiece = null;
 
 function isUpper(piece) {
   return piece && piece === piece.toUpperCase();
@@ -53,6 +54,7 @@ function renderBoard() {
   boardElem.style.display = 'grid';
   boardElem.style.gap = '1px';
   boardElem.style.backgroundColor = '#333';
+  boardElem.style.position = 'relative';
 
   for(let r=0; r<8; r++) {
     for(let c=0; c<8; c++) {
@@ -70,104 +72,78 @@ function renderBoard() {
       square.dataset.c = c;
 
       let piece = board[r][c];
+
       if(piece) {
-        square.textContent = unicodeForPiece(piece);
-        square.draggable = true;
-
-        // Drag event handlers
-        square.addEventListener('dragstart', onDragStart);
-        square.addEventListener('dragend', onDragEnd);
+        if(draggingPiece && draggingPiece.r === r && draggingPiece.c === c) {
+          square.textContent = '';
+        } else {
+          square.textContent = unicodeForPiece(piece);
+        }
+        square.draggable = false;
+        square.addEventListener('click', () => onSquareClick(r, c));
+      } else {
+        square.addEventListener('click', () => onSquareClick(r, c));
       }
-
-      // Allow dropping on squares
-      square.addEventListener('dragover', onDragOver);
-      square.addEventListener('drop', onDrop);
 
       if(selected && selected.r === r && selected.c === c) {
         square.style.outline = '3px solid yellow';
       }
 
-      // Also keep click support for selection
-      square.addEventListener('click', () => onSquareClick(r,c));
-
       boardElem.appendChild(square);
     }
   }
-}
 
-function onDragStart(e) {
-  const r = +e.target.dataset.r;
-  const c = +e.target.dataset.c;
-  const piece = board[r][c];
-  if(!piece) {
-    e.preventDefault();
-    return;
-  }
-  if((turn === 'white' && isUpper(piece)) || (turn === 'black' && isLower(piece))) {
-    e.dataTransfer.setData('text/plain', JSON.stringify({r, c}));
-    // Set drag image so it looks better while dragging
-    const dragIcon = document.createElement('div');
-    dragIcon.style.fontSize = '40px';
-    dragIcon.style.lineHeight = '40px';
-    dragIcon.textContent = unicodeForPiece(piece);
-    document.body.appendChild(dragIcon);
-    e.dataTransfer.setDragImage(dragIcon, 20, 20);
-    setTimeout(() => document.body.removeChild(dragIcon), 0);
-  } else {
-    e.preventDefault();
+  if(draggingPiece) {
+    let dragDiv = document.createElement('div');
+    dragDiv.className = 'dragging-piece';
+    dragDiv.style.position = 'absolute';
+    dragDiv.style.pointerEvents = 'none';
+    dragDiv.style.fontSize = '40px';
+    dragDiv.style.lineHeight = '60px';
+    dragDiv.style.width = '60px';
+    dragDiv.style.height = '60px';
+    dragDiv.style.textAlign = 'center';
+    dragDiv.style.userSelect = 'none';
+    dragDiv.style.zIndex = 1000;
+    dragDiv.textContent = unicodeForPiece(draggingPiece.piece);
+    boardElem.appendChild(dragDiv);
+
+    draggingPiece.elem = dragDiv;
   }
 }
 
-function onDragEnd(e) {
-  // Clear selection after drag ends
-  selected = null;
-  renderBoard();
-}
-
-function onDragOver(e) {
-  e.preventDefault();
-}
-
-function onDrop(e) {
-  e.preventDefault();
-  const fromData = e.dataTransfer.getData('text/plain');
-  if(!fromData) return;
-  const {r: sr, c: sc} = JSON.parse(fromData);
-  const tr = +e.currentTarget.dataset.r;
-  const tc = +e.currentTarget.dataset.c;
-
-  if(canMove(sr, sc, tr, tc)) {
-    movePiece(sr, sc, tr, tc);
-    turn = turn === 'white' ? 'black' : 'white';
-    selected = null;
-    renderBoard();
-    updateCaptured();
-    updateMoveLog();
+window.addEventListener('mousemove', (e) => {
+  if(draggingPiece && draggingPiece.elem) {
+    const boardRect = boardElem.getBoundingClientRect();
+    const x = e.clientX - boardRect.left - 30;
+    const y = e.clientY - boardRect.top - 30;
+    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
-}
+});
 
-function onSquareClick(r,c) {
-  const piece = board[r][c];
-  if(selected) {
-    if(canMove(selected.r, selected.c, r, c)) {
-      movePiece(selected.r, selected.c, r, c);
-      selected = null;
+function onSquareClick(r, c) {
+  const clickedPiece = board[r][c];
+
+  if(draggingPiece) {
+    if(canMove(draggingPiece.r, draggingPiece.c, r, c)) {
+      movePiece(draggingPiece.r, draggingPiece.c, r, c);
       turn = turn === 'white' ? 'black' : 'white';
+      draggingPiece = null;
+      selected = null;
       renderBoard();
       updateCaptured();
       updateMoveLog();
     } else {
-      if(piece && ((turn === 'white' && isUpper(piece)) || (turn === 'black' && isLower(piece)))) {
-        selected = {r,c};
-        renderBoard();
-      } else {
-        selected = null;
-        renderBoard();
-      }
+      draggingPiece = null;
+      renderBoard();
     }
   } else {
-    if(piece && ((turn === 'white' && isUpper(piece)) || (turn === 'black' && isLower(piece)))) {
-      selected = {r,c};
+    if(clickedPiece && ((turn === 'white' && isUpper(clickedPiece)) || (turn === 'black' && isLower(clickedPiece)))) {
+      draggingPiece = {r, c, piece: clickedPiece};
+      selected = {r, c};
+      renderBoard();
+    } else {
+      selected = null;
       renderBoard();
     }
   }
@@ -266,7 +242,6 @@ function updateMoveLog() {
     li.textContent = moveText;
     moveLogList.appendChild(li);
   }
-  // Undo button
   if (!document.getElementById('undo-button')) {
     const undoBtn = document.createElement('button');
     undoBtn.id = 'undo-button';
@@ -286,12 +261,17 @@ function undoMove() {
   captured = JSON.parse(JSON.stringify(last.captured));
   turn = last.turn;
   selected = null;
+  draggingPiece = null;
   renderBoard();
   updateCaptured();
   updateMoveLog();
 }
 
-// Initialize
+boardElem.addEventListener('dragstart', e => e.preventDefault());
+boardElem.addEventListener('dragend', e => e.preventDefault());
+boardElem.addEventListener('drop', e => e.preventDefault());
+boardElem.addEventListener('dragover', e => e.preventDefault());
+
 renderBoard();
 updateCaptured();
 updateMoveLog();
