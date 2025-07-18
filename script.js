@@ -1,11 +1,6 @@
-const boardElem = document.getElementById('chessboard');
-const whiteCapturedElem = document.getElementById('white-captured');
-const blackCapturedElem = document.getElementById('black-captured');
-const moveLogContainer = document.getElementById('move-log-container');
-const moveLogList = document.getElementById('move-log-list');
-const files = ['a','b','c','d','e','f','g','h'];
+const boardElem = document.getElementById('board');
 
-const initialBoard = [
+let board = [
   ['r','n','b','q','k','b','n','r'],
   ['p','p','p','p','p','p','p','p'],
   ['','','','','','','',''],
@@ -13,40 +8,38 @@ const initialBoard = [
   ['','','','','','','',''],
   ['','','','','','','',''],
   ['P','P','P','P','P','P','P','P'],
-  ['R','N','B','Q','K','B','N','R'],
+  ['R','N','B','Q','K','B','N','R']
 ];
 
-let board = JSON.parse(JSON.stringify(initialBoard));
-let selected = null;
 let turn = 'white';
-let captured = { white: [], black: [] };
-let moveHistory = [];
+let selected = null;
 let draggingPiece = null;
 let mouseX = 0;
 let mouseY = 0;
 
-function isUpper(piece) {
-  return piece && piece === piece.toUpperCase();
+function isUpper(char) {
+  return char === char.toUpperCase();
 }
-function isLower(piece) {
-  return piece && piece === piece.toLowerCase();
+
+function isLower(char) {
+  return char === char.toLowerCase();
 }
-function unicodeForPiece(p) {
-  switch(p) {
-    case 'P': return '♙';
-    case 'R': return '♖';
-    case 'N': return '♘';
-    case 'B': return '♗';
-    case 'Q': return '♕';
-    case 'K': return '♔';
-    case 'p': return '♟';
-    case 'r': return '♜';
-    case 'n': return '♞';
-    case 'b': return '♝';
-    case 'q': return '♛';
-    case 'k': return '♚';
-    default: return '';
-  }
+
+function unicodeForPiece(piece) {
+  const map = {
+    'K':'♔', 'Q':'♕', 'R':'♖', 'B':'♗', 'N':'♘', 'P':'♙',
+    'k':'♚', 'q':'♛', 'r':'♜', 'b':'♝', 'n':'♞', 'p':'♟'
+  };
+  return map[piece] || '';
+}
+
+function canMove(r1, c1, r2, c2) {
+  return true; // replace with actual move validation
+}
+
+function movePiece(r1, c1, r2, c2) {
+  board[r2][c2] = board[r1][c1];
+  board[r1][c1] = '';
 }
 
 function renderBoard() {
@@ -112,24 +105,12 @@ function renderBoard() {
 
     draggingPiece.elem = dragDiv;
 
-    // Position dragged piece at current mouse position
     const boardRect = boardElem.getBoundingClientRect();
     const x = mouseX - boardRect.left - 30;
     const y = mouseY - boardRect.top - 30;
     draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
 }
-
-window.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if(draggingPiece && draggingPiece.elem) {
-    const boardRect = boardElem.getBoundingClientRect();
-    const x = mouseX - boardRect.left - 30;
-    const y = mouseY - boardRect.top - 30;
-    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
-  }
-});
 
 function onSquareClick(r, c) {
   const clickedPiece = board[r][c];
@@ -141,8 +122,6 @@ function onSquareClick(r, c) {
       draggingPiece = null;
       selected = null;
       renderBoard();
-      updateCaptured();
-      updateMoveLog();
     } else {
       draggingPiece = null;
       renderBoard();
@@ -159,123 +138,16 @@ function onSquareClick(r, c) {
   }
 }
 
-function canMove(sr, sc, tr, tc) {
-  const piece = board[sr][sc];
-  if(!piece) return false;
-  const target = board[tr][tc];
-  if(target && ((isUpper(piece) && isUpper(target)) || (isLower(piece) && isLower(target)))) return false;
-
-  const dr = tr - sr;
-  const dc = tc - sc;
-  const absDr = Math.abs(dr);
-  const absDc = Math.abs(dc);
-
-  switch(piece.toLowerCase()) {
-    case 'p': {
-      let direction = isUpper(piece) ? -1 : 1;
-      if(dc === 0 && dr === direction && !target) return true;
-      if(dc === 0 && dr === 2*direction && !target && ((sr === 6 && isUpper(piece)) || (sr === 1 && isLower(piece)))) {
-        if(board[sr + direction][sc] === '') return true;
-      }
-      if(absDc === 1 && dr === direction && target) return true;
-      return false;
-    }
-    case 'r': {
-      if(dr !== 0 && dc !== 0) return false;
-      return clearPath(sr, sc, tr, tc);
-    }
-    case 'n': {
-      return (absDr === 2 && absDc === 1) || (absDr === 1 && absDc === 2);
-    }
-    case 'b': {
-      if(absDr !== absDc) return false;
-      return clearPath(sr, sc, tr, tc);
-    }
-    case 'q': {
-      if(dr === 0 || dc === 0 || absDr === absDc) {
-        return clearPath(sr, sc, tr, tc);
-      }
-      return false;
-    }
-    case 'k': {
-      return absDr <= 1 && absDc <= 1;
-    }
+window.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  if(draggingPiece && draggingPiece.elem) {
+    const boardRect = boardElem.getBoundingClientRect();
+    const x = mouseX - boardRect.left - 30;
+    const y = mouseY - boardRect.top - 30;
+    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
-  return false;
-}
-
-function clearPath(sr, sc, tr, tc) {
-  const dr = Math.sign(tr - sr);
-  const dc = Math.sign(tc - sc);
-  let r = sr + dr;
-  let c = sc + dc;
-  while(r !== tr || c !== tc) {
-    if(board[r][c] !== '') return false;
-    r += dr;
-    c += dc;
-  }
-  return true;
-}
-
-function movePiece(sr, sc, tr, tc) {
-  const piece = board[sr][sc];
-  const target = board[tr][tc];
-  moveHistory.push({
-    board: JSON.parse(JSON.stringify(board)),
-    captured: JSON.parse(JSON.stringify(captured)),
-    turn,
-    move: {from: {r: sr, c: sc}, to: {r: tr, c: tc}, piece, captured: target}
-  });
-  if(target) {
-    if(isUpper(target)) captured.black.push(target);
-    else captured.white.push(target);
-  }
-  board[tr][tc] = piece;
-  board[sr][sc] = '';
-}
-
-function updateCaptured() {
-  whiteCapturedElem.textContent = captured.white.map(p => unicodeForPiece(p)).join(' ');
-  blackCapturedElem.textContent = captured.black.map(p => unicodeForPiece(p)).join(' ');
-}
-
-function updateMoveLog() {
-  moveLogList.innerHTML = '';
-  for(let i = 0; i < moveHistory.length; i++) {
-    const m = moveHistory[i].move;
-    const from = files[m.from.c] + (8 - m.from.r);
-    const to = files[m.to.c] + (8 - m.to.r);
-    const pieceSymbol = unicodeForPiece(m.piece);
-    const captureSymbol = m.captured ? 'x' : '-';
-    const moveText = `${pieceSymbol} ${from}${captureSymbol}${to}`;
-    const li = document.createElement('li');
-    li.textContent = moveText;
-    moveLogList.appendChild(li);
-  }
-  if (!document.getElementById('undo-button')) {
-    const undoBtn = document.createElement('button');
-    undoBtn.id = 'undo-button';
-    undoBtn.textContent = 'Undo';
-    undoBtn.style.marginTop = '10px';
-    undoBtn.style.padding = '5px 10px';
-    undoBtn.style.cursor = 'pointer';
-    undoBtn.addEventListener('click', undoMove);
-    moveLogContainer.appendChild(undoBtn);
-  }
-}
-
-function undoMove() {
-  if(moveHistory.length === 0) return;
-  const last = moveHistory.pop();
-  board = JSON.parse(JSON.stringify(last.board));
-  captured = JSON.parse(JSON.stringify(last.captured));
-  turn = last.turn;
-  selected = null;
-  draggingPiece = null;
-  renderBoard();
-  updateCaptured();
-  updateMoveLog();
-}
+});
 
 boardElem.addEventListener('dragstart', e => e.preventDefault());
 boardElem.addEventListener('dragend', e => e.preventDefault());
@@ -283,5 +155,3 @@ boardElem.addEventListener('drop', e => e.preventDefault());
 boardElem.addEventListener('dragover', e => e.preventDefault());
 
 renderBoard();
-updateCaptured();
-updateMoveLog();
