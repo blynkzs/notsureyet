@@ -34,7 +34,7 @@ function unicodeForPiece(piece) {
 }
 
 function canMove(r1, c1, r2, c2) {
-  return true; // replace with actual move validation
+  return true; // Placeholder, always allows movement
 }
 
 function movePiece(r1, c1, r2, c2) {
@@ -44,25 +44,12 @@ function movePiece(r1, c1, r2, c2) {
 
 function renderBoard() {
   boardElem.innerHTML = '';
-  boardElem.style.gridTemplateColumns = 'repeat(8, 60px)';
-  boardElem.style.gridTemplateRows = 'repeat(8, 60px)';
-  boardElem.style.display = 'grid';
-  boardElem.style.gap = '1px';
-  boardElem.style.backgroundColor = '#333';
-  boardElem.style.position = 'relative';
 
   for(let r=0; r<8; r++) {
     for(let c=0; c<8; c++) {
       const square = document.createElement('div');
       const isLight = (r + c) % 2 === 0;
       square.className = 'square ' + (isLight ? 'light' : 'dark');
-      square.style.width = '60px';
-      square.style.height = '60px';
-      square.style.lineHeight = '60px';
-      square.style.fontSize = '40px';
-      square.style.textAlign = 'center';
-      square.style.userSelect = 'none';
-      square.style.cursor = 'grab';
       square.dataset.r = r;
       square.dataset.c = c;
 
@@ -74,15 +61,13 @@ function renderBoard() {
         } else {
           square.textContent = unicodeForPiece(piece);
         }
-        square.draggable = false;
-        square.addEventListener('click', () => onSquareClick(r, c));
-      } else {
-        square.addEventListener('click', () => onSquareClick(r, c));
       }
 
       if(selected && selected.r === r && selected.c === c) {
         square.style.outline = '3px solid yellow';
       }
+
+      square.addEventListener('click', () => onSquareClick(r, c));
 
       boardElem.appendChild(square);
     }
@@ -91,15 +76,6 @@ function renderBoard() {
   if(draggingPiece) {
     let dragDiv = document.createElement('div');
     dragDiv.className = 'dragging-piece';
-    dragDiv.style.position = 'absolute';
-    dragDiv.style.pointerEvents = 'none';
-    dragDiv.style.fontSize = '40px';
-    dragDiv.style.lineHeight = '60px';
-    dragDiv.style.width = '60px';
-    dragDiv.style.height = '60px';
-    dragDiv.style.textAlign = 'center';
-    dragDiv.style.userSelect = 'none';
-    dragDiv.style.zIndex = 1000;
     dragDiv.textContent = unicodeForPiece(draggingPiece.piece);
     boardElem.appendChild(dragDiv);
 
@@ -148,10 +124,5 @@ window.addEventListener('mousemove', (e) => {
     draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
 });
-
-boardElem.addEventListener('dragstart', e => e.preventDefault());
-boardElem.addEventListener('dragend', e => e.preventDefault());
-boardElem.addEventListener('drop', e => e.preventDefault());
-boardElem.addEventListener('dragover', e => e.preventDefault());
 
 renderBoard();
