@@ -1,4 +1,4 @@
-const boardElem = document.getElementById('board');
+const boardElem = document.getElementById('chessboard');
 
 let board = [
   ['r','n','b','q','k','b','n','r'],
@@ -34,7 +34,7 @@ function unicodeForPiece(piece) {
 }
 
 function canMove(r1, c1, r2, c2) {
-  return true; // Placeholder, always allows movement
+  return true; // placeholder for logic
 }
 
 function movePiece(r1, c1, r2, c2) {
@@ -44,57 +44,70 @@ function movePiece(r1, c1, r2, c2) {
 
 function renderBoard() {
   boardElem.innerHTML = '';
+  boardElem.style.display = 'grid';
+  boardElem.style.gridTemplateColumns = 'repeat(8, 60px)';
+  boardElem.style.gridTemplateRows = 'repeat(8, 60px)';
+  boardElem.style.gap = '1px';
+  boardElem.style.position = 'relative';
 
-  for(let r=0; r<8; r++) {
-    for(let c=0; c<8; c++) {
+  for(let r = 0; r < 8; r++) {
+    for(let c = 0; c < 8; c++) {
       const square = document.createElement('div');
-      const isLight = (r + c) % 2 === 0;
-      square.className = 'square ' + (isLight ? 'light' : 'dark');
+      const light = (r + c) % 2 === 0;
+      square.className = 'square ' + (light ? 'light' : 'dark');
+      square.style.width = '60px';
+      square.style.height = '60px';
+      square.style.display = 'flex';
+      square.style.justifyContent = 'center';
+      square.style.alignItems = 'center';
+      square.style.fontSize = '40px';
+
       square.dataset.r = r;
       square.dataset.c = c;
 
-      let piece = board[r][c];
-
-      if(piece) {
-        if(draggingPiece && draggingPiece.r === r && draggingPiece.c === c) {
+      const piece = board[r][c];
+      if (piece) {
+        if (draggingPiece && draggingPiece.r === r && draggingPiece.c === c) {
           square.textContent = '';
         } else {
           square.textContent = unicodeForPiece(piece);
         }
       }
 
-      if(selected && selected.r === r && selected.c === c) {
+      if (selected && selected.r === r && selected.c === c) {
         square.style.outline = '3px solid yellow';
       }
 
       square.addEventListener('click', () => onSquareClick(r, c));
-
       boardElem.appendChild(square);
     }
   }
 
-  if(draggingPiece) {
-    let dragDiv = document.createElement('div');
-    dragDiv.className = 'dragging-piece';
-    dragDiv.textContent = unicodeForPiece(draggingPiece.piece);
-    boardElem.appendChild(dragDiv);
-
-    draggingPiece.elem = dragDiv;
-
-    const boardRect = boardElem.getBoundingClientRect();
-    const x = mouseX - boardRect.left - 30;
-    const y = mouseY - boardRect.top - 30;
-    draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
+  if (draggingPiece) {
+    const drag = document.createElement('div');
+    drag.className = 'dragging-piece';
+    drag.textContent = unicodeForPiece(draggingPiece.piece);
+    drag.style.position = 'absolute';
+    drag.style.fontSize = '40px';
+    drag.style.width = '60px';
+    drag.style.height = '60px';
+    drag.style.textAlign = 'center';
+    drag.style.lineHeight = '60px';
+    drag.style.pointerEvents = 'none';
+    drag.style.zIndex = '1000';
+    const rect = boardElem.getBoundingClientRect();
+    drag.style.transform = `translate(${mouseX - rect.left - 30}px, ${mouseY - rect.top - 30}px)`;
+    boardElem.appendChild(drag);
+    draggingPiece.elem = drag;
   }
 }
 
 function onSquareClick(r, c) {
   const clickedPiece = board[r][c];
-
-  if(draggingPiece) {
-    if(canMove(draggingPiece.r, draggingPiece.c, r, c)) {
+  if (draggingPiece) {
+    if (canMove(draggingPiece.r, draggingPiece.c, r, c)) {
       movePiece(draggingPiece.r, draggingPiece.c, r, c);
-      turn = turn === 'white' ? 'black' : 'white';
+      turn = (turn === 'white') ? 'black' : 'white';
       draggingPiece = null;
       selected = null;
       renderBoard();
@@ -103,9 +116,12 @@ function onSquareClick(r, c) {
       renderBoard();
     }
   } else {
-    if(clickedPiece && ((turn === 'white' && isUpper(clickedPiece)) || (turn === 'black' && isLower(clickedPiece)))) {
-      draggingPiece = {r, c, piece: clickedPiece};
-      selected = {r, c};
+    if (clickedPiece && (
+      (turn === 'white' && isUpper(clickedPiece)) ||
+      (turn === 'black' && isLower(clickedPiece))
+    )) {
+      draggingPiece = { r, c, piece: clickedPiece };
+      selected = { r, c };
       renderBoard();
     } else {
       selected = null;
@@ -117,10 +133,10 @@ function onSquareClick(r, c) {
 window.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
-  if(draggingPiece && draggingPiece.elem) {
-    const boardRect = boardElem.getBoundingClientRect();
-    const x = mouseX - boardRect.left - 30;
-    const y = mouseY - boardRect.top - 30;
+  if (draggingPiece && draggingPiece.elem) {
+    const rect = boardElem.getBoundingClientRect();
+    const x = mouseX - rect.left - 30;
+    const y = mouseY - rect.top - 30;
     draggingPiece.elem.style.transform = `translate(${x}px, ${y}px)`;
   }
 });
