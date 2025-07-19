@@ -6,10 +6,12 @@ const unicodePieces = {
 // --- GAME STATE ---
 let board = [];
 let selectedPiece = null;
+let hoveringPiece = null;
 let draggingPiece = null;
-let offsetX = 0, offsetY = 0;
 let isDragging = false;
-let dragTimeout;
+let isHovering = false;
+let dragTimeout = null;
+let offsetX = 0, offsetY = 0;
 let legalMoves = [];
 
 const startPosition = [
@@ -46,7 +48,6 @@ function renderBoard() {
         pieceEl.dataset.piece = piece;
         pieceEl.dataset.x = x;
         pieceEl.dataset.y = y;
-        pieceEl.addEventListener("mousedown", onMouseDown);
         square.appendChild(pieceEl);
       }
       boardEl.appendChild(square);
@@ -80,15 +81,15 @@ function getLegalMoves(x, y, piece) {
   if (piece.toUpperCase() === 'P') {
     const dir = isWhite ? -1 : 1;
     const startRow = isWhite ? 6 : 1;
-    if (!board[y + dir]?.[x]) moves.push([x, y + dir]);
-    if (y === startRow && !board[y + dir]?.[x] && !board[y + 2 * dir]?.[x]) {
-      moves.push([x, y + 2 * dir]);
-    }
+    if (!board[y + dir][x]) moves.push([x, y + dir]);
+    if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
     for (let dx of [-1, 1]) {
       const nx = x + dx, ny = y + dir;
-      const target = board[ny]?.[nx];
-      if (target && isWhite !== (target === target.toUpperCase())) {
-        moves.push([nx, ny]);
+      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        const target = board[ny][nx];
+        if (target && isWhite !== (target === target.toUpperCase())) {
+          moves.push([nx, ny]);
+        }
       }
     }
   } else if (piece.toUpperCase() === 'N') {
@@ -138,45 +139,42 @@ function onMouseDown(e) {
     isDragging = true;
     draggingPiece = pieceEl.cloneNode(true);
     draggingPiece.classList.add('dragging-piece');
-    draggingPiece.style.position = 'absolute';
-    draggingPiece.style.pointerEvents = 'none';
     document.body.appendChild(draggingPiece);
     offsetX = e.offsetX;
     offsetY = e.offsetY;
-    draggingPiece.style.left = `${e.pageX - offsetX}px`;
-    draggingPiece.style.top = `${e.pageY - offsetY}px`;
-  }, 150);
+  }, 200);
 
+  document.addEventListener('mouseup', onMouseUp);
   document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp, { once: true });
 }
 
 function onMouseMove(e) {
   if (isDragging && draggingPiece) {
-    draggingPiece.style.left = (e.pageX - offsetX) + 'px';
-    draggingPiece.style.top = (e.pageY - offsetY) + 'px';
+    draggingPiece.style.left = (e.pageX - offsetX) + "px";
+    draggingPiece.style.top = (e.pageY - offsetY) + "px";
   }
 }
 
 function onMouseUp(e) {
   clearTimeout(dragTimeout);
 
-  const boardRect = document.getElementById('chessboard').getBoundingClientRect();
+  const boardRect = document.getElementById("chessboard").getBoundingClientRect();
   const x = Math.floor((e.clientX - boardRect.left) / (boardRect.width / 8));
   const y = Math.floor((e.clientY - boardRect.top) / (boardRect.height / 8));
 
   const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
-  if (selectedPiece && isValid) {
+  if (isValid) {
     board[y][x] = selectedPiece.piece;
     board[selectedPiece.y][selectedPiece.x] = "";
   }
 
-  selectedPiece = null;
-  isDragging = false;
   draggingPiece?.remove();
+  selectedPiece = null;
   draggingPiece = null;
+  isDragging = false;
   clearHighlights();
   renderBoard();
 }
 
 initBoard();
+document.addEventListener("mousedown", onMouseDown);
