@@ -6,214 +6,167 @@
   <title>Rules - Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    html, body {
-      height: 100%;
+    body {
       margin: 0;
       font-family: Arial, sans-serif;
-      width: 100vw;
-      overflow-x: hidden;
-      background-color: #121212; /* dark background */
-      color: white; /* white text by default */
+      background-color: #1a1a1a;
+      color: white;
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 20px 0 20px 0; /* top and bottom padding only */
-      min-height: 100vh;
-      box-sizing: border-box;
-      background-color: #121212;
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
     }
 
     .layout {
       display: flex;
-      width: 100vw;
       min-height: 100vh;
-      box-sizing: border-box;
     }
 
     .sidebar-container {
       width: 220px;
-      box-sizing: border-box;
+      background-color: #111;
       padding: 20px;
-      border-right: 1px solid #444;
-      flex-shrink: 0;
-      background-color: #1e1e1e;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      overflow-y: auto;
+      box-sizing: border-box;
     }
 
     .main-content {
-      margin-left: 220px; /* leave space for fixed sidebar */
-      flex-grow: 1;
-      padding: 20px 30px;
+      flex: 1;
+      padding: 30px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      gap: 30px;
-      color: white;
-      background-color: #121212;
-      min-height: 100vh;
     }
 
-    .goal-section {
-      /* full width */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .piece-board-container {
+    .top-info {
       display: flex;
-      gap: 40px;
-      align-items: flex-start;
       flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
     }
 
     .piece-description-container {
-      flex: 1 1 320px;
-      max-width: 400px;
-      font-size: 1.1em;
-      line-height: 1.4;
-    }
-
-    /* White box wrapping piece display and description */
-    .piece-box {
+      flex: 1 1 300px;
+      max-width: 350px;
       background-color: white;
-      color: black;  /* black text inside white box */
+      color: black;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border-radius: 10px;
+      margin-right: 30px;
+      margin-bottom: 20px;
     }
 
     #chessboard {
-      flex: 1 1 320px;
-      max-width: 400px;
-      display: flex;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      gap: 0;
+      margin-bottom: 20px;
     }
 
-    .piece-display {
-      font-size: 2em;
-      margin-bottom: 10px;
+    .square {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+    }
+
+    .light {
+      background-color: #eee;
+    }
+
+    .dark {
+      background-color: #666;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: red;
     }
 
     .controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
+      text-align: center;
       margin-top: 10px;
     }
 
     button {
-      cursor: pointer;
       padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 1em;
-      background-color: #333;
-      border: none;
-      color: white;
-      transition: background-color 0.3s;
-    }
-    button:hover {
-      background-color: #555;
+      font-size: 16px;
+      margin: 0 10px;
+      cursor: pointer;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 900px) {
-      .sidebar-container {
-        position: relative;
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid #444;
-        padding: 15px 10px;
-      }
-
-      .main-content {
-        margin-left: 0;
-        padding: 15px 20px;
-      }
-
-      .layout {
+      .top-info {
         flex-direction: column;
-        min-height: auto;
-        width: 100vw;
+        align-items: center;
       }
 
-      .piece-board-container {
-        flex-direction: column;
-        gap: 25px;
+      .piece-description-container {
+        margin-right: 0;
       }
 
-      .piece-description-container,
       #chessboard {
-        max-width: 100%;
-        flex: none;
+        margin-top: 10px;
       }
     }
   </style>
 </head>
 <body>
   <header>Da Rules</header>
+
   <div class="layout">
-    <div class="sidebar-container" id="sidebar-container">
-    </div>
+    <div class="sidebar-container" id="sidebar-container"></div>
 
     <main class="main-content">
-      <section class="goal-section">
-        
+      <div class="section">
+        <p><strong>Goal of the Game:</strong> The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.</p>
 
-        <p><strong>Goal of the Game</strong></p>
-        <p>
-          The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
-        </p>
+        <div class="top-info">
+          <div class="piece-description-container">
+            <p><strong>The Board:</strong> The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).</p>
 
-        <p><strong>The Board</strong></p>
-        <p>
-          The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
-        </p>
+            <p><strong>Starting Pieces:</strong><br>
+              1 King, 1 Queen, 2 Rooks, 2 Bishops, 2 Knights, 8 Pawns
+            </p>
 
-        <p><strong>Starting Pieces</strong></p>
-        <ul>
-          <li>1 King</li>
-          <li>1 Queen</li>
-          <li>2 Rooks</li>
-          <li>2 Bishops</li>
-          <li>2 Knights</li>
-          <li>8 Pawns</li>
-        </ul>
+            <p>White always moves first, and players alternate turns.</p>
 
-        <p>White always moves first, and players alternate turns.</p>
-      </section>
-
-      <section class="piece-board-container">
-        <div class="piece-description-container">
-          <div class="piece-box">
             <div class="piece-display">
-              <div id="pieceSymbol" class="piece-symbol">♙</div>
+              <div id="pieceSymbol" class="piece-symbol" style="font-size: 2em; text-align: center;">♙</div>
+              <div class="piece-description" id="pieceDescription">
+                Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+              </div>
             </div>
-            <div class="piece-description" id="pieceDescription">
-              Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+          </div>
+
+          <div>
+            <div id="chessboard"></div>
+            <div class="controls">
+              <button onclick="previousPiece()">&#8592; Prev</button>
+              <span id="pieceName">Pawn</span>
+              <button onclick="nextPiece()">Next &#8594;</button>
             </div>
           </div>
         </div>
-
-        <div id="chessboard"></div>
-      </section>
-
-      <div class="controls">
-        <button onclick="previousPiece()">&#8592; Prev</button>
-        <span id="pieceName">Pawn</span>
-        <button onclick="nextPiece()">Next &#8594;</button>
       </div>
     </main>
   </div>
 
   <script>
-    // Load sidebar HTML dynamically
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
