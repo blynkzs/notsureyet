@@ -34,15 +34,21 @@
     }
 
     .sidebar-container {
-     
+      width: 220px;
+      box-sizing: border-box;
+      padding: 20px;
+      border-right: 1px solid #444;
       flex-shrink: 0;
       background-color: #1e1e1e;
       position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
       overflow-y: auto;
     }
 
     .main-content {
-      margin-left: 220px;
+      margin-left: 220px; /* leave space for fixed sidebar */
       flex-grow: 1;
       padding: 20px 30px;
       box-sizing: border-box;
@@ -70,7 +76,15 @@
       max-width: 400px;
       font-size: 1.1em;
       line-height: 1.4;
-      color: white;
+    }
+
+    /* White box wrapping piece display and description */
+    .piece-box {
+      background-color: white;
+      color: black;  /* black text inside white box */
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
 
     #chessboard {
@@ -138,20 +152,19 @@
       #chessboard {
         max-width: 100%;
         flex: none;
-        color: white;
       }
     }
   </style>
 </head>
 <body>
+  <header>Da Rules</header>
   <div class="layout">
     <div class="sidebar-container" id="sidebar-container">
-      <!-- sidebar loads here -->
     </div>
 
     <main class="main-content">
       <section class="goal-section">
-        <h1>Da Rules</h1>
+        
 
         <p><strong>Goal of the Game</strong></p>
         <p>
@@ -163,25 +176,28 @@
           The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
         </p>
 
-        <p><strong>Starting Pieces</strong>
-          <br>1 King</br>
-          <br>1 Queen</br>
-          <br>2 Rooks</br>
-          <br>2 Bishops</br>
-          <br>2 Knights</br>
-          <br>8 Pawns</br>
-       </p>
+        <p><strong>Starting Pieces</strong></p>
+        <ul>
+          <li>1 King</li>
+          <li>1 Queen</li>
+          <li>2 Rooks</li>
+          <li>2 Bishops</li>
+          <li>2 Knights</li>
+          <li>8 Pawns</li>
+        </ul>
 
         <p>White always moves first, and players alternate turns.</p>
       </section>
 
       <section class="piece-board-container">
         <div class="piece-description-container">
-          <div class="piece-display">
-            <div id="pieceSymbol" class="piece-symbol">♙</div>
-          </div>
-          <div class="piece-description" id="pieceDescription">
-            Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+          <div class="piece-box">
+            <div class="piece-display">
+              <div id="pieceSymbol" class="piece-symbol">♙</div>
+            </div>
+            <div class="piece-description" id="pieceDescription">
+              Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+            </div>
           </div>
         </div>
 
