@@ -118,11 +118,11 @@ header {
 }
 
 .square.light {
-  background-color: #e5e5e5;
+  background-color: #dcdcdc;
 }
 
 .square.dark {
-  background-color: #555555;
+  background-color: #4a4a4a;
 }
 
 .captured-box {
