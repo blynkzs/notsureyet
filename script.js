@@ -17,7 +17,7 @@ const unicodePieces = {
 
 let board = JSON.parse(JSON.stringify(initialBoard));
 let turn = 'white';
-let selected = null;
+let selected = null;      // currently picked-up square {r,c} or null
 let legalMoves = [];
 let captured = { white: [], black: [] };
 let moveLog = [];
@@ -28,6 +28,8 @@ let dragInfo = {
   origin: null,
   piece: null,
   holdTimeout: null,
+  mouseX: 0,
+  mouseY: 0,
 };
 
 function isUpper(c) { return c === c.toUpperCase(); }
@@ -191,25 +193,40 @@ function renderBoard() {
         pieceDiv.style.userSelect = 'none';
         pieceDiv.style.cursor = 'grab';
 
-        pieceDiv.addEventListener('mousedown', (e) => {
-          e.preventDefault();
-          selected = {r,c};
-          legalMoves = getLegalMoves(r,c);
-          dragInfo.origin = {r,c};
-          dragInfo.piece = piece;
+        // On click: pick up or drop piece
+        pieceDiv.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if(selected && selected.r === r && selected.c === c) {
+            // Clicking selected piece cancels pick-up
+            cleanupDragPiece();
+            selected = null;
+            legalMoves = [];
+            renderBoard();
+            return;
+          }
+          if(turn !== getColor(piece)) return;
+
+          selected = {r, c};
+          legalMoves = getLegalMoves(r, c);
+          createDragPiece(piece, e.clientX, e.clientY);
           dragInfo.isDragging = false;
+          dragInfo.origin = {r, c};
+          dragInfo.piece = piece;
+
+          window.addEventListener('mousemove', onMouseMove);
+          window.addEventListener('mouseup', onMouseUp);
+
           dragInfo.holdTimeout = setTimeout(() => {
             dragInfo.isDragging = true;
             pieceDiv.style.visibility = 'hidden';
-            createDragPiece(piece, e.clientX, e.clientY);
           }, 200);
-          window.addEventListener('mousemove', onMouseMove);
-          window.addEventListener('mouseup', onMouseUp);
+
           renderBoard();
         });
 
-        pieceDiv.addEventListener('dragstart', (e) => {
-          e.preventDefault();
+        // On mousedown: start drag hold timer (same as click but for dragging)
+        pieceDiv.addEventListener('mousedown', (e) => {
+          e.preventDefault(); // prevent text selection etc
         });
 
         square.appendChild(pieceDiv);
@@ -234,28 +251,16 @@ function renderBoard() {
         });
       }
 
+      // Allow dropping by clicking on empty or opponent square when piece selected
       square.addEventListener('click', () => {
-        if(dragInfo.isDragging) return; // ignore click during drag
-        if(selected) {
-          if(canMove(selected.r, selected.c, r, c)) {
-            movePiece(selected.r, selected.c, r, c);
-            selected = null;
-            legalMoves = [];
-            cleanupDragPiece();
-            renderBoard();
-          } else {
-            selected = null;
-            legalMoves = [];
-            cleanupDragPiece();
-            renderBoard();
-          }
-        } else {
-          if(piece && getColor(piece) === turn) {
-            selected = {r,c};
-            legalMoves = getLegalMoves(r,c);
-            renderBoard();
-          }
+        if(!selected) return;
+        if(canMove(selected.r, selected.c, r, c)) {
+          movePiece(selected.r, selected.c, r, c);
         }
+        cleanupDragPiece();
+        selected = null;
+        legalMoves = [];
+        renderBoard();
       });
 
       boardElem.appendChild(square);
@@ -264,6 +269,7 @@ function renderBoard() {
 }
 
 function createDragPiece(piece, x, y) {
+  cleanupDragPiece();
   dragInfo.dragElem = document.createElement('div');
   dragInfo.dragElem.className = 'dragging-piece';
   dragInfo.dragElem.textContent = unicodePieces[piece];
@@ -278,7 +284,9 @@ function createDragPiece(piece, x, y) {
 }
 
 function onMouseMove(e) {
-  if(dragInfo.isDragging && dragInfo.dragElem) {
+  dragInfo.mouseX = e.clientX;
+  dragInfo.mouseY = e.clientY;
+  if(dragInfo.dragElem) {
     dragInfo.dragElem.style.top = (e.clientY - 20) + 'px';
     dragInfo.dragElem.style.left = (e.clientX - 20) + 'px';
   }
@@ -289,27 +297,25 @@ function onMouseUp(e) {
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('mouseup', onMouseUp);
 
-  if(dragInfo.isDragging) {
-    const boardRect = document.getElementById('chessboard').getBoundingClientRect();
-    const x = e.clientX - boardRect.left;
-    const y = e.clientY - boardRect.top;
-    const col = Math.floor(x / (boardRect.width / 8));
-    const row = Math.floor(y / (boardRect.height / 8));
-
-    if(canMove(dragInfo.origin.r, dragInfo.origin.c, row, col)) {
-      movePiece(dragInfo.origin.r, dragInfo.origin.c, row, col);
-    }
-    // Snapback handled by not moving if illegal
-
-  } else if(selected) {
-    // If released without dragging, deselect piece (hover mode)
-    // Just keep hover until another click or move
+  if(!selected) {
+    cleanupDragPiece();
+    return;
   }
 
-  dragInfo.isDragging = false;
+  const boardRect = document.getElementById('chessboard').getBoundingClientRect();
+  const x = e.clientX - boardRect.left;
+  const y = e.clientY - boardRect.top;
+  const col = Math.floor(x / (boardRect.width / 8));
+  const row = Math.floor(y / (boardRect.height / 8));
+
+  if(canMove(selected.r, selected.c, row, col)) {
+    movePiece(selected.r, selected.c, row, col);
+  }
+
   cleanupDragPiece();
   selected = null;
   legalMoves = [];
+  dragInfo.isDragging = false;
   renderBoard();
 }
 
@@ -327,5 +333,6 @@ function updateCaptured() {
   blackCapturedElem.textContent = captured.black.map(p => unicodePieces[p]).join(' ');
 }
 
+// Init
 renderBoard();
 updateCaptured();
