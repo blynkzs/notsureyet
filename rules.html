@@ -6,6 +6,84 @@
   <title>Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    /* Sidebar styles */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      background-color: #222;
+      color: white;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #111;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar .logo {
+      width: 150px;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .sidebar h2 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    .nav-button {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      margin: 5px 0;
+      width: 100%;
+      display: block;
+      background-color: #333;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    .nav-button:hover {
+      background-color: #555;
+    }
+    
+    /* Main content */
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      background-color: #333;
+    }
+    header h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    /* Chessboard and piece display */
+    #chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 40px);
+      grid-template-rows: repeat(8, 40px);
+      gap: 0;
+      border: 2px solid #555;
+      margin-top: 10px;
+      background-color: #999;
+    }
+    .square {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      user-select: none;
+    }
+    .light {
+      background-color: #f0d9b5;
+    }
+    .dark {
+      background-color: #b58863;
+    }
     .dot {
       width: 12px;
       height: 12px;
@@ -13,6 +91,7 @@
       border-radius: 50%;
       margin: auto;
     }
+
     .controls {
       margin-top: 20px;
     }
@@ -21,21 +100,37 @@
       flex-direction: column;
       align-items: center;
       margin-left: 40px;
+      color: white;
     }
     .piece-symbol {
       font-size: 80px;
       margin-bottom: 10px;
     }
     .piece-description {
-      color: white;
       max-width: 200px;
       text-align: left;
+    }
+
+    /* Container for chessboard and piece display */
+    .content-area > div {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
     }
   </style>
 </head>
 <body>
   <div class="layout">
-    <div id="sidebar-container"></div>
+    <aside class="sidebar">
+      <a href="index.html">
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
+      </a>
+      <h2>Menu</h2>
+      <a href="games.html" class="nav-button">Games</a>
+      <a href="rules.html" class="nav-button">Rules</a>
+      <a href="puzzle.html" class="nav-button">Puzzles</a>
+      <a href="matchhistory.html" class="nav-button">Match History</a>
+    </aside>
 
     <div class="main-content">
       <header>
@@ -45,23 +140,23 @@
       <main>
         <div class="content-area">
           <p>
-            <strong>Goal of the Game</strong><br>
-            The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br><br>
+            <strong>Goal of the Game</strong><br />
+            The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br /><br />
 
-            <strong>The Board</strong><br>
-            The chessboard has 8 rows (1–8) and 8 columns (a–h).<br>
-            Each player starts with 16 pieces:<br>
-            1 King<br>
-            1 Queen<br>
-            2 Rooks<br>
-            2 Bishops<br>
-            2 Knights<br>
-            8 Pawns<br><br>
+            <strong>The Board</strong><br />
+            The chessboard has 8 rows (1–8) and 8 columns (a–h).<br />
+            Each player starts with 16 pieces:<br />
+            1 King<br />
+            1 Queen<br />
+            2 Rooks<br />
+            2 Bishops<br />
+            2 Knights<br />
+            8 Pawns<br /><br />
 
             White moves first, and then players take turns.
           </p>
 
-          <div style="display: flex; gap: 40px;">
+          <div>
             <div class="piece-display">
               <div id="pieceSymbol" class="piece-symbol">♙</div>
               <div class="piece-description" id="pieceDescription">
@@ -83,13 +178,6 @@
   </div>
 
   <script>
-    fetch('sidebar.html')
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('sidebar-container').innerHTML = html;
-      });
-
-    
     const board = document.getElementById('chessboard');
     const pieceName = document.getElementById('pieceName');
     const pieceSymbol = document.getElementById('pieceSymbol');
@@ -106,7 +194,12 @@
         name: 'Rook',
         symbol: '♖',
         description: 'Rooks move any number of squares vertically or horizontally.',
-        moves: [...Array(8).fill().map((_, i) => [i + 1, 0]), ...Array(8).fill().map((_, i) => [0, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, 0]), ...Array(8).fill().map((_, i) => [0, -i - 1])]
+        moves: [
+          ...Array(8).fill().map((_, i) => [i + 1, 0]),
+          ...Array(8).fill().map((_, i) => [0, i + 1]),
+          ...Array(8).fill().map((_, i) => [-i - 1, 0]),
+          ...Array(8).fill().map((_, i) => [0, -i - 1])
+        ]
       },
       {
         name: 'Knight',
@@ -118,7 +211,12 @@
         name: 'Bishop',
         symbol: '♗',
         description: 'Bishops move diagonally any number of squares.',
-        moves: [...Array(8).fill().map((_, i) => [i + 1, i + 1]), ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]), ...Array(8).fill().map((_, i) => [i + 1, -i - 1]), ...Array(8).fill().map((_, i) => [-i - 1, i + 1])]
+        moves: [
+          ...Array(8).fill().map((_, i) => [i + 1, i + 1]),
+          ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]),
+          ...Array(8).fill().map((_, i) => [i + 1, -i - 1]),
+          ...Array(8).fill().map((_, i) => [-i - 1, i + 1])
+        ]
       },
       {
         name: 'Queen',
