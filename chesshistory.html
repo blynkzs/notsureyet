@@ -9,70 +9,74 @@
 </head>
 <body>
   <div class="layout">
-    <div class="sidebar-container" id="sidebar-container">
+
+    <div class="sidebar-container" id="sidebar-container"></div>
+
 
     <div class="main-content">
       <header>
         <h1>Chess History</h1>
       </header>
 
-        <div class="content-area history-section">
-          <p>
-            Chess is one of the oldest and most popular board games in the world, with a history spanning over a thousand years. It has evolved from early strategic games played in India to the modern version we know today.
-          </p>
+      <div class="content-area history-section">
+        <p>
+          Chess is one of the oldest and most popular board games in the world, with a history spanning over a thousand years. It has evolved from early strategic games played in India to the modern version we know today.
+        </p>
 
-          <div class="timeline">
-            <div class="timeline-item">
-              <h3>6th Century AD - Origins</h3>
-              <p>
-                Chess originated in northern India during the Gupta Empire. It was known as "Chaturanga," which means "four divisions of the military": infantry, cavalry, elephants, and chariotry.
-              </p>
-            </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h3>6th Century AD - Origins</h3>
+            <p>
+              Chess originated in northern India during the Gupta Empire. It was known as "Chaturanga," which means "four divisions of the military": infantry, cavalry, elephants, and chariotry.
+            </p>
+          </div>
 
-            <div class="timeline-item">
-              <h3>7th-9th Century - Spread to Persia and the Arab World</h3>
-              <p>
-                The game spread to Persia where it was called "Shatranj." After the Islamic conquest, chess spread throughout the Arab world and later into Europe via Spain and Sicily.
-              </p>
-            </div>
+          <div class="timeline-item">
+            <h3>7th-9th Century - Spread to Persia and the Arab World</h3>
+            <p>
+              The game spread to Persia where it was called "Shatranj." After the Islamic conquest, chess spread throughout the Arab world and later into Europe via Spain and Sicily.
+            </p>
+          </div>
 
-            <div class="timeline-item">
-              <h3>15th Century - Modern Rules</h3>
-              <p>
-                Major rule changes, such as the introduction of the powerful queen and the bishop’s new moves, transformed chess into the modern game during the Renaissance in Europe.
-              </p>
-            </div>
+          <div class="timeline-item">
+            <h3>15th Century - Modern Rules</h3>
+            <p>
+              Major rule changes, such as the introduction of the powerful queen and the bishop’s new moves, transformed chess into the modern game during the Renaissance in Europe.
+            </p>
+          </div>
 
-            <div class="timeline-item">
-              <h3>19th Century - Organized Competitions</h3>
-              <p>
-                The first official world chess championship was held in 1886, marking the beginning of organized competitive chess.
-              </p>
-            </div>
+          <div class="timeline-item">
+            <h3>19th Century - Organized Competitions</h3>
+            <p>
+              The first official world chess championship was held in 1886, marking the beginning of organized competitive chess.
+            </p>
+          </div>
 
-            <div class="timeline-item">
-              <h3>20th Century - Chess in the Computer Age</h3>
-              <p>
-                The rise of computers revolutionized chess, with programs like Deep Blue defeating world champions, and online chess platforms connecting players worldwide.
-              </p>
-            </div>
+          <div class="timeline-item">
+            <h3>20th Century - Chess in the Computer Age</h3>
+            <p>
+              The rise of computers revolutionized chess, with programs like Deep Blue defeating world champions, and online chess platforms connecting players worldwide.
+            </p>
+          </div>
 
-            <div class="timeline-item">
-              <h3>Today - Chess for Everyone</h3>
-              <p>
-                Chess remains a global pastime enjoyed both casually and professionally, with millions of players, streaming platforms, and tournaments.
-              </p>
-            </div>
+          <div class="timeline-item">
+            <h3>Today - Chess for Everyone</h3>
+            <p>
+              Chess remains a global pastime enjoyed both casually and professionally, with millions of players, streaming platforms, and tournaments.
+            </p>
           </div>
         </div>
-    </div>
-  </div>
-    <script>
+      </div>
+    </div> 
+  </div> 
+
+
+  <script>
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
         document.getElementById('sidebar-container').innerHTML = html;
       });
-      </script>
+  </script>
 </body>
 </html>
