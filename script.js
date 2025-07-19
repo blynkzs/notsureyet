@@ -1,338 +1,178 @@
-const boardSize = 8;
-const initialBoard = [
-  ['r','n','b','q','k','b','n','r'],
-  ['p','p','p','p','p','p','p','p'],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['P','P','P','P','P','P','P','P'],
-  ['R','N','B','Q','K','B','N','R']
+const unicodePieces = {
+  P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔",
+  p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚"
+};
+
+// --- GAME STATE ---
+let board = [];
+let selectedPiece = null;
+let draggingPiece = null;
+let offsetX = 0, offsetY = 0;
+let isDragging = false;
+let dragTimeout;
+let legalMoves = [];
+
+const startPosition = [
+  ["r","n","b","q","k","b","n","r"],
+  ["p","p","p","p","p","p","p","p"],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["P","P","P","P","P","P","P","P"],
+  ["R","N","B","Q","K","B","N","R"]
 ];
 
-const unicodePieces = {
-  P: '♙', R: '♖', N: '♘', B: '♗', Q: '♕', K: '♔',
-  p: '♟', r: '♜', n: '♞', b: '♝', q: '♛', k: '♚'
-};
+function initBoard() {
+  board = JSON.parse(JSON.stringify(startPosition));
+  renderBoard();
+}
 
-let board = JSON.parse(JSON.stringify(initialBoard));
-let turn = 'white';
-let selected = null;      // currently picked-up square {r,c} or null
-let legalMoves = [];
-let captured = { white: [], black: [] };
-let moveLog = [];
+function renderBoard() {
+  const boardEl = document.getElementById("chessboard");
+  boardEl.innerHTML = "";
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const square = document.createElement("div");
+      square.className = `square ${(x + y) % 2 === 0 ? "light" : "dark"}`;
+      square.dataset.x = x;
+      square.dataset.y = y;
 
-let dragInfo = {
-  isDragging: false,
-  dragElem: null,
-  origin: null,
-  piece: null,
-  holdTimeout: null,
-  mouseX: 0,
-  mouseY: 0,
-};
+      const piece = board[y][x];
+      if (piece) {
+        const pieceEl = document.createElement("div");
+        pieceEl.className = "piece";
+        pieceEl.textContent = unicodePieces[piece];
+        pieceEl.dataset.piece = piece;
+        pieceEl.dataset.x = x;
+        pieceEl.dataset.y = y;
+        square.appendChild(pieceEl);
+      }
+      boardEl.appendChild(square);
+    }
+  }
+}
 
-function isUpper(c) { return c === c.toUpperCase(); }
-function isLower(c) { return c === c.toLowerCase(); }
-function inBounds(r,c) { return r>=0 && r<boardSize && c>=0 && c<boardSize; }
-function getColor(p) { return isUpper(p) ? 'white' : 'black'; }
-
-function getLegalMoves(r,c) {
-  const piece = board[r][c];
-  if(!piece) return [];
-  const color = getColor(piece);
+function getLegalMoves(x, y, piece) {
   const moves = [];
-  const dir = color === 'white' ? -1 : 1;
+  const isWhite = piece === piece.toUpperCase();
 
-  function addMove(tr, tc) {
-    if(!inBounds(tr, tc)) return;
-    const target = board[tr][tc];
-    if(!target || getColor(target) !== color) moves.push([tr, tc]);
+  const directions = {
+    N: [[-2, -1], [-2, 1], [2, -1], [2, 1], [-1, -2], [1, -2], [-1, 2], [1, 2]],
+    B: [[1,1], [-1,-1], [-1,1], [1,-1]],
+    R: [[1,0], [-1,0], [0,1], [0,-1]],
+    Q: [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [-1,1], [1,-1]],
+    K: [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [-1,1], [1,-1]]
+  };
+
+  function pushIfValid(nx, ny) {
+    if (nx >= 0 && ny >= 0 && nx < 8 && ny < 8) {
+      const target = board[ny][nx];
+      if (!target || (isWhite !== (target === target.toUpperCase()))) {
+        moves.push([nx, ny]);
+        return !target;
+      }
+    }
+    return false;
   }
 
-  switch(piece.toLowerCase()) {
-    case 'p':
-      // Forward moves
-      if(inBounds(r+dir, c) && !board[r+dir][c]) moves.push([r+dir,c]);
-      // Double forward
-      if((color==='white' && r===6) || (color==='black' && r===1)) {
-        if(!board[r+dir][c] && !board[r+2*dir][c]) moves.push([r+2*dir, c]);
-      }
-      // Captures
-      for(let dc of [-1,1]) {
-        let tr = r + dir, tc = c + dc;
-        if(inBounds(tr,tc)) {
-          let target = board[tr][tc];
-          if(target && getColor(target) !== color) moves.push([tr,tc]);
+  if (piece.toUpperCase() === 'P') {
+    const dir = isWhite ? -1 : 1;
+    const startRow = isWhite ? 6 : 1;
+    if (!board[y + dir][x]) moves.push([x, y + dir]);
+    if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
+    for (let dx of [-1, 1]) {
+      const nx = x + dx, ny = y + dir;
+      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        const target = board[ny][nx];
+        if (target && isWhite !== (target === target.toUpperCase())) {
+          moves.push([nx, ny]);
         }
       }
-      break;
-    case 'n':
-      [[-2,1],[2,1],[1,2],[-1,2],[-2,-1],[2,-1],[1,-2],[-1,-2]].forEach(([dr,dc])=>{
-        let tr = r+dr, tc=c+dc;
-        if(inBounds(tr,tc)) {
-          const target = board[tr][tc];
-          if(!target || getColor(target) !== color) moves.push([tr,tc]);
-        }
-      });
-      break;
-    case 'b':
-      for(let [dr,dc] of [[1,1],[1,-1],[-1,1],[-1,-1]]) {
-        let tr = r+dr, tc = c+dc;
-        while(inBounds(tr, tc)) {
-          if(!board[tr][tc]) moves.push([tr, tc]);
-          else {
-            if(getColor(board[tr][tc]) !== color) moves.push([tr,tc]);
-            break;
-          }
-          tr += dr; tc += dc;
-        }
-      }
-      break;
-    case 'r':
-      for(let [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]) {
-        let tr = r+dr, tc = c+dc;
-        while(inBounds(tr, tc)) {
-          if(!board[tr][tc]) moves.push([tr, tc]);
-          else {
-            if(getColor(board[tr][tc]) !== color) moves.push([tr,tc]);
-            break;
-          }
-          tr += dr; tc += dc;
-        }
-      }
-      break;
-    case 'q':
-      for(let [dr,dc] of [[1,1],[1,-1],[-1,1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]]) {
-        let tr = r+dr, tc = c+dc;
-        while(inBounds(tr, tc)) {
-          if(!board[tr][tc]) moves.push([tr, tc]);
-          else {
-            if(getColor(board[tr][tc]) !== color) moves.push([tr,tc]);
-            break;
-          }
-          tr += dr; tc += dc;
-        }
-      }
-      break;
-    case 'k':
-      for(let dr=-1; dr<=1; dr++) {
-        for(let dc=-1; dc<=1; dc++) {
-          if(dr !== 0 || dc !== 0) {
-            let tr = r+dr, tc=c+dc;
-            if(inBounds(tr,tc)) {
-              let target = board[tr][tc];
-              if(!target || getColor(target) !== color) moves.push([tr,tc]);
-            }
-          }
-        }
-      }
-      break;
+    }
+  } else if (piece.toUpperCase() === 'N') {
+    for (let [dx, dy] of directions.N) pushIfValid(x + dx, y + dy);
+  } else if (piece.toUpperCase() === 'B') {
+    for (let [dx, dy] of directions.B) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'R') {
+    for (let [dx, dy] of directions.R) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'Q') {
+    for (let [dx, dy] of directions.Q) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'K') {
+    for (let [dx, dy] of directions.K) pushIfValid(x + dx, y + dy);
   }
+
   return moves;
 }
 
-function canMove(sr, sc, tr, tc) {
-  if(!inBounds(sr,sc) || !inBounds(tr,tc)) return false;
-  const piece = board[sr][sc];
-  if(!piece) return false;
-  if(turn !== getColor(piece)) return false;
-  return getLegalMoves(sr, sc).some(([r,c]) => r===tr && c===tc);
-}
-
-function movePiece(sr, sc, tr, tc) {
-  const piece = board[sr][sc];
-  const target = board[tr][tc];
-  if(target) captured[turn].push(target);
-  board[tr][tc] = piece;
-  board[sr][sc] = '';
-  // Pawn promotion automatic queen
-  if(piece.toLowerCase() === 'p' && (tr === 0 || tr === 7)) {
-    board[tr][tc] = turn === 'white' ? 'Q' : 'q';
+function highlightLegalMoves(moves) {
+  document.querySelectorAll('.highlight').forEach(el => el.remove());
+  for (const [x, y] of moves) {
+    const square = document.querySelector(`.square[data-x='${x}'][data-y='${y}']`);
+    if (square) {
+      const dot = document.createElement('div');
+      dot.className = 'highlight';
+      square.appendChild(dot);
+    }
   }
-  addMoveLog(sr, sc, tr, tc, piece, !!target);
-  turn = turn === 'white' ? 'black' : 'white';
-}
-
-function addMoveLog(sr, sc, tr, tc, piece, capture) {
-  const files = ['a','b','c','d','e','f','g','h'];
-  const from = files[sc] + (8 - sr);
-  const to = files[tc] + (8 - tr);
-  const symbol = piece.toLowerCase() === 'p' ? '' : unicodePieces[piece];
-  const captureSymbol = capture ? 'x' : '-';
-  const logText = `${symbol}${from}${captureSymbol}${to}`;
-  const moveLogList = document.getElementById('move-log-list');
-  const li = document.createElement('li');
-  li.textContent = logText;
-  moveLogList.appendChild(li);
 }
 
 function clearHighlights() {
   document.querySelectorAll('.highlight').forEach(el => el.remove());
 }
 
-function renderBoard() {
-  const boardElem = document.getElementById('chessboard');
-  boardElem.innerHTML = '';
-  clearHighlights();
+function onMouseDown(e) {
+  if (!e.target.classList.contains('piece')) return;
 
-  for(let r=0; r<boardSize; r++) {
-    for(let c=0; c<boardSize; c++) {
-      const square = document.createElement('div');
-      square.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
-      square.dataset.r = r;
-      square.dataset.c = c;
-      square.style.position = 'relative';
+  const pieceEl = e.target;
+  const piece = pieceEl.dataset.piece;
+  const x = +pieceEl.dataset.x;
+  const y = +pieceEl.dataset.y;
 
-      let piece = board[r][c];
-      if(piece) {
-        const pieceDiv = document.createElement('div');
-        pieceDiv.className = 'piece';
-        pieceDiv.textContent = unicodePieces[piece];
-        pieceDiv.style.color = isUpper(piece) ? 'white' : 'black';
-        pieceDiv.style.userSelect = 'none';
-        pieceDiv.style.cursor = 'grab';
+  selectedPiece = { x, y, piece };
+  legalMoves = getLegalMoves(x, y, piece);
+  highlightLegalMoves(legalMoves);
 
-        // On click: pick up or drop piece
-        pieceDiv.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if(selected && selected.r === r && selected.c === c) {
-            // Clicking selected piece cancels pick-up
-            cleanupDragPiece();
-            selected = null;
-            legalMoves = [];
-            renderBoard();
-            return;
-          }
-          if(turn !== getColor(piece)) return;
+  dragTimeout = setTimeout(() => {
+    isDragging = true;
+    draggingPiece = pieceEl.cloneNode(true);
+    draggingPiece.classList.add('dragging-piece');
+    document.body.appendChild(draggingPiece);
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  }, 200);
 
-          selected = {r, c};
-          legalMoves = getLegalMoves(r, c);
-          createDragPiece(piece, e.clientX, e.clientY);
-          dragInfo.isDragging = false;
-          dragInfo.origin = {r, c};
-          dragInfo.piece = piece;
-
-          window.addEventListener('mousemove', onMouseMove);
-          window.addEventListener('mouseup', onMouseUp);
-
-          dragInfo.holdTimeout = setTimeout(() => {
-            dragInfo.isDragging = true;
-            pieceDiv.style.visibility = 'hidden';
-          }, 200);
-
-          renderBoard();
-        });
-
-        // On mousedown: start drag hold timer (same as click but for dragging)
-        pieceDiv.addEventListener('mousedown', (e) => {
-          e.preventDefault(); // prevent text selection etc
-        });
-
-        square.appendChild(pieceDiv);
-      }
-
-      // Highlight legal moves if selected
-      if(selected) {
-        legalMoves.forEach(([mr, mc]) => {
-          if(mr === r && mc === c) {
-            const hl = document.createElement('div');
-            hl.className = 'highlight';
-            hl.style.position = 'absolute';
-            hl.style.top = '15px';
-            hl.style.left = '15px';
-            hl.style.width = '30px';
-            hl.style.height = '30px';
-            hl.style.borderRadius = '50%';
-            hl.style.backgroundColor = 'rgba(255, 255, 0, 0.5)';
-            hl.style.pointerEvents = 'none';
-            square.appendChild(hl);
-          }
-        });
-      }
-
-      // Allow dropping by clicking on empty or opponent square when piece selected
-      square.addEventListener('click', () => {
-        if(!selected) return;
-        if(canMove(selected.r, selected.c, r, c)) {
-          movePiece(selected.r, selected.c, r, c);
-        }
-        cleanupDragPiece();
-        selected = null;
-        legalMoves = [];
-        renderBoard();
-      });
-
-      boardElem.appendChild(square);
-    }
-  }
-}
-
-function createDragPiece(piece, x, y) {
-  cleanupDragPiece();
-  dragInfo.dragElem = document.createElement('div');
-  dragInfo.dragElem.className = 'dragging-piece';
-  dragInfo.dragElem.textContent = unicodePieces[piece];
-  dragInfo.dragElem.style.position = 'fixed';
-  dragInfo.dragElem.style.top = (y - 20) + 'px';
-  dragInfo.dragElem.style.left = (x - 20) + 'px';
-  dragInfo.dragElem.style.fontSize = '40px';
-  dragInfo.dragElem.style.pointerEvents = 'none';
-  dragInfo.dragElem.style.userSelect = 'none';
-  dragInfo.dragElem.style.zIndex = 10000;
-  document.body.appendChild(dragInfo.dragElem);
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 }
 
 function onMouseMove(e) {
-  dragInfo.mouseX = e.clientX;
-  dragInfo.mouseY = e.clientY;
-  if(dragInfo.dragElem) {
-    dragInfo.dragElem.style.top = (e.clientY - 20) + 'px';
-    dragInfo.dragElem.style.left = (e.clientX - 20) + 'px';
+  if (isDragging && draggingPiece) {
+    draggingPiece.style.left = (e.pageX - offsetX) + 'px';
+    draggingPiece.style.top = (e.pageY - offsetY) + 'px';
   }
 }
 
 function onMouseUp(e) {
-  clearTimeout(dragInfo.holdTimeout);
-  window.removeEventListener('mousemove', onMouseMove);
-  window.removeEventListener('mouseup', onMouseUp);
-
-  if(!selected) {
-    cleanupDragPiece();
-    return;
-  }
+  clearTimeout(dragTimeout);
 
   const boardRect = document.getElementById('chessboard').getBoundingClientRect();
-  const x = e.clientX - boardRect.left;
-  const y = e.clientY - boardRect.top;
-  const col = Math.floor(x / (boardRect.width / 8));
-  const row = Math.floor(y / (boardRect.height / 8));
+  const x = Math.floor((e.clientX - boardRect.left) / (boardRect.width / 8));
+  const y = Math.floor((e.clientY - boardRect.top) / (boardRect.height / 8));
 
-  if(canMove(selected.r, selected.c, row, col)) {
-    movePiece(selected.r, selected.c, row, col);
+  const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
+  if (isValid) {
+    board[y][x] = selectedPiece.piece;
+    board[selectedPiece.y][selectedPiece.x] = "";
   }
 
-  cleanupDragPiece();
-  selected = null;
-  legalMoves = [];
-  dragInfo.isDragging = false;
+  selectedPiece = null;
+  isDragging = false;
+  draggingPiece?.remove();
+  draggingPiece = null;
+  clearHighlights();
   renderBoard();
 }
 
-function cleanupDragPiece() {
-  if(dragInfo.dragElem) {
-    dragInfo.dragElem.remove();
-    dragInfo.dragElem = null;
-  }
-}
-
-function updateCaptured() {
-  const whiteCapturedElem = document.getElementById('white-captured');
-  const blackCapturedElem = document.getElementById('black-captured');
-  whiteCapturedElem.textContent = captured.white.map(p => unicodePieces[p]).join(' ');
-  blackCapturedElem.textContent = captured.black.map(p => unicodePieces[p]).join(' ');
-}
-
-// Init
-renderBoard();
-updateCaptured();
+initBoard();
+document.addEventListener('mousedown', onMouseDown);
