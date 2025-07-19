@@ -6,7 +6,7 @@
   <title>Maybe Chess</title>
   <link rel="stylesheet" href="styles.css" />
 
-  <style>
+ <style>
   * {
     margin: 0;
     padding: 0;
@@ -15,32 +15,34 @@
 
   body {
     font-family: Arial, sans-serif;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
   }
 
   header {
     height: 60px;
-    text-align: center;
     line-height: 60px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .main-layout {
+    display: flex;
+    flex: 1;
+    height: calc(100vh - 60px);
+    overflow: hidden;
   }
 
   #sidebar-container {
-    position: absolute;
-    top: 60px; /* below header */
-    left: 0;
     width: 200px;
-    height: calc(100vh - 60px);
+    flex-shrink: 0;
     overflow-y: auto;
   }
 
   .board-area {
-    margin-left: 200px; /* leave space for sidebar */
-    display: flex;
     flex: 1;
-    height: calc(100vh - 60px);
+    display: flex;
     padding: 20px;
     gap: 20px;
     align-items: center;
