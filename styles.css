@@ -124,6 +124,35 @@ header {
 .square.dark {
   background-color: #4a4a4a;
 }
+.light {
+  background-color: #f0d9b5;
+}
+
+.dark {
+  background-color: #b58863;
+}
+
+.piece {
+  cursor: pointer;
+  user-select: none;
+  z-index: 1;
+}
+
+.dragging-piece {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  font-size: 40px;
+}
+
+.highlight {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  z-index: 0;
+}
 
 .captured-box {
   width: 160px;
