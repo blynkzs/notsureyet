@@ -5,48 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rules - Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
-<style>
+  <style>
     html, body {
       height: 100%;
       margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
       display: flex;
       justify-content: center;
-      align-items: center;
-      font-family: Arial, sans-serif;
+      align-items: flex-start;
+      padding: 20px;
+      background: #fff;
     }
 
     .layout {
       display: flex;
-      max-width: 900px;
+      max-width: 1000px;
       width: 100%;
       min-height: 80vh;
+      box-sizing: border-box;
     }
 
     .sidebar-container {
       width: 220px;
       box-sizing: border-box;
       padding: 20px;
+      border-right: 1px solid #ccc;
     }
 
     .main-content {
       flex-grow: 1;
-      padding: 30px 40px;
+      padding: 20px 30px;
       box-sizing: border-box;
-      overflow-y: auto;
-      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      color: #000;
     }
 
-    .piece-display {
+    .goal-section {
+      /* full width */
+    }
+
+    .piece-board-container {
       display: flex;
-      align-items: center;
-      gap: 15px;
-      margin: 20px 0;
+      gap: 40px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .piece-description-container {
+      flex: 1 1 320px;
+      max-width: 400px;
+      font-size: 1.1em;
+      line-height: 1.4;
     }
 
     #chessboard {
-      margin: 20px 0;
+      flex: 1 1 320px;
+      max-width: 400px;
       display: flex;
       justify-content: center;
+    }
+
+    .piece-display {
+      font-size: 2em;
+      margin-bottom: 10px;
     }
 
     .controls {
@@ -54,55 +80,74 @@
       justify-content: center;
       align-items: center;
       gap: 20px;
-      margin-top: 20px;
+      margin-top: 10px;
     }
 
     button {
       cursor: pointer;
       padding: 8px 16px;
       border-radius: 4px;
+      font-size: 1em;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+        min-height: auto;
+      }
+
+      .sidebar-container {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        padding: 15px 10px;
+      }
+
+      .main-content {
+        padding: 15px 20px;
+      }
+
+      .piece-board-container {
+        flex-direction: column;
+        gap: 25px;
+      }
+
+      .piece-description-container,
+      #chessboard {
+        max-width: 100%;
+        flex: none;
+      }
     }
   </style>
 </head>
 <body>
   <div class="layout">
     <div class="sidebar-container" id="sidebar-container">
-      
+      <!-- sidebar loads here -->
     </div>
 
     <main class="main-content">
-      <h1>Da Rules</h1>
+      <section class="goal-section">
+        <h1>Da Rules</h1>
+        <p><strong>Goal of the Game</strong></p>
+        <p>
+          The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
+        </p>
+      </section>
 
-      <p><strong>Goal of the Game</strong></p>
-      <p>
-        The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
-      </p>
-
-      <p><strong>The Board</strong></p>
-      <p>
-        The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
-      </p>
-
-      <p><strong>Starting Pieces</strong></p>
-      <ul>
-        <li>1 King</li>
-        <li>1 Queen</li>
-        <li>2 Rooks</li>
-        <li>2 Bishops</li>
-        <li>2 Knights</li>
-        <li>8 Pawns</li>
-      </ul>
-
-      <p>White always moves first, and players alternate turns.</p>
-
-      <div class="piece-display">
-        <div id="pieceSymbol" class="piece-symbol">♙</div>
-        <div class="piece-description" id="pieceDescription">
-          Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+      <section class="piece-board-container">
+        <div class="piece-description-container">
+          <div class="piece-display">
+            <div id="pieceSymbol" class="piece-symbol">♙</div>
+          </div>
+          <div class="piece-description" id="pieceDescription">
+            Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+          </div>
         </div>
-      </div>
 
-      <div id="chessboard"></div>
+        <div id="chessboard"></div>
+      </section>
 
       <div class="controls">
         <button onclick="previousPiece()">&#8592; Prev</button>
