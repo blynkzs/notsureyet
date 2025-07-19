@@ -124,48 +124,61 @@
   </style>
 </head>
 <body>
-  <main class="main-content">
-    <h1>Chess Rules</h1>
+  <div class="layout">
+    <div class="sidebar-container" id="sidebar-container">
+      
+    </div>
 
-    <p><strong>Goal of the Game</strong></p>
-    <p>
-      The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
-    </p>
+    <main class="main-content">
+      <h1>Da Rules</h1>
 
-    <p><strong>The Board</strong></p>
-    <p>
-      The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
-    </p>
+      <p><strong>Goal of the Game</strong></p>
+      <p>
+        The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
+      </p>
 
-    <p><strong>Starting Pieces</strong></p>
-    <ul>
-      <li>1 King</li>
-      <li>1 Queen</li>
-      <li>2 Rooks</li>
-      <li>2 Bishops</li>
-      <li>2 Knights</li>
-      <li>8 Pawns</li>
-    </ul>
+      <p><strong>The Board</strong></p>
+      <p>
+        The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
+      </p>
 
-    <p>White always moves first, and players alternate turns.</p>
+      <p><strong>Starting Pieces</strong></p>
+      <ul>
+        <li>1 King</li>
+        <li>1 Queen</li>
+        <li>2 Rooks</li>
+        <li>2 Bishops</li>
+        <li>2 Knights</li>
+        <li>8 Pawns</li>
+      </ul>
 
-    <div class="piece-display">
-      <div id="pieceSymbol" class="piece-symbol">♙</div>
-      <div class="piece-description" id="pieceDescription">
-        Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+      <p>White always moves first, and players alternate turns.</p>
+
+      <div class="piece-display">
+        <div id="pieceSymbol" class="piece-symbol">♙</div>
+        <div class="piece-description" id="pieceDescription">
+          Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
+        </div>
       </div>
-    </div>
 
-    <div id="chessboard"></div>
+      <div id="chessboard"></div>
 
-    <div class="controls">
-      <button onclick="previousPiece()">&#8592; Prev</button>
-      <span id="pieceName">Pawn</span>
-      <button onclick="nextPiece()">Next &#8594;</button>
-    </div>
-  </main>
+      <div class="controls">
+        <button onclick="previousPiece()">&#8592; Prev</button>
+        <span id="pieceName">Pawn</span>
+        <button onclick="nextPiece()">Next &#8594;</button>
+      </div>
+    </main>
+  </div>
 
   <script>
+    // Load sidebar HTML dynamically
+    fetch('sidebar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+      });
+
     const board = document.getElementById('chessboard');
     const pieceName = document.getElementById('pieceName');
     const pieceSymbol = document.getElementById('pieceSymbol');
