@@ -35,16 +35,7 @@
 </head>
 <body>
   <div class="layout">
-    <aside class="sidebar">
-      <a href="index.html">
-        <img src="logo.jpg" alt="Chess Logo" class="logo" />
-      </a>
-      <h2>Menu</h2>
-      <a href="games.html" class="nav-button">Games</a>
-      <a href="rules.html" class="nav-button">Rules</a>
-      <a href="puzzle.html" class="nav-button">Puzzles</a>
-      <a href="matchhistory.html" class="nav-button">Match History</a>
-    </aside>
+    <div id="sidebar-container"></div>
 
     <div class="main-content">
       <header>
@@ -92,6 +83,13 @@
   </div>
 
   <script>
+    fetch('sidebar.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+      });
+
+    
     const board = document.getElementById('chessboard');
     const pieceName = document.getElementById('pieceName');
     const pieceSymbol = document.getElementById('pieceSymbol');
