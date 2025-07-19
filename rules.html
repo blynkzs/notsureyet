@@ -122,45 +122,46 @@
 <body>
   <header>Da Rules</header>
 
-  <div class="layout">
-    <div class="sidebar-container" id="sidebar-container"></div>
+   <div class="layout">
+    <div class="sidebar-container" id="sidebar-container">
+      <!-- Sidebar loaded dynamically -->
+    </div>
 
     <main class="main-content">
-      <div class="section">
-        <p><strong>Goal of the Game:</strong> The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.</p>
+      <section class="overview-text">
+        <p><strong>Goal of the Game:</strong></p>
+        <p>
+          The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
+        </p>
 
-        <div class="top-info">
-          <div class="piece-description-container">
-            <p><strong>The Board:</strong> The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).</p>
+        <p><strong>The Board:</strong> The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).</p>
 
-            <p><strong>Starting Pieces:</strong><br>
-              1 King, 1 Queen, 2 Rooks, 2 Bishops, 2 Knights, 8 Pawns
-            </p>
+        <p><strong>Starting Pieces:</strong> 1 King, 1 Queen, 2 Rooks, 2 Bishops, 2 Knights, 8 Pawns</p>
 
-            <p>White always moves first, and players alternate turns.</p>
+        <p>White always moves first, and players alternate turns.</p>
+      </section>
 
-            <div class="piece-display">
-              <div id="pieceSymbol" class="piece-symbol" style="font-size: 2em; text-align: center;">♙</div>
-              <div class="piece-description" id="pieceDescription">
-                Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div id="chessboard"></div>
-            <div class="controls">
-              <button onclick="previousPiece()">&#8592; Prev</button>
-              <span id="pieceName">Pawn</span>
-              <button onclick="nextPiece()">Next &#8594;</button>
-            </div>
+      <section class="piece-box">
+        <div>
+          <div id="pieceSymbol" class="piece-symbol">♙</div>
+          <div class="piece-description" id="pieceDescription">
+            Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
           </div>
         </div>
+
+        <div id="chessboard"></div>
+      </section>
+
+      <div class="controls">
+        <button onclick="previousPiece()">&#8592; Prev</button>
+        <span id="pieceName">Pawn</span>
+        <button onclick="nextPiece()">Next &#8594;</button>
       </div>
     </main>
   </div>
 
   <script>
+    // Load sidebar HTML dynamically
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
