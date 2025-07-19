@@ -50,7 +50,6 @@ let castlingRights = {
 let halfMoveClock = 0;
 let fullMoveNumber = 1;
 
-// Generate legal moves for piece at (r,c)
 function generateMoves(r, c) {
   const piece = board[r][c];
   if (!piece) return [];
@@ -88,7 +87,6 @@ function generateMoves(r, c) {
           if (board[tr][tc] !== '' && oppositeColor(piece, board[tr][tc])) {
             moves.push([tr, tc]);
           }
-          // EN PASSANT REMOVED
         }
       }
       break;
@@ -161,7 +159,6 @@ function generateMoves(r, c) {
           }
         }
       }
-      // Castling check remains
       if (!isInCheck(turn)) {
         if (castlingRights[turn].kingside && canCastleKingside(turn)) {
           moves.push([turn === 'white' ? 7 : 0, 6]);
@@ -173,6 +170,293 @@ function generateMoves(r, c) {
       break;
     }
   }
-  // Filter out moves that put own king in check
   return moves.filter(m => !wouldBeCheck(r, c, m[0], m[1]));
 }
+
+function canCastleKingside(color) {
+  const r = color === 'white' ? 7 : 0;
+  if (board[r][5] !== '' || board[r][6] !== '') return false;
+  if (isSquareAttacked(r, 4, opposite(color))) return false;
+  if (isSquareAttacked(r, 5, opposite(color))) return false;
+  if (isSquareAttacked(r, 6, opposite(color))) return false;
+  return true;
+}
+
+function canCastleQueenside(color) {
+  const r = color === 'white' ? 7 : 0;
+  if (board[r][1] !== '' || board[r][2] !== '' || board[r][3] !== '') return false;
+  if (isSquareAttacked(r, 4, opposite(color))) return false;
+  if (isSquareAttacked(r, 3, opposite(color))) return false;
+  if (isSquareAttacked(r, 2, opposite(color))) return false;
+  return true;
+}
+
+function isSquareAttacked(r, c, byColor) {
+  for (let rr = 0; rr < 8; rr++) {
+    for (let cc = 0; cc < 8; cc++) {
+      const piece = board[rr][cc];
+      if (!piece) continue;
+      if ((byColor === 'white' && isUpper(piece)) || (byColor === 'black' && isLower(piece))) {
+        const moves = generatePseudoMoves(rr, cc);
+        for (const [mr, mc] of moves) {
+          if (mr === r && mc === c) return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function generatePseudoMoves(r, c) {
+  // Similar to generateMoves but without check filtering to avoid recursion
+  const piece = board[r][c];
+  if (!piece) return [];
+  const moves = [];
+  const isWhite = isUpper(piece);
+
+  function tryMove(tr, tc, canCapture = true) {
+    if (!onBoard(tr, tc)) return;
+    const target = board[tr][tc];
+    if (target === '') {
+      moves.push([tr, tc]);
+    } else if (canCapture && oppositeColor(piece, target)) {
+      moves.push([tr, tc]);
+    }
+  }
+
+  switch (piece.toLowerCase()) {
+    case 'p': {
+      const dir = isWhite ? -1 : 1;
+      if (onBoard(r+dir, c) && board[r+dir][c] === '') moves.push([r+dir, c]);
+      for (const dc of [-1,1]) {
+        const tr = r+dir, tc = c+dc;
+        if (onBoard(tr, tc) && board[tr][tc] !== '' && oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+      }
+      break;
+    }
+    case 'n': {
+      for (const [dr, dc] of knightMoves) {
+        const tr = r+dr, tc = c+dc;
+        if (!onBoard(tr, tc)) continue;
+        const target = board[tr][tc];
+        if (target === '' || oppositeColor(piece, target)) moves.push([tr, tc]);
+      }
+      break;
+    }
+    case 'b': {
+      for (const [dr, dc] of bishopDirs) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') moves.push([tr, tc]);
+          else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'r': {
+      for (const [dr, dc] of rookDirs) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') moves.push([tr, tc]);
+          else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'q': {
+      for (const [dr, dc] of [...rookDirs, ...bishopDirs]) {
+        let tr = r+dr, tc = c+dc;
+        while (onBoard(tr, tc)) {
+          if (board[tr][tc] === '') moves.push([tr, tc]);
+          else {
+            if (oppositeColor(piece, board[tr][tc])) moves.push([tr, tc]);
+            break;
+          }
+          tr += dr; tc += dc;
+        }
+      }
+      break;
+    }
+    case 'k': {
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          if (dr === 0 && dc === 0) continue;
+          const tr = r+dr, tc = c+dc;
+          if (!onBoard(tr, tc)) continue;
+          const target = board[tr][tc];
+          if (target === '' || oppositeColor(piece, target)) moves.push([tr, tc]);
+        }
+      }
+      break;
+    }
+  }
+  return moves;
+}
+
+function wouldBeCheck(sr, sc, tr, tc) {
+  const piece = board[sr][sc];
+  const target = board[tr][tc];
+
+  board[tr][tc] = piece;
+  board[sr][sc] = '';
+
+  if (piece.toLowerCase() === 'k') {
+    kingPositions[turn] = [tr, tc];
+  } else if (piece.toLowerCase() === 'k' && turn === 'black') {
+    kingPositions.black = [tr, tc];
+  }
+
+  const check = isInCheck(turn);
+
+  board[sr][sc] = piece;
+  board[tr][tc] = target;
+
+  if (piece.toLowerCase() === 'k') {
+    kingPositions[turn] = [sr, sc];
+  }
+
+  return check;
+}
+
+function isInCheck(color) {
+  const [kr, kc] = kingPositions[color];
+  return isSquareAttacked(kr, kc, opposite(color));
+}
+
+function opposite(color) {
+  return color === 'white' ? 'black' : 'white';
+}
+
+function canMove(sr, sc, tr, tc) {
+  const piece = board[sr][sc];
+  if (!piece) return false;
+  const target = board[tr][tc];
+  if (target && ((isUpper(piece) && isUpper(target)) || (isLower(piece) && isLower(target)))) return false;
+
+  const moves = generateMoves(sr, sc);
+  return moves.some(m => m[0] === tr && m[1] === tc);
+}
+
+function movePiece(sr, sc, tr, tc) {
+  const piece = board[sr][sc];
+  const target = board[tr][tc];
+
+  moveHistory.push({
+    board: JSON.parse(JSON.stringify(board)),
+    captured: JSON.parse(JSON.stringify(captured)),
+    turn,
+    move: {from: {r: sr, c: sc}, to: {r: tr, c: tc}, piece, captured: target}
+  });
+
+  if (target) {
+    if (isUpper(target)) captured.black.push(target);
+    else captured.white.push(target);
+  }
+
+  // Castling move
+  if (piece.toLowerCase() === 'k' && Math.abs(tc - sc) === 2) {
+    if (tc === 6) { // kingside
+      board[tr][5] = board[tr][7];
+      board[tr][7] = '';
+    } else if (tc === 2) { // queenside
+      board[tr][3] = board[tr][0];
+      board[tr][0] = '';
+    }
+  }
+
+  board[tr][tc] = piece;
+  board[sr][sc] = '';
+
+  // Update king position
+  if (piece.toLowerCase() === 'k') {
+    kingPositions[turn] = [tr, tc];
+    castlingRights[turn].kingside = false;
+    castlingRights[turn].queenside = false;
+  }
+
+  // Rook moves cancel castling rights
+  if (piece.toLowerCase() === 'r') {
+    if (sr === 7 && sc === 0) castlingRights.white.queenside = false;
+    if (sr === 7 && sc === 7) castlingRights.white.kingside = false;
+    if (sr === 0 && sc === 0) castlingRights.black.queenside = false;
+    if (sr === 0 && sc === 7) castlingRights.black.kingside = false;
+  }
+
+  // Pawn promotion (auto promote to queen)
+  if (piece.toLowerCase() === 'p' && (tr === 0 || tr === 7)) {
+    board[tr][tc] = isUpper(piece) ? 'Q' : 'q';
+  }
+
+  // Reset selected and legal moves after move
+  selected = null;
+  legalMoves = [];
+}
+
+function updateCaptured() {
+  whiteCapturedElem.textContent = captured.white.map(p => pieceUnicode[p]).join(' ');
+  blackCapturedElem.textContent = captured.black.map(p => pieceUnicode[p]).join(' ');
+}
+
+function updateMoveLog() {
+  moveLogList.innerHTML = '';
+  for(let i = 0; i < moveHistory.length; i++) {
+    const m = moveHistory[i].move;
+    const from = files[m.from.c] + (8 - m.from.r);
+    const to = files[m.to.c] + (8 - m.to.r);
+    const pieceSymbol = pieceUnicode[m.piece];
+    const captureSymbol = m.captured ? 'x' : '-';
+    const moveText = `${pieceSymbol} ${from}${captureSymbol}${to}`;
+    const li = document.createElement('li');
+    li.textContent = moveText;
+    moveLogList.appendChild(li);
+  }
+  if (!document.getElementById('undo-button')) {
+    const undoBtn = document.createElement('button');
+    undoBtn.id = 'undo-button';
+    undoBtn.textContent = 'Undo';
+    undoBtn.style.marginTop = '10px';
+    undoBtn.style.padding = '5px 10px';
+    undoBtn.style.cursor = 'pointer';
+    undoBtn.addEventListener('click', undoMove);
+    moveLogList.parentElement.appendChild(undoBtn);
+  }
+}
+
+function undoMove() {
+  if(moveHistory.length === 0) return;
+  const last = moveHistory.pop();
+  board = JSON.parse(JSON.stringify(last.board));
+  captured = JSON.parse(JSON.stringify(last.captured));
+  turn = last.turn;
+  selected = null;
+  legalMoves = [];
+  kingPositions = { white: [7,4], black: [0,4] };
+  castlingRights = {
+    white: { kingside: true, queenside: true },
+    black: { kingside: true, queenside: true }
+  };
+  updateCaptured();
+  updateMoveLog();
+  renderBoard();
+}
+
+function renderBoard() {
+  boardElem.innerHTML = '';
+  boardElem.style.gridTemplateColumns = 'repeat(8, 60px)';
+  boardElem.style.gridTemplateRows = 'repeat(8, 60px)';
+  boardElem.style.display = 'grid';
+  boardElem.style.gap = '1px';
+  boardElem.style.backgroundColor = '#333';
+
+  for(let r=0; r<8; r++) {
+    for(let c=0; c<8; c++) {
+      const square = document.createElement('div');
+      const isLight = (r + c) % 2 ===
