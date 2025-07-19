@@ -5,14 +5,14 @@ const unicodePieces = {
 
 // --- GAME STATE ---
 let board = [];
-let selectedPiece = null;
-let hoveringPiece = null;
+let selectedPiece = null; // {x, y, piece}
 let draggingPiece = null;
 let isDragging = false;
-let isHovering = false;
-let dragTimeout = null;
-let offsetX = 0, offsetY = 0;
 let legalMoves = [];
+let turn = 'white';
+
+let offsetX = 0, offsetY = 0;
+let dragTimeout = null;
 
 const startPosition = [
   ["r","n","b","q","k","b","n","r"],
@@ -25,9 +25,8 @@ const startPosition = [
   ["R","N","B","Q","K","B","N","R"]
 ];
 
-function initBoard() {
-  board = JSON.parse(JSON.stringify(startPosition));
-  renderBoard();
+function isWhitePiece(piece) {
+  return piece === piece.toUpperCase();
 }
 
 function renderBoard() {
@@ -57,7 +56,7 @@ function renderBoard() {
 
 function getLegalMoves(x, y, piece) {
   const moves = [];
-  const isWhite = piece === piece.toUpperCase();
+  const isWhite = isWhitePiece(piece);
 
   const directions = {
     N: [[-2, -1], [-2, 1], [2, -1], [2, 1], [-1, -2], [1, -2], [-1, 2], [1, 2]],
@@ -70,7 +69,7 @@ function getLegalMoves(x, y, piece) {
   function pushIfValid(nx, ny) {
     if (nx >= 0 && ny >= 0 && nx < 8 && ny < 8) {
       const target = board[ny][nx];
-      if (!target || (isWhite !== (target === target.toUpperCase()))) {
+      if (!target || (isWhite !== isWhitePiece(target))) {
         moves.push([nx, ny]);
         return !target;
       }
@@ -87,7 +86,7 @@ function getLegalMoves(x, y, piece) {
       const nx = x + dx, ny = y + dir;
       if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
         const target = board[ny][nx];
-        if (target && isWhite !== (target === target.toUpperCase())) {
+        if (target && isWhite !== isWhitePiece(target)) {
           moves.push([nx, ny]);
         }
       }
@@ -108,7 +107,7 @@ function getLegalMoves(x, y, piece) {
 }
 
 function highlightLegalMoves(moves) {
-  document.querySelectorAll('.highlight').forEach(el => el.remove());
+  clearHighlights();
   for (const [x, y] of moves) {
     const square = document.querySelector(`.square[data-x='${x}'][data-y='${y}']`);
     if (square) {
@@ -131,10 +130,13 @@ function onMouseDown(e) {
   const x = +pieceEl.dataset.x;
   const y = +pieceEl.dataset.y;
 
+  if ((turn === 'white' && !isWhitePiece(piece)) || (turn === 'black' && isWhitePiece(piece))) return;
+
   selectedPiece = { x, y, piece };
   legalMoves = getLegalMoves(x, y, piece);
   highlightLegalMoves(legalMoves);
 
+  // Start drag after 200ms hold
   dragTimeout = setTimeout(() => {
     isDragging = true;
     draggingPiece = pieceEl.cloneNode(true);
@@ -144,8 +146,8 @@ function onMouseDown(e) {
     offsetY = e.offsetY;
   }, 200);
 
-  document.addEventListener('mouseup', onMouseUp);
   document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 }
 
 function onMouseMove(e) {
@@ -163,9 +165,10 @@ function onMouseUp(e) {
   const y = Math.floor((e.clientY - boardRect.top) / (boardRect.height / 8));
 
   const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
-  if (isValid) {
+  if (isValid && selectedPiece) {
     board[y][x] = selectedPiece.piece;
     board[selectedPiece.y][selectedPiece.x] = "";
+    turn = turn === 'white' ? 'black' : 'white';
   }
 
   draggingPiece?.remove();
@@ -174,6 +177,9 @@ function onMouseUp(e) {
   isDragging = false;
   clearHighlights();
   renderBoard();
+
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup', onMouseUp);
 }
 
 initBoard();
