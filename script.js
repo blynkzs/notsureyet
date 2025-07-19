@@ -3,9 +3,8 @@ const unicodePieces = {
   p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚"
 };
 
-// --- GAME STATE ---
 let board = [];
-let selectedPiece = null; // {x, y, piece}
+let selectedPiece = null;
 let draggingPiece = null;
 let isDragging = false;
 let legalMoves = [];
@@ -32,12 +31,26 @@ function isWhitePiece(piece) {
 function renderBoard() {
   const boardEl = document.getElementById("chessboard");
   boardEl.innerHTML = "";
+  boardEl.style.display = "grid";
+  boardEl.style.gridTemplateColumns = "repeat(8, 60px)";
+  boardEl.style.gridTemplateRows = "repeat(8, 60px)";
+  boardEl.style.gap = "1px";
+  boardEl.style.backgroundColor = "#333";
+
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       const square = document.createElement("div");
       square.className = `square ${(x + y) % 2 === 0 ? "light" : "dark"}`;
       square.dataset.x = x;
       square.dataset.y = y;
+      square.style.width = "60px";
+      square.style.height = "60px";
+      square.style.lineHeight = "60px";
+      square.style.fontSize = "40px";
+      square.style.textAlign = "center";
+      square.style.userSelect = "none";
+      square.style.cursor = "pointer";
+      square.style.position = "relative";
 
       const piece = board[y][x];
       if (piece) {
@@ -47,6 +60,7 @@ function renderBoard() {
         pieceEl.dataset.piece = piece;
         pieceEl.dataset.x = x;
         pieceEl.dataset.y = y;
+        pieceEl.style.userSelect = "none";
         square.appendChild(pieceEl);
       }
       boardEl.appendChild(square);
@@ -80,7 +94,7 @@ function getLegalMoves(x, y, piece) {
   if (piece.toUpperCase() === 'P') {
     const dir = isWhite ? -1 : 1;
     const startRow = isWhite ? 6 : 1;
-    if (!board[y + dir][x]) moves.push([x, y + dir]);
+    if (y + dir >= 0 && y + dir < 8 && !board[y + dir][x]) moves.push([x, y + dir]);
     if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
     for (let dx of [-1, 1]) {
       const nx = x + dx, ny = y + dir;
@@ -136,7 +150,7 @@ function onMouseDown(e) {
   legalMoves = getLegalMoves(x, y, piece);
   highlightLegalMoves(legalMoves);
 
-  // Start drag after 200ms hold
+  // Drag starts after 200ms hold
   dragTimeout = setTimeout(() => {
     isDragging = true;
     draggingPiece = pieceEl.cloneNode(true);
@@ -180,6 +194,11 @@ function onMouseUp(e) {
 
   document.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', onMouseUp);
+}
+
+function initBoard() {
+  board = JSON.parse(JSON.stringify(startPosition));
+  renderBoard();
 }
 
 initBoard();
