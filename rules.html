@@ -5,7 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rules - Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
-  
+<style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .layout {
+      display: flex;
+      max-width: 900px;
+      width: 100%;
+      min-height: 80vh;
+    }
+
+    .sidebar-container {
+      width: 220px;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+
+    .main-content {
+      flex-grow: 1;
+      padding: 30px 40px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      text-align: left;
+    }
+
+    .piece-display {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    #chessboard {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 <body>
   <div class="layout">
