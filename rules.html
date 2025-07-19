@@ -3,184 +3,144 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Chess Website</title>
+  <title>Rules - Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-
-    /* Your existing styles */
-    .layout {
-      display: flex;
-      height: 100vh;
+    /* Base & layout (matching your CSS) */
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1a1a1a;
+      color: white;
     }
 
+    .container {
+      display: flex;
+      height: 100vh;
+      gap: 20px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-    .main-content {
-      flex-grow: 1;
-      padding: 30px;
+    .sidebar {
+      background-color: #fefefe;
+      width: 220px;
+      padding: 20px;
+      text-align: left;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #aaa;
+      color: black;
       overflow-y: auto;
     }
 
-    header h1 {
-      margin-top: 0;
-      margin-bottom: 20px;
+    .logo {
+      width: 80px;
+      height: auto;
+      margin: 0 auto 20px auto;
+      display: block;
     }
 
-    /* Keep all your other styles unchanged */
+    .nav-button {
+      display: block;
+      background-color: #4CAF50;
+      color: black;
+      text-decoration: none;
+      padding: 10px 15px;
+      margin: 10px 0;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+
+    .nav-button:hover {
+      background-color: #3e8e41;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 30px 40px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      line-height: 1.6;
+      max-width: 1000px;
+      margin: 0 auto;
+      color: white;
+    }
+
+    h1 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 2.2rem;
+      color: #ddd;
+      text-align: center;
+    }
+
+    strong {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    p {
+      margin-bottom: 20px;
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    ul {
+      margin-top: 0;
+      padding-left: 20px;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
-  <div class="layout">
-    <div id="sidebar-container"></div>
+  <div class="container">
+    <aside class="sidebar">
+      <a href="index.html">
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
+      </a>
+      <h2>Menu</h2>
+      <a href="games.html" class="nav-button">Games</a>
+      <a href="rules.html" class="nav-button">Rules</a>
+      <a href="chesshistory.html" class="nav-button">About Chess</a>
+      <a href="puzzle.html" class="nav-button">Puzzles</a>
+      <a href="matchhistory.html" class="nav-button">Match History</a>
+      <a href="contact.html" class="nav-button">Contact Us</a>
+    </aside>
 
-    <div class="main-content">
-      <header>
-        <h1>Da Rules</h1>
-      </header>
+    <main class="main-content">
+      <h1>Chess Rules</h1>
 
-      <main>
-        <div class="content-area">
-          <p>
-            <strong>Goal of the Game</strong><br />
-            The main goal is to checkmate your opponent’s king by putting them in a position to be captured with no way to escape.<br /><br />
+      <p><strong>Goal of the Game</strong></p>
+      <p>
+        The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
+      </p>
 
-            <strong>The Board</strong><br />
-            The chessboard has 8 rows (1–8) and 8 columns (a–h).<br />
-            Each player starts with 16 pieces:<br />
-            1 King<br />
-            1 Queen<br />
-            2 Rooks<br />
-            2 Bishops<br />
-            2 Knights<br />
-            8 Pawns<br /><br />
+      <p><strong>The Board</strong></p>
+      <p>
+        The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).
+      </p>
 
-            White moves first, and then players take turns.
-          </p>
+      <p><strong>Starting Pieces</strong></p>
+      <ul>
+        <li>1 King</li>
+        <li>1 Queen</li>
+        <li>2 Rooks</li>
+        <li>2 Bishops</li>
+        <li>2 Knights</li>
+        <li>8 Pawns</li>
+      </ul>
 
-          <div>
-            <div class="piece-display">
-              <div id="pieceSymbol" class="piece-symbol">♙</div>
-              <div class="piece-description" id="pieceDescription">
-                Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
-              </div>
-            </div>
-            <div>
-              <div id="chessboard"></div>
-              <div class="controls">
-                <button onclick="previousPiece()">&#8592; Prev</button>
-                <span id="pieceName" style="color:white">Pawn</span>
-                <button onclick="nextPiece()">Next &#8594;</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      <p>White always moves first, and players alternate turns.</p>
+    </main>
   </div>
-
-  <script>
-    fetch('sidebar.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('sidebar-container').innerHTML = html;
-      })
-      .catch(err => console.error('Failed to load sidebar:', err));
-
-    // Chess piece code (unchanged)
-    const board = document.getElementById('chessboard');
-    const pieceName = document.getElementById('pieceName');
-    const pieceSymbol = document.getElementById('pieceSymbol');
-    const pieceDescription = document.getElementById('pieceDescription');
-
-    const pieces = [
-      {
-        name: 'Pawn',
-        symbol: '♙',
-        description: 'Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.',
-        moves: [[1, 0], [2, 0], [1, 1], [1, -1]]
-      },
-      {
-        name: 'Rook',
-        symbol: '♖',
-        description: 'Rooks move any number of squares vertically or horizontally.',
-        moves: [
-          ...Array(8).fill().map((_, i) => [i + 1, 0]),
-          ...Array(8).fill().map((_, i) => [0, i + 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, 0]),
-          ...Array(8).fill().map((_, i) => [0, -i - 1])
-        ]
-      },
-      {
-        name: 'Knight',
-        symbol: '♘',
-        description: 'Knights move in an L-shape: two squares in one direction, then one square perpendicular.',
-        moves: [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
-      },
-      {
-        name: 'Bishop',
-        symbol: '♗',
-        description: 'Bishops move diagonally any number of squares.',
-        moves: [
-          ...Array(8).fill().map((_, i) => [i + 1, i + 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]),
-          ...Array(8).fill().map((_, i) => [i + 1, -i - 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, i + 1])
-        ]
-      },
-      {
-        name: 'Queen',
-        symbol: '♕',
-        description: 'The queen moves any number of squares in any direction: horizontally, vertically, or diagonally.',
-        moves: []
-      },
-      {
-        name: 'King',
-        symbol: '♔',
-        description: 'The king moves one square in any direction.',
-        moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
-      }
-    ];
-    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves);
-
-    let currentPieceIndex = 0;
-
-    function drawBoard() {
-      board.innerHTML = '';
-      for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-          const square = document.createElement('div');
-          square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
-
-          if (row === 3 && col === 3) {
-            square.textContent = pieces[currentPieceIndex].symbol;
-          } else {
-            for (const move of pieces[currentPieceIndex].moves) {
-              if (row === 3 + move[0] && col === 3 + move[1]) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                square.appendChild(dot);
-              }
-            }
-          }
-
-          board.appendChild(square);
-        }
-      }
-      pieceName.textContent = pieces[currentPieceIndex].name;
-      pieceSymbol.textContent = pieces[currentPieceIndex].symbol;
-      pieceDescription.textContent = pieces[currentPieceIndex].description;
-    }
-
-    function previousPiece() {
-      currentPieceIndex = (currentPieceIndex - 1 + pieces.length) % pieces.length;
-      drawBoard();
-    }
-
-    function nextPiece() {
-      currentPieceIndex = (currentPieceIndex + 1) % pieces.length;
-      drawBoard();
-    }
-
-    drawBoard();
-  </script>
 </body>
 </html>
