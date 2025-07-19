@@ -7,89 +7,36 @@
   <link rel="stylesheet" href="styles.css" />
   <style>
 
-    /* Main content */
+    /* Your existing styles */
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    #sidebar-container {
+      width: 220px; /* same width as sidebar */
+      height: 100vh;
+    }
+
     .main-content {
       flex-grow: 1;
       padding: 30px;
       background-color: #333;
+      overflow-y: auto;
     }
+
     header h1 {
       margin-top: 0;
       margin-bottom: 20px;
-    }
-
-    /* Chessboard and piece display */
-    #chessboard {
-      display: grid;
-      grid-template-columns: repeat(8, 40px);
-      grid-template-rows: repeat(8, 40px);
-      gap: 0;
-      border: 2px solid #555;
-      margin-top: 10px;
-      background-color: #999;
-    }
-    .square {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 26px;
-      user-select: none;
-    }
-    .light {
-      background-color: #f0d9b5;
-    }
-    .dark {
-      background-color: #b58863;
-    }
-    .dot {
-      width: 12px;
-      height: 12px;
-      background-color: red;
-      border-radius: 50%;
-      margin: auto;
-    }
-
-    .controls {
-      margin-top: 20px;
-    }
-    .piece-display {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-left: 40px;
       color: white;
     }
-    .piece-symbol {
-      font-size: 80px;
-      margin-bottom: 10px;
-    }
-    .piece-description {
-      max-width: 200px;
-      text-align: left;
-    }
 
-    /* Container for chessboard and piece display */
-    .content-area > div {
-      display: flex;
-      gap: 40px;
-      align-items: flex-start;
-    }
+    /* Keep all your other styles unchanged */
   </style>
 </head>
 <body>
   <div class="layout">
-    <aside class="sidebar">
-      <a href="index.html">
-        <img src="logo.jpg" alt="Chess Logo" class="logo" />
-      </a>
-      <h2>Menu</h2>
-      <a href="games.html" class="nav-button">Games</a>
-      <a href="rules.html" class="nav-button">Rules</a>
-      <a href="puzzle.html" class="nav-button">Puzzles</a>
-      <a href="matchhistory.html" class="nav-button">Match History</a>
-    </aside>
+    <div id="sidebar-container"></div>
 
     <div class="main-content">
       <header>
@@ -137,6 +84,14 @@
   </div>
 
   <script>
+    fetch('sidebar.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('sidebar-container').innerHTML = html;
+      })
+      .catch(err => console.error('Failed to load sidebar:', err));
+
+    // Chess piece code (unchanged)
     const board = document.getElementById('chessboard');
     const pieceName = document.getElementById('pieceName');
     const pieceSymbol = document.getElementById('pieceSymbol');
