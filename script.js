@@ -46,6 +46,7 @@ function renderBoard() {
         pieceEl.dataset.piece = piece;
         pieceEl.dataset.x = x;
         pieceEl.dataset.y = y;
+        pieceEl.addEventListener("mousedown", onMouseDown);
         square.appendChild(pieceEl);
       }
       boardEl.appendChild(square);
@@ -79,15 +80,15 @@ function getLegalMoves(x, y, piece) {
   if (piece.toUpperCase() === 'P') {
     const dir = isWhite ? -1 : 1;
     const startRow = isWhite ? 6 : 1;
-    if (!board[y + dir][x]) moves.push([x, y + dir]);
-    if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
+    if (!board[y + dir]?.[x]) moves.push([x, y + dir]);
+    if (y === startRow && !board[y + dir]?.[x] && !board[y + 2 * dir]?.[x]) {
+      moves.push([x, y + 2 * dir]);
+    }
     for (let dx of [-1, 1]) {
       const nx = x + dx, ny = y + dir;
-      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-        const target = board[ny][nx];
-        if (target && isWhite !== (target === target.toUpperCase())) {
-          moves.push([nx, ny]);
-        }
+      const target = board[ny]?.[nx];
+      if (target && isWhite !== (target === target.toUpperCase())) {
+        moves.push([nx, ny]);
       }
     }
   } else if (piece.toUpperCase() === 'N') {
@@ -137,13 +138,17 @@ function onMouseDown(e) {
     isDragging = true;
     draggingPiece = pieceEl.cloneNode(true);
     draggingPiece.classList.add('dragging-piece');
+    draggingPiece.style.position = 'absolute';
+    draggingPiece.style.pointerEvents = 'none';
     document.body.appendChild(draggingPiece);
     offsetX = e.offsetX;
     offsetY = e.offsetY;
-  }, 200);
+    draggingPiece.style.left = `${e.pageX - offsetX}px`;
+    draggingPiece.style.top = `${e.pageY - offsetY}px`;
+  }, 150);
 
   document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
+  document.addEventListener('mouseup', onMouseUp, { once: true });
 }
 
 function onMouseMove(e) {
@@ -161,7 +166,7 @@ function onMouseUp(e) {
   const y = Math.floor((e.clientY - boardRect.top) / (boardRect.height / 8));
 
   const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
-  if (isValid) {
+  if (selectedPiece && isValid) {
     board[y][x] = selectedPiece.piece;
     board[selectedPiece.y][selectedPiece.x] = "";
   }
@@ -175,4 +180,3 @@ function onMouseUp(e) {
 }
 
 initBoard();
-document.addEventListener('mousedown', onMouseDown);
