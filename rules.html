@@ -27,7 +27,6 @@
       min-height: 100vh;
     }
 
-
     .main-content {
       flex: 1;
       padding: 30px;
@@ -36,27 +35,25 @@
       flex-direction: column;
     }
 
-    .section {
-      max-width: 1200px;
-      margin: 0 auto;
+    .rules-section {
+      max-width: 900px;
+      margin: 0 auto 30px;
     }
 
-    .top-info {
+    .display-area {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      margin-top: 20px;
+      gap: 30px;
     }
 
-    .piece-description-container {
+    .piece-display-box {
       flex: 1 1 300px;
       max-width: 350px;
       background-color: white;
       color: black;
       padding: 20px;
       border-radius: 10px;
-      margin-right: 30px;
-      margin-bottom: 20px;
     }
 
     #chessboard {
@@ -64,7 +61,7 @@
       grid-template-columns: repeat(8, 50px);
       grid-template-rows: repeat(8, 50px);
       gap: 0;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .square {
@@ -104,13 +101,9 @@
     }
 
     @media (max-width: 900px) {
-      .top-info {
+      .display-area {
         flex-direction: column;
         align-items: center;
-      }
-
-      .piece-description-container {
-        margin-right: 0;
       }
 
       #chessboard {
@@ -122,7 +115,7 @@
 <body>
   <header>Da Rules</header>
 
-   <div class="layout">
+  <div class="layout">
     <div class="sidebar-container" id="sidebar-container"></div>
 
     <main class="main-content">
@@ -142,8 +135,8 @@
 
       <section class="display-area">
         <div class="piece-display-box">
-          <div id="pieceSymbol" class="piece-symbol">♙</div>
-          <div class="piece-description" id="pieceDescription">
+          <div id="pieceSymbol" class="piece-symbol" style="font-size: 48px; text-align: center;">♙</div>
+          <div class="piece-description" id="pieceDescription" style="margin-top: 10px;">
             Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
           </div>
         </div>
@@ -219,7 +212,7 @@
         moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
       }
     ];
-    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves);
+    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves); // Queen = Rook + Bishop
 
     let currentPieceIndex = 0;
 
