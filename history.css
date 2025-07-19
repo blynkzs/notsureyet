@@ -1,12 +1,4 @@
 
-
-.main-content {
-  flex-grow: 1;
-  padding: 30px 40px;
-  box-sizing: border-box;
-  background: linear-gradient(135deg, #333 0%, #111 100%);
-}
-
 .history-section {
   max-width: 900px;
   margin: 0 auto;
