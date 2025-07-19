@@ -19,49 +19,49 @@ let board = JSON.parse(JSON.stringify(initialBoard));
 let turn = 'white';
 let selected = null;
 let legalMoves = [];
-let moveLog = [];
 let captured = { white: [], black: [] };
+let moveLog = [];
 
-// Variables for drag vs click
-let holdTimeout = null;
-let isDragging = false;
-let dragPiece = null;
-let dragOrigin = null;
-let dragElem = null;
-let mouseX = 0;
-let mouseY = 0;
+let dragInfo = {
+  isDragging: false,
+  dragElem: null,
+  origin: null,
+  piece: null,
+  holdTimeout: null,
+};
 
-// Utils
-const isUpper = c => c === c.toUpperCase();
-const isLower = c => c === c.toLowerCase();
-const inBounds = (r,c) => r >= 0 && r < boardSize && c >= 0 && c < boardSize;
-const getColor = p => isUpper(p) ? 'white' : 'black';
+function isUpper(c) { return c === c.toUpperCase(); }
+function isLower(c) { return c === c.toLowerCase(); }
+function inBounds(r,c) { return r>=0 && r<boardSize && c>=0 && c<boardSize; }
+function getColor(p) { return isUpper(p) ? 'white' : 'black'; }
 
-// Legal moves (basic, no castling or check for brevity here - can expand)
 function getLegalMoves(r,c) {
   const piece = board[r][c];
-  if (!piece) return [];
+  if(!piece) return [];
   const color = getColor(piece);
   const moves = [];
   const dir = color === 'white' ? -1 : 1;
 
   function addMove(tr, tc) {
-    if (!inBounds(tr, tc)) return;
+    if(!inBounds(tr, tc)) return;
     const target = board[tr][tc];
-    if (!target || getColor(target) !== color) moves.push([tr, tc]);
+    if(!target || getColor(target) !== color) moves.push([tr, tc]);
   }
 
   switch(piece.toLowerCase()) {
     case 'p':
-      if(!board[r+dir] || !board[r+dir][c]) break; // no moves if out of bounds
-      if(!board[r+dir][c]) moves.push([r+dir, c]);
-      if((color === 'white' && r === 6) || (color === 'black' && r ===1))
-        if(!board[r+2*dir][c]) moves.push([r+2*dir, c]);
-      for(const dc of [-1,1]) {
+      // Forward moves
+      if(inBounds(r+dir, c) && !board[r+dir][c]) moves.push([r+dir,c]);
+      // Double forward
+      if((color==='white' && r===6) || (color==='black' && r===1)) {
+        if(!board[r+dir][c] && !board[r+2*dir][c]) moves.push([r+2*dir, c]);
+      }
+      // Captures
+      for(let dc of [-1,1]) {
         let tr = r + dir, tc = c + dc;
-        if(inBounds(tr, tc)) {
-          const target = board[tr][tc];
-          if(target && getColor(target) !== color) moves.push([tr, tc]);
+        if(inBounds(tr,tc)) {
+          let target = board[tr][tc];
+          if(target && getColor(target) !== color) moves.push([tr,tc]);
         }
       }
       break;
@@ -114,45 +114,42 @@ function getLegalMoves(r,c) {
       }
       break;
     case 'k':
-      for(let dr = -1; dr <=1; dr++) {
-        for(let dc = -1; dc <=1; dc++) {
+      for(let dr=-1; dr<=1; dr++) {
+        for(let dc=-1; dc<=1; dc++) {
           if(dr !== 0 || dc !== 0) {
-            let tr = r + dr, tc = c + dc;
-            if(inBounds(tr, tc)) {
-              const target = board[tr][tc];
-              if(!target || getColor(target) !== color) moves.push([tr, tc]);
+            let tr = r+dr, tc=c+dc;
+            if(inBounds(tr,tc)) {
+              let target = board[tr][tc];
+              if(!target || getColor(target) !== color) moves.push([tr,tc]);
             }
           }
         }
       }
       break;
   }
-
   return moves;
 }
 
 function canMove(sr, sc, tr, tc) {
-  if(!inBounds(sr, sc) || !inBounds(tr, tc)) return false;
+  if(!inBounds(sr,sc) || !inBounds(tr,tc)) return false;
   const piece = board[sr][sc];
   if(!piece) return false;
-  const color = getColor(piece);
-  if(turn !== color) return false;
-  const legal = getLegalMoves(sr, sc);
-  return legal.some(([r,c]) => r === tr && c === tc);
+  if(turn !== getColor(piece)) return false;
+  return getLegalMoves(sr, sc).some(([r,c]) => r===tr && c===tc);
 }
 
 function movePiece(sr, sc, tr, tc) {
-  let piece = board[sr][sc];
-  let target = board[tr][tc];
+  const piece = board[sr][sc];
+  const target = board[tr][tc];
   if(target) captured[turn].push(target);
   board[tr][tc] = piece;
   board[sr][sc] = '';
-  // Pawn promotion (auto to queen)
+  // Pawn promotion automatic queen
   if(piece.toLowerCase() === 'p' && (tr === 0 || tr === 7)) {
     board[tr][tc] = turn === 'white' ? 'Q' : 'q';
   }
-  turn = turn === 'white' ? 'black' : 'white';
   addMoveLog(sr, sc, tr, tc, piece, !!target);
+  turn = turn === 'white' ? 'black' : 'white';
 }
 
 function addMoveLog(sr, sc, tr, tc, piece, capture) {
@@ -161,11 +158,11 @@ function addMoveLog(sr, sc, tr, tc, piece, capture) {
   const to = files[tc] + (8 - tr);
   const symbol = piece.toLowerCase() === 'p' ? '' : unicodePieces[piece];
   const captureSymbol = capture ? 'x' : '-';
-  const text = `${symbol}${from}${captureSymbol}${to}`;
-  const logList = document.getElementById('move-log-list');
+  const logText = `${symbol}${from}${captureSymbol}${to}`;
+  const moveLogList = document.getElementById('move-log-list');
   const li = document.createElement('li');
-  li.textContent = text;
-  logList.appendChild(li);
+  li.textContent = logText;
+  moveLogList.appendChild(li);
 }
 
 function clearHighlights() {
@@ -177,8 +174,8 @@ function renderBoard() {
   boardElem.innerHTML = '';
   clearHighlights();
 
-  for(let r=0; r < 8; r++) {
-    for(let c=0; c < 8; c++) {
+  for(let r=0; r<boardSize; r++) {
+    for(let c=0; c<boardSize; c++) {
       const square = document.createElement('div');
       square.className = 'square ' + ((r + c) % 2 === 0 ? 'light' : 'dark');
       square.dataset.r = r;
@@ -194,22 +191,17 @@ function renderBoard() {
         pieceDiv.style.userSelect = 'none';
         pieceDiv.style.cursor = 'grab';
 
-        // Drag handlers
-        pieceDiv.draggable = true;
-
         pieceDiv.addEventListener('mousedown', (e) => {
           e.preventDefault();
           selected = {r,c};
           legalMoves = getLegalMoves(r,c);
-          dragOrigin = {r,c};
-          dragPiece = piece;
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-          isDragging = false;
-          holdTimeout = setTimeout(() => {
-            isDragging = true;
+          dragInfo.origin = {r,c};
+          dragInfo.piece = piece;
+          dragInfo.isDragging = false;
+          dragInfo.holdTimeout = setTimeout(() => {
+            dragInfo.isDragging = true;
             pieceDiv.style.visibility = 'hidden';
-            createDragPiece(pieceDiv, e.clientX, e.clientY);
+            createDragPiece(piece, e.clientX, e.clientY);
           }, 200);
           window.addEventListener('mousemove', onMouseMove);
           window.addEventListener('mouseup', onMouseUp);
@@ -217,35 +209,34 @@ function renderBoard() {
         });
 
         pieceDiv.addEventListener('dragstart', (e) => {
-          e.preventDefault(); // disable default drag
+          e.preventDefault();
         });
 
         square.appendChild(pieceDiv);
       }
 
       // Highlight legal moves if selected
-      if(selected && selected.r === r && selected.c === c) {
+      if(selected) {
         legalMoves.forEach(([mr, mc]) => {
           if(mr === r && mc === c) {
             const hl = document.createElement('div');
             hl.className = 'highlight';
             hl.style.position = 'absolute';
-            hl.style.top = '0';
-            hl.style.left = '0';
-            hl.style.width = '100%';
-            hl.style.height = '100%';
-            hl.style.backgroundColor = 'rgba(255, 255, 0, 0.4)';
+            hl.style.top = '15px';
+            hl.style.left = '15px';
+            hl.style.width = '30px';
+            hl.style.height = '30px';
             hl.style.borderRadius = '50%';
+            hl.style.backgroundColor = 'rgba(255, 255, 0, 0.5)';
+            hl.style.pointerEvents = 'none';
             square.appendChild(hl);
           }
         });
       }
 
-      // Square click to move or select
       square.addEventListener('click', () => {
-        if(isDragging) return; // Ignore click while dragging
+        if(dragInfo.isDragging) return; // ignore click during drag
         if(selected) {
-          // If clicked square is legal move, move piece
           if(canMove(selected.r, selected.c, r, c)) {
             movePiece(selected.r, selected.c, r, c);
             selected = null;
@@ -259,7 +250,6 @@ function renderBoard() {
             renderBoard();
           }
         } else {
-          // Select piece if belongs to turn
           if(piece && getColor(piece) === turn) {
             selected = {r,c};
             legalMoves = getLegalMoves(r,c);
@@ -273,46 +263,50 @@ function renderBoard() {
   }
 }
 
-// Drag piece follow cursor
-function createDragPiece(pieceDiv, x, y) {
-  dragElem = document.createElement('div');
-  dragElem.className = 'dragging-piece';
-  dragElem.textContent = unicodePieces[dragPiece];
-  dragElem.style.position = 'fixed';
-  dragElem.style.top = `${y - 20}px`;
-  dragElem.style.left = `${x - 20}px`;
-  dragElem.style.fontSize = '40px';
-  dragElem.style.pointerEvents = 'none';
-  dragElem.style.zIndex = '1000';
-  document.body.appendChild(dragElem);
+function createDragPiece(piece, x, y) {
+  dragInfo.dragElem = document.createElement('div');
+  dragInfo.dragElem.className = 'dragging-piece';
+  dragInfo.dragElem.textContent = unicodePieces[piece];
+  dragInfo.dragElem.style.position = 'fixed';
+  dragInfo.dragElem.style.top = (y - 20) + 'px';
+  dragInfo.dragElem.style.left = (x - 20) + 'px';
+  dragInfo.dragElem.style.fontSize = '40px';
+  dragInfo.dragElem.style.pointerEvents = 'none';
+  dragInfo.dragElem.style.userSelect = 'none';
+  dragInfo.dragElem.style.zIndex = 10000;
+  document.body.appendChild(dragInfo.dragElem);
 }
 
 function onMouseMove(e) {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-  if(isDragging && dragElem) {
-    dragElem.style.top = `${mouseY - 20}px`;
-    dragElem.style.left = `${mouseX - 20}px`;
+  if(dragInfo.isDragging && dragInfo.dragElem) {
+    dragInfo.dragElem.style.top = (e.clientY - 20) + 'px';
+    dragInfo.dragElem.style.left = (e.clientX - 20) + 'px';
   }
 }
 
 function onMouseUp(e) {
-  clearTimeout(holdTimeout);
+  clearTimeout(dragInfo.holdTimeout);
   window.removeEventListener('mousemove', onMouseMove);
   window.removeEventListener('mouseup', onMouseUp);
-  if(isDragging) {
+
+  if(dragInfo.isDragging) {
     const boardRect = document.getElementById('chessboard').getBoundingClientRect();
     const x = e.clientX - boardRect.left;
     const y = e.clientY - boardRect.top;
     const col = Math.floor(x / (boardRect.width / 8));
     const row = Math.floor(y / (boardRect.height / 8));
 
-    if(canMove(dragOrigin.r, dragOrigin.c, row, col)) {
-      movePiece(dragOrigin.r, dragOrigin.c, row, col);
+    if(canMove(dragInfo.origin.r, dragInfo.origin.c, row, col)) {
+      movePiece(dragInfo.origin.r, dragInfo.origin.c, row, col);
     }
-    // Snapback if illegal
+    // Snapback handled by not moving if illegal
+
+  } else if(selected) {
+    // If released without dragging, deselect piece (hover mode)
+    // Just keep hover until another click or move
   }
-  isDragging = false;
+
+  dragInfo.isDragging = false;
   cleanupDragPiece();
   selected = null;
   legalMoves = [];
@@ -320,9 +314,18 @@ function onMouseUp(e) {
 }
 
 function cleanupDragPiece() {
-  if(dragElem) {
-    dragElem.remove();
-    dragElem = null;
+  if(dragInfo.dragElem) {
+    dragInfo.dragElem.remove();
+    dragInfo.dragElem = null;
   }
 }
+
+function updateCaptured() {
+  const whiteCapturedElem = document.getElementById('white-captured');
+  const blackCapturedElem = document.getElementById('black-captured');
+  whiteCapturedElem.textContent = captured.white.map(p => unicodePieces[p]).join(' ');
+  blackCapturedElem.textContent = captured.black.map(p => unicodePieces[p]).join(' ');
+}
+
 renderBoard();
+updateCaptured();
