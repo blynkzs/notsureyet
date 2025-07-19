@@ -23,28 +23,17 @@ body {
 }
 .sidebar h2 {
   margin-top: 0;
-  color: #ccc;
   margin-bottom: 15px;
   font-weight: normal;
 }
-.nav-button {
-  display: block;
-  color: white;
-  text-decoration: none;
-  margin-bottom: 12px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-}
-.nav-button:hover {
-  background-color: #444;
-}
+
 .main-content {
   flex-grow: 1;
   padding: 30px 40px;
   box-sizing: border-box;
   background: linear-gradient(135deg, #333 0%, #111 100%);
 }
+
 header h1 {
   margin: 0 0 30px 0;
   font-weight: normal;
