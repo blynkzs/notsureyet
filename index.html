@@ -20,16 +20,19 @@
       min-height: 100vh;
     }
 
-    header {
-      width: 100%;
-      background-color: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid #333;
-    }
+header {
+  width: 100%;
+  background-color: #111;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #333;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
     header .logo {
       height: 40px;
       width: 40px;
@@ -89,10 +92,12 @@
   </style>
 </head>
 <body>
-  <header>
+ <header>
+  <div class="header-content">
     <img src="logo.jpg" alt="Chess Logo" class="logo" />
     <h1>Maybe a Chess Website or Something</h1>
-  </header>
+  </div>
+</header>
 
   <div class="layout">
     <div class="sidebar-container" id="sidebar-container"></div>
