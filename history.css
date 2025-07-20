@@ -15,18 +15,16 @@
 .images-and-timeline {
   display: flex;
   gap: 40px;
-  align-items: flex-start; 
+  align-items: flex-start;
+  max-width: 900px;
 }
 
-
 .chess-images {
+  flex: 0 0 220px;
   display: flex;
   flex-direction: column;
   gap: 25px;
-  max-width: 220px;
-  flex-shrink: 0;
 }
-
 
 .chess-images figure {
   margin: 0;
@@ -48,10 +46,13 @@
 
 
 .timeline {
+  flex: 1 1 600px;
   border-left: 3px solid #f0a500;
   margin-left: 0;
   padding-left: 20px;
-  flex-grow: 1;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .timeline-item {
