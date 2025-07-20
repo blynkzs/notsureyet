@@ -52,7 +52,7 @@
 }
 
 .timeline-item {
-  margin-bottom: 25px;
+  margin-bottom: 40px;
   position: relative;
 }
 
@@ -69,13 +69,13 @@
 }
 
 .timeline-item h3 {
-  margin: 0 0 12px 0; 
+  margin: 0 0 18px 0; 
   color: #ffcc33;
   line-height: 1.4;
 }
 
 .timeline-item p {
-  margin: 0 0 18px 0; 
+  margin: 0 0 24px 0;
   color: #eee;
-  line-height: 1.7; 
+  line-height: 1.8;
 }
