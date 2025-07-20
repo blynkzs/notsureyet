@@ -1,169 +1,306 @@
-const board = Array.from({ length: 8 }, () => Array(8).fill(""));
+const unicodePieces = {
+  P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔",
+  p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚"
+};
+
+let board = [];
 let selectedPiece = null;
-let isDragging = false;
-let draggingPiece = null;
-let offsetX = 0, offsetY = 0;
-let moveLog = [];
-let turn = "white";
+let legalMoves = [];
+let turn = 'white';
 
-// Setup starting position
-function initBoard() {
-  const pieces = {
-    R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔", P: "♙",
-    r: "♜", n: "♞", b: "♝", q: "♛", k: "♚", p: "♟"
-  };
+let history = [];
 
-  const whiteBack = ["R", "N", "B", "Q", "K", "B", "N", "R"];
-  const blackBack = ["r", "n", "b", "q", "k", "b", "n", "r"];
+const startPosition = [
+  ["r","n","b","q","k","b","n","r"],
+  ["p","p","p","p","p","p","p","p"],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["","","","","","","",""],
+  ["P","P","P","P","P","P","P","P"],
+  ["R","N","B","Q","K","B","N","R"]
+];
 
-  for (let i = 0; i < 8; i++) {
-    board[0][i] = blackBack[i];
-    board[1][i] = "p";
-    board[6][i] = "P";
-    board[7][i] = whiteBack[i];
-  }
+function isWhitePiece(piece) {
+  return piece === piece.toUpperCase() && piece !== "";
+}
+
+function toAlgebraic(x, y) {
+  const files = "abcdefgh";
+  return files[x] + (8 - y);
+}
+
+function pieceLetter(piece) {
+  const p = piece.toUpperCase();
+  return p === 'P' ? '' : p;
 }
 
 function renderBoard() {
-  const chessboard = document.getElementById("chessboard");
-  chessboard.innerHTML = "";
+  const boardEl = document.getElementById("chessboard");
+  boardEl.innerHTML = "";
+  boardEl.style.display = "grid";
+  boardEl.style.gridTemplateColumns = "repeat(8, 60px)";
+  boardEl.style.gridTemplateRows = "repeat(8, 60px)";
+  boardEl.style.gap = "1px";
+  boardEl.style.backgroundColor = "#333";
 
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       const square = document.createElement("div");
-      square.classList.add("square");
+      square.className = `square ${(x + y) % 2 === 0 ? "light" : "dark"}`;
       square.dataset.x = x;
       square.dataset.y = y;
+      square.style.width = "60px";
+      square.style.height = "60px";
+      square.style.lineHeight = "60px";
+      square.style.fontSize = "40px";
+      square.style.textAlign = "center";
+      square.style.userSelect = "none";
+      square.style.cursor = "pointer";
+      square.style.position = "relative";
 
-      const isDark = (x + y) % 2 === 1;
-      square.style.backgroundColor = isDark ? "#444" : "#ddd";
-      square.style.color = board[y][x] === board[y][x].toLowerCase() ? "black" : "white";
-      square.textContent = board[y][x] ? getPieceSymbol(board[y][x]) : "";
+      // Highlight selected square
+      if (selectedPiece && selectedPiece.x === x && selectedPiece.y === y) {
+        square.style.outline = "3px solid yellow";
+      }
 
-      square.addEventListener("mousedown", onMouseDown);
-      square.addEventListener("mouseup", onMouseUp);
+      // Highlight legal moves squares
+      if (legalMoves.some(m => m[0] === x && m[1] === y)) {
+        square.style.outline = "3px solid limegreen";
+      }
 
-      chessboard.appendChild(square);
+      const piece = board[y][x];
+      if (piece) {
+        const pieceEl = document.createElement("div");
+        pieceEl.className = "piece";
+        pieceEl.textContent = unicodePieces[piece];
+        pieceEl.dataset.piece = piece;
+        pieceEl.dataset.x = x;
+        pieceEl.dataset.y = y;
+        pieceEl.style.userSelect = "none";
+        square.appendChild(pieceEl);
+      }
+      boardEl.appendChild(square);
     }
   }
 }
 
-function getPieceSymbol(letter) {
-  const map = {
-    R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔", P: "♙",
-    r: "♜", n: "♞", b: "♝", q: "♛", k: "♚", p: "♟"
+function getLegalMoves(x, y, piece) {
+  const moves = [];
+  const isWhite = isWhitePiece(piece);
+
+  const directions = {
+    N: [[-2, -1], [-2, 1], [2, -1], [2, 1], [-1, -2], [1, -2], [-1, 2], [1, 2]],
+    B: [[1,1], [-1,-1], [-1,1], [1,-1]],
+    R: [[1,0], [-1,0], [0,1], [0,-1]],
+    Q: [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [-1,1], [1,-1]],
+    K: [[1,0], [-1,0], [0,1], [0,-1], [1,1], [-1,-1], [-1,1], [1,-1]]
   };
-  return map[letter] || "";
+
+  function pushIfValid(nx, ny) {
+    if (nx >= 0 && ny >= 0 && nx < 8 && ny < 8) {
+      const target = board[ny][nx];
+      if (!target || (isWhite !== isWhitePiece(target))) {
+        moves.push([nx, ny]);
+        return !target;
+      }
+    }
+    return false;
+  }
+
+  if (piece.toUpperCase() === 'P') {
+    const dir = isWhite ? -1 : 1;
+    const startRow = isWhite ? 6 : 1;
+    if (y + dir >= 0 && y + dir < 8 && !board[y + dir][x]) moves.push([x, y + dir]);
+    if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
+    for (let dx of [-1, 1]) {
+      const nx = x + dx, ny = y + dir;
+      if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        const target = board[ny][nx];
+        if (target && isWhite !== isWhitePiece(target)) {
+          moves.push([nx, ny]);
+        }
+      }
+    }
+  } else if (piece.toUpperCase() === 'N') {
+    for (let [dx, dy] of directions.N) pushIfValid(x + dx, y + dy);
+  } else if (piece.toUpperCase() === 'B') {
+    for (let [dx, dy] of directions.B) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'R') {
+    for (let [dx, dy] of directions.R) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'Q') {
+    for (let [dx, dy] of directions.Q) for (let i = 1; i < 8 && pushIfValid(x + dx*i, y + dy*i); i++);
+  } else if (piece.toUpperCase() === 'K') {
+    for (let [dx, dy] of directions.K) pushIfValid(x + dx, y + dy);
+  }
+
+  return moves;
 }
 
-function onMouseDown(e) {
-  const x = +this.dataset.x;
-  const y = +this.dataset.y;
-  const piece = board[y][x];
-  if (!piece) return;
+function moveToNotation(x1, y1, x2, y2, piece) {
+  const from = toAlgebraic(x1, y1);
+  const to = toAlgebraic(x2, y2);
+  const isPawn = piece.toUpperCase() === 'P';
+  const capture = board[y2][x2] !== "" && board[y2][x2] !== piece;
 
-  const isWhite = piece === piece.toUpperCase();
-  if ((turn === "white" && !isWhite) || (turn === "black" && isWhite)) return;
-
-  selectedPiece = { piece, x, y };
-
-  draggingPiece = document.createElement("div");
-  draggingPiece.classList.add("dragging-piece");
-  draggingPiece.textContent = getPieceSymbol(piece);
-  document.body.appendChild(draggingPiece);
-  isDragging = true;
-  updateDraggingPiece(e);
+  if (isPawn) {
+    if (capture) {
+      return from[0] + 'x' + to;
+    }
+    return to;
+  } else {
+    let notation = pieceLetter(piece);
+    if (capture) notation += 'x';
+    notation += to;
+    return notation;
+  }
 }
 
-function onMouseUp(e) {
-  if (!isDragging || !selectedPiece) return;
+function addMoveToLog(moveNotation) {
+  const log = document.getElementById("move-log");
+  if (!log) return;
 
-  const x = +this.dataset.x;
-  const y = +this.dataset.y;
+  let moveNumber = Math.floor(history.length / 2) + 1;
+  if (history.length % 2 === 1) {
+    const entry = document.createElement("div");
+    entry.textContent = `${moveNumber}. ${moveNotation}`;
+    entry.dataset.moveIndex = history.length - 1;
+    log.appendChild(entry);
+  } else {
+    const lastEntry = log.lastChild;
+    if (lastEntry) {
+      lastEntry.textContent += ` ${moveNotation}`;
+    } else {
+      const entry = document.createElement("div");
+      entry.textContent = `${moveNumber}. ... ${moveNotation}`;
+      entry.dataset.moveIndex = history.length - 1;
+      log.appendChild(entry);
+    }
+  }
 
-  const fromX = selectedPiece.x;
-  const fromY = selectedPiece.y;
+  log.scrollTop = log.scrollHeight;
+}
 
-  if ((fromX !== x || fromY !== y) && isLegalMove(selectedPiece, x, y)) {
-    const captured = board[y][x];
-    board[y][x] = selectedPiece.piece;
-    board[fromY][fromX] = "";
+function undoMove() {
+  if (history.length === 0) return;
 
-    moveLog.push({
-      piece: selectedPiece.piece,
-      from: { x: fromX, y: fromY },
-      to: { x, y },
-      captured
-    });
+  const lastState = history.pop();
+  board = JSON.parse(JSON.stringify(lastState.board));
+  turn = lastState.turn;
 
-    logMove(selectedPiece.piece, fromX, fromY, x, y);
-    turn = turn === "white" ? "black" : "white";
+  renderBoard();
+
+  const log = document.getElementById("move-log");
+  if (log) {
+    if (history.length === 0) {
+      log.innerHTML = "";
+    } else {
+      log.innerHTML = "";
+      for (let i = 0; i < history.length; i++) {
+        addMoveToLog(history[i].moveNotation);
+      }
+    }
   }
 
   selectedPiece = null;
-  isDragging = false;
-  if (draggingPiece) draggingPiece.remove();
-  draggingPiece = null;
+  legalMoves = [];
+}
 
+function setupUI() {
+  if (!document.getElementById("move-log")) {
+    const container = document.createElement("div");
+    container.id = "move-log";
+    container.style.marginTop = "10px";
+    container.style.maxHeight = "200px";
+    container.style.overflowY = "auto";
+    container.style.backgroundColor = "#222";
+    container.style.color = "white";
+    container.style.padding = "5px";
+    container.style.fontFamily = "monospace";
+    container.style.fontSize = "14px";
+    container.style.border = "1px solid #555";
+    container.style.width = "500px";
+    container.style.userSelect = "none";
+
+    document.body.appendChild(container);
+  }
+
+  if (!document.getElementById("undo-btn")) {
+    const btn = document.createElement("button");
+    btn.id = "undo-btn";
+    btn.textContent = "Undo";
+    btn.style.marginTop = "10px";
+    btn.style.padding = "5px 10px";
+    btn.style.fontSize = "16px";
+    btn.style.cursor = "pointer";
+    btn.addEventListener("click", undoMove);
+
+    document.body.appendChild(btn);
+  }
+}
+
+// Handle clicks on the board squares
+function onSquareClick(e) {
+  const target = e.target.closest(".square");
+  if (!target) return;
+
+  const x = +target.dataset.x;
+  const y = +target.dataset.y;
+  const piece = board[y][x];
+
+  // If no piece selected yet
+  if (!selectedPiece) {
+    if (!piece) return; // clicked empty square, ignore
+    if ((turn === 'white' && !isWhitePiece(piece)) || (turn === 'black' && isWhitePiece(piece))) return; // Not your piece
+
+    selectedPiece = { x, y, piece };
+    legalMoves = getLegalMoves(x, y, piece);
+    renderBoard();
+    return;
+  }
+
+  // If clicking the same square again -> deselect
+  if (selectedPiece.x === x && selectedPiece.y === y) {
+    selectedPiece = null;
+    legalMoves = [];
+    renderBoard();
+    return;
+  }
+
+  // If clicked on a legal move square, move the piece
+  if (legalMoves.some(m => m[0] === x && m[1] === y)) {
+    // Save current state to history for undo
+    history.push({
+      board: JSON.parse(JSON.stringify(board)),
+      turn,
+      moveNotation: moveToNotation(selectedPiece.x, selectedPiece.y, x, y, selectedPiece.piece)
+    });
+
+    board[y][x] = selectedPiece.piece;
+    board[selectedPiece.y][selectedPiece.x] = "";
+
+    turn = turn === 'white' ? 'black' : 'white';
+
+    addMoveToLog(history[history.length - 1].moveNotation);
+
+    selectedPiece = null;
+    legalMoves = [];
+    renderBoard();
+    return;
+  }
+
+  // Otherwise, clicked an invalid square -> deselect
+  selectedPiece = null;
+  legalMoves = [];
   renderBoard();
 }
 
-function isLegalMove(pieceObj, x, y) {
-  const target = board[y][x];
-  const isWhite = pieceObj.piece === pieceObj.piece.toUpperCase();
-  const targetIsWhite = target && target === target.toUpperCase();
-
-  if (target && isWhite === targetIsWhite) return false;
-
-  // Simplified legality: allow any move unless blocked by own piece
-  return true;
-}
-
-function updateDraggingPiece(e) {
-  if (draggingPiece) {
-    draggingPiece.style.left = e.pageX - offsetX + "px";
-    draggingPiece.style.top = e.pageY - offsetY + "px";
-  }
-}
-
-document.addEventListener("mousemove", (e) => {
-  if (isDragging) {
-    updateDraggingPiece(e);
-  }
-});
-
-document.addEventListener("mouseup", () => {
-  if (isDragging && draggingPiece) {
-    draggingPiece.remove();
-    draggingPiece = null;
-    isDragging = false;
-  }
-});
-
-function logMove(piece, fromX, fromY, toX, toY) {
-  const file = (x) => String.fromCharCode(97 + x);
-  const rank = (y) => 8 - y;
-  const moveStr = `${piece} ${file(fromX)}${rank(fromY)} → ${file(toX)}${rank(toY)}\n`;
-
-  const logEl = document.getElementById("moveLog");
-  logEl.textContent += moveStr;
-}
-
-document.getElementById("undoBtn").addEventListener("click", () => {
-  const last = moveLog.pop();
-  if (!last) return;
-
-  board[last.from.y][last.from.x] = last.piece;
-  board[last.to.y][last.to.x] = last.captured || "";
-  turn = turn === "white" ? "black" : "white";
-
-  const logEl = document.getElementById("moveLog");
-  const lines = logEl.textContent.trim().split("\n");
-  lines.pop();
-  logEl.textContent = lines.join("\n") + "\n";
-
+function initBoard() {
+  board = JSON.parse(JSON.stringify(startPosition));
   renderBoard();
-});
+  setupUI();
+}
 
 initBoard();
-renderBoard();
+
+document.getElementById("chessboard").addEventListener("click", onSquareClick);
