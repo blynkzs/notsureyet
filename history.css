@@ -4,7 +4,6 @@
   color: #ddd;
 }
 
-
 .history-section .intro {
   font-size: 1.1rem;
   line-height: 1.6;
@@ -13,18 +12,20 @@
 
 
 .images-and-timeline {
-  display: flex;
+  display: flex !important; 
   gap: 40px;
   align-items: flex-start;
   max-width: 900px;
 }
 
+
 .chess-images {
-  flex: 0 0 220px;
+  flex: 0 0 220px; 
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
+
 
 .chess-images figure {
   margin: 0;
@@ -35,7 +36,7 @@
   width: 100%;
   height: auto;
   border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .chess-images figcaption {
@@ -48,36 +49,8 @@
 .timeline {
   flex: 1 1 600px;
   border-left: 3px solid #f0a500;
-  margin-left: 0;
   padding-left: 20px;
+  margin-left: 0;
   overflow-wrap: break-word;
-  word-wrap: break-word;
   word-break: break-word;
-}
-
-.timeline-item {
-  margin-bottom: 25px;
-  position: relative;
-}
-
-.timeline-item::before {
-  content: '';
-  position: absolute;
-  left: -11px;
-  top: 5px;
-  width: 18px;
-  height: 18px;
-  background-color: #f0a500;
-  border-radius: 50%;
-  border: 3px solid #222;
-}
-
-.timeline-item h3 {
-  margin: 0 0 6px 0;
-  color: #ffcc33;
-}
-
-.timeline-item p {
-  margin: 0;
-  color: #eee;
 }
