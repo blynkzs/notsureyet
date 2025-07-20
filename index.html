@@ -6,10 +6,28 @@
   <title>Chess Game - Home</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    .layout-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .sidebar-container {
+      min-width: 200px;
+    }
+
+    .main-section {
+      flex: 1;
+      min-width: 300px;
+      max-width: 700px;
+    }
+
     .welcome {
       text-align: center;
       margin: 2rem auto;
-      max-width: 600px;
     }
 
     .chess-links {
@@ -17,7 +35,6 @@
       padding: 1rem;
       background-color: #2a2a2a;
       border-radius: 10px;
-      max-width: 700px;
     }
 
     .chess-links h3 {
@@ -48,28 +65,30 @@
   </header>
 
   <main class="home-content">
-    <div class="sidebar-container" id="sidebar-container"></div>
+    <div class="layout-row">
+      <div class="sidebar-container" id="sidebar-container"></div>
 
-    <section class="welcome">
-      <h2>Welcome to the Chess Zone!</h2>
-      <p>Whether you're just starting or deep into strategy books, this is your place to play, learn, and have fun with chess.</p>
-    </section>
+      <div class="main-section">
+        <section class="welcome">
+          <h2>Welcome to this Chess Website or something</h2>
+          <p>maybe play chess and learn about stuff</p>
+        </section>
 
-    
+        <p> please help me im bad at this</p>
 
-    <section class="chess-links">
-      <h3>Explore the World of Chess</h3>
-      <ul>
-        <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – Play games, solve puzzles, and follow top players</li>
-        <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – Free, open-source chess with no ads</li>
-        <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – Fun, fast-paced chess lessons</li>
-        <li><a href="https://www.youtube.com/@agadmator" target="_blank">Agadmator’s Chess Channel</a> – Detailed classic and current game recaps</li>
-        <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – Grandmaster & chess streamer</li>
-        <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – Info, games, and news from a chess legend</li>
-        <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
-      </ul>
-    </section>
-    <p> please help me im bad at this</p>
+        <section class="chess-links">
+          <h3>some chess things</h3>
+          <ul>
+            <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
+            <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
+            <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
+            <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
+            <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
+            <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
+          </ul>
+        </section>
+      </div>
+    </div>
   </main>
 
   <script>
