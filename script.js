@@ -1,3 +1,4 @@
+<script>
 const unicodePieces = {
   P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔",
   p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚"
@@ -9,9 +10,9 @@ let draggingPiece = null;
 let isDragging = false;
 let legalMoves = [];
 let turn = 'white';
+let moveLog = [];
 
-let offsetX = 0, offsetY = 0;
-let dragTimeout = null;
+let offsetX = 30, offsetY = 30;
 
 const startPosition = [
   ["r","n","b","q","k","b","n","r"],
@@ -150,15 +151,13 @@ function onMouseDown(e) {
   legalMoves = getLegalMoves(x, y, piece);
   highlightLegalMoves(legalMoves);
 
-  // Drag starts after 200ms hold
-  dragTimeout = setTimeout(() => {
-    isDragging = true;
-    draggingPiece = pieceEl.cloneNode(true);
-    draggingPiece.classList.add('dragging-piece');
-    document.body.appendChild(draggingPiece);
-    offsetX = e.offsetX;
-    offsetY = e.offsetY;
-  }, 200);
+  isDragging = true;
+  draggingPiece = pieceEl.cloneNode(true);
+  draggingPiece.classList.add('dragging-piece');
+  draggingPiece.style.position = "absolute";
+  draggingPiece.style.pointerEvents = "none";
+  draggingPiece.style.zIndex = 1000;
+  document.body.appendChild(draggingPiece);
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
@@ -172,16 +171,25 @@ function onMouseMove(e) {
 }
 
 function onMouseUp(e) {
-  clearTimeout(dragTimeout);
-
   const boardRect = document.getElementById("chessboard").getBoundingClientRect();
   const x = Math.floor((e.clientX - boardRect.left) / (boardRect.width / 8));
   const y = Math.floor((e.clientY - boardRect.top) / (boardRect.height / 8));
 
   const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
   if (isValid && selectedPiece) {
+    moveLog.push({
+      from: { x: selectedPiece.x, y: selectedPiece.y },
+      to: { x, y },
+      piece: selectedPiece.piece,
+      captured: board[y][x]
+    });
+
     board[y][x] = selectedPiece.piece;
     board[selectedPiece.y][selectedPiece.x] = "";
+
+    document.getElementById("moveLog").innerText +=
+      `${selectedPiece.piece} ${String.fromCharCode(97 + selectedPiece.x)}${8 - selectedPiece.y} → ${String.fromCharCode(97 + x)}${8 - y}\n`;
+
     turn = turn === 'white' ? 'black' : 'white';
   }
 
@@ -201,5 +209,22 @@ function initBoard() {
   renderBoard();
 }
 
-initBoard();
 document.addEventListener("mousedown", onMouseDown);
+
+document.getElementById("undoBtn").addEventListener("click", () => {
+  const last = moveLog.pop();
+  if (!last) return;
+
+  board[last.from.y][last.from.x] = last.piece;
+  board[last.to.y][last.to.x] = last.captured || "";
+  turn = turn === 'white' ? 'black' : 'white';
+  document.getElementById("moveLog").innerText = "";
+  moveLog.forEach(m => {
+    document.getElementById("moveLog").innerText +=
+      `${m.piece} ${String.fromCharCode(97 + m.from.x)}${8 - m.from.y} → ${String.fromCharCode(97 + m.to.x)}${8 - m.to.y}\n`;
+  });
+  renderBoard();
+});
+
+initBoard();
+</script>
