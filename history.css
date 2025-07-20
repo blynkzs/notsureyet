@@ -1,28 +1,36 @@
-
 .history-section {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
 }
+
 .history-section h2 {
   margin-top: 40px;
   margin-bottom: 15px;
   color: #f0a500;
 }
+
 .history-section p {
   line-height: 1.6;
   font-size: 1.1rem;
   margin-bottom: 20px;
   color: #ddd;
 }
+
 .timeline {
   border-left: 3px solid #f0a500;
-  margin-left: 20px;
+  margin-left: 0;
   padding-left: 20px;
+  flex-grow: 1;
 }
+
 .timeline-item {
   margin-bottom: 25px;
   position: relative;
 }
+
 .timeline-item::before {
   content: '';
   position: absolute;
@@ -34,11 +42,39 @@
   border-radius: 50%;
   border: 3px solid #222;
 }
+
 .timeline-item h3 {
   margin: 0 0 6px 0;
   color: #ffcc33;
 }
+
 .timeline-item p {
   margin: 0;
   color: #eee;
+}
+
+.chess-images {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 220px;
+  flex-shrink: 0;
+}
+
+.chess-images figure {
+  margin: 0;
+  text-align: center;
+}
+
+.chess-images img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.chess-images figcaption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #ddd;
 }
