@@ -4,31 +4,72 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chess Game - Home</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
-    
-    .main-layout {
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #111;
+      color: white;
+    }
+    body {
       display: flex;
-      align-items: flex-start; 
-      height: 100%; 
+      flex-direction: column;
+      min-height: 100vh;
     }
 
+   
+    .header {
+      background-color: #111;
+      padding: 1rem 2rem;
+      flex-shrink: 0; 
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .header .logo {
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+    }
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: normal;
+    }
+
+
+    .main-layout {
+      display: flex;
+      flex-grow: 1; 
+      align-items: flex-start;
+      overflow: auto; 
+      background-color: #222;
+    }
+
+  
     .sidebar-container {
       width: 240px;
       flex-shrink: 0;
-    
-      background-color: #222; 
+      background-color: #333; 
       padding: 1rem;
       box-sizing: border-box;
+      color: white;
+      overflow-y: auto;
     }
 
-    
     .home-content {
       flex-grow: 1;
       padding: 2rem;
       max-width: 900px;
       box-sizing: border-box;
-      margin-left: 0; 
+      overflow-y: auto;
+      background-color: #1a1a1a;
+      margin-left: 0;
     }
 
     .welcome {
