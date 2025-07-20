@@ -17,47 +17,42 @@
       color: white;
     }
     body {
-      display: flex;
       min-height: 100vh;
-      flex-direction: row;
     }
 
-    .page-content {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-y: auto;
-    }
-
-    .header {
+    header {
       width: 100%;
+      background-color: #111;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 1rem;
       padding: 1.5rem 2rem;
-      background-color: #111;
       border-bottom: 1px solid #333;
-      flex-shrink: 0;
     }
-    .header .logo {
+    header .logo {
       height: 40px;
       width: 40px;
       object-fit: contain;
     }
-    .header h1 {
+    header h1 {
       font-size: 1.5rem;
       font-weight: normal;
       white-space: nowrap;
     }
 
-    .main-layout {
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 80px); 
+    }
+
+
+    .main-content {
       flex-grow: 1;
       padding: 2rem 1rem;
-      width: 100%;
       max-width: 900px;
-      margin: 0 auto;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .welcome {
@@ -94,35 +89,33 @@
   </style>
 </head>
 <body>
-  <div id="sidebar-container"></div>
+  <header>
+    <img src="logo.jpg" alt="Chess Logo" class="logo" />
+    <h1>Maybe a Chess Website or Something</h1>
+  </header>
 
-  <div class="page-content">
-    <header class="header">
-      <img src="logo.jpg" alt="Chess Logo" class="logo" />
-      <h1>Maybe a Chess Website or Something</h1>
-    </header>
+  <div class="layout">
+    <div class="sidebar-container" id="sidebar-container"></div>
 
-    <div class="main-layout">
-      <main>
-        <section class="welcome">
-          <h2>Welcome to this Chess Website or something</h2>
-          <p>maybe play chess and learn about stuff</p>
-        </section>
+    <div class="main-content">
+      <section class="welcome">
+        <h2>Welcome to this Chess Website or something</h2>
+        <p>maybe play chess and learn about stuff</p>
+      </section>
 
-        <section class="chess-links">
-          <h3>some chess things</h3>
-          <ul>
-            <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
-            <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
-            <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
-            <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
-            <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
-            <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
-          </ul>
-        </section>
+      <section class="chess-links">
+        <h3>some chess things</h3>
+        <ul>
+          <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
+          <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
+          <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
+          <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
+          <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
+          <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
+        </ul>
+      </section>
 
-        <p>please help me im bad at this</p>
-      </main>
+      <p>please help me im bad at this</p>
     </div>
   </div>
 
