@@ -6,14 +6,31 @@
   <title>Chess Game - Home</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
+    
+    .main-layout {
+      display: flex;
+      align-items: flex-start; 
+      height: 100%; 
+    }
+
+    .sidebar-container {
+      width: 240px;
+      flex-shrink: 0;
+    
+      background-color: #222; 
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    
     .home-content {
-      display: inline-block;
-      vertical-align: top;
-      width: calc(100% - 240px);
+      flex-grow: 1;
       padding: 2rem;
       max-width: 900px;
       box-sizing: border-box;
       margin-left: 0; 
+    }
+
     .welcome {
       text-align: center;
       margin-bottom: 2rem;
@@ -52,30 +69,31 @@
     <img src="logo.jpg" alt="Chess Logo" class="logo" />
     <h1>Maybe a Chess Website or Something</h1>
   </header>
-<div class="sidebar-container" id="sidebar-container"></div>
-  
-  <main class="home-content">
 
-    <section class="welcome">
-      <h2>Welcome to this Chess Website or something</h2>
-      <p>maybe play chess and learn about stuff</p>
-    </section>
+  <div class="main-layout">
+    <div class="sidebar-container" id="sidebar-container"></div>
 
-    
+    <main class="home-content">
+      <section class="welcome">
+        <h2>Welcome to this Chess Website or something</h2>
+        <p>maybe play chess and learn about stuff</p>
+      </section>
 
-    <section class="chess-links">
-      <h3>some chess things</h3>
-      <ul>
-        <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
-        <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
-        <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
-        <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
-        <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
-        <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
-      </ul>
-    </section>
-    <p> please help me im bad at this</p>
-  </main>
+      <section class="chess-links">
+        <h3>some chess things</h3>
+        <ul>
+          <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
+          <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
+          <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
+          <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
+          <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
+          <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
+        </ul>
+      </section>
+
+      <p> please help me im bad at this</p>
+    </main>
+  </div>
 
   <script>
     fetch('sidebar.html')
