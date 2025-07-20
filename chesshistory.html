@@ -9,22 +9,20 @@
 </head>
 <body>
   <header>
-        <h1>Some Chess History</h1>
-      </header>
+    <h1>Some Chess History</h1>
+  </header>
   <div class="layout">
 
     <div class="sidebar-container" id="sidebar-container"></div>
 
-
     <div class="main-content">
-      
-
       <div class="content-area history-section">
         <p>
           Chess is one of the oldest and most popular board games in the world, with a history spanning over a thousand years. It has evolved from early strategic games played in India to the modern version we know today.
         </p>
 
         <div class="timeline">
+          <!-- timeline items here, unchanged -->
           <div class="timeline-item">
             <h3>6th Century AD - Origins</h3>
             <p>
@@ -67,10 +65,26 @@
             </p>
           </div>
         </div>
+
+        <div class="chess-images">
+          <figure>
+            <img src="chaturanga.jpg" alt="Chaturanga - the original chess game" />
+            <figcaption>Chaturanga - The original chess game, dating back to the 6th century.</figcaption>
+          </figure>
+
+          <figure>
+            <img src="first.jpeg" alt="First Chess Tournament" />
+            <figcaption>The first official chess tournament, marking a key moment in organized chess competition.</figcaption>
+          </figure>
+
+          <figure>
+            <img src="deepblue.jpeg" alt="Deep Blue defeating the chess champion" />
+            <figcaption>Deep Blue defeating the world chess champion, a milestone in computer chess history.</figcaption>
+          </figure>
+        </div>
       </div>
     </div> 
   </div> 
-
 
   <script>
     fetch('sidebar.html')
