@@ -18,17 +18,16 @@
       color: white;
     }
 
-    body {
+    .page-wrapper {
       display: flex;
       min-height: 100vh;
     }
-    
+
     .content-area {
       flex-grow: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
     }
 
     .header {
@@ -53,6 +52,14 @@
       white-space: nowrap;
     }
 
+    .main-layout {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      padding: 2rem;
+    }
+
     .home-content {
       width: 100%;
       max-width: 900px;
@@ -60,7 +67,6 @@
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
-      margin-top: 2rem;
     }
 
     .welcome {
@@ -94,59 +100,50 @@
     .chess-links a:hover {
       text-decoration: underline;
     }
-
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      
-      .content-area {
-        padding: 1rem;
-      }
-
-      .home-content {
-        margin-top: 1rem;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Sidebar loaded normally -->
-  <div class="sidebar" id="sidebar"></div>
+  <div class="page-wrapper">
+  
+    <div id="sidebar-container"></div>
 
-  <div class="content-area">
-    <header class="header">
-      <img src="logo.jpg" alt="Chess Logo" class="logo" />
-      <h1>Maybe a Chess Website or Something</h1>
-    </header>
+  
+    <div class="content-area">
+      <header class="header">
+        <img src="logo.jpg" alt="Chess Logo" class="logo" />
+        <h1>Maybe a Chess Website or Something</h1>
+      </header>
 
-    <main class="home-content">
-      <section class="welcome">
-        <h2>Welcome to this Chess Website or something</h2>
-        <p>maybe play chess and learn about stuff</p>
-      </section>
+      <div class="main-layout">
+        <main class="home-content">
+          <section class="welcome">
+            <h2>Welcome to this Chess Website or something</h2>
+            <p>maybe play chess and learn about stuff</p>
+          </section>
 
-      <section class="chess-links">
-        <h3>some chess things</h3>
-        <ul>
-          <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
-          <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
-          <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
-          <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
-          <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
-          <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
-        </ul>
-      </section>
+          <section class="chess-links">
+            <h3>some chess things</h3>
+            <ul>
+              <li><a href="https://www.chess.com" target="_blank">Chess.com</a> – play some games and solve puzzles</li>
+              <li><a href="https://lichess.org" target="_blank">Lichess.org</a> – open-source chess with no ads</li>
+              <li><a href="https://www.youtube.com/@GothamChess" target="_blank">GothamChess (Levy Rozman)</a> – teaches some chess</li>
+              <li><a href="https://www.youtube.com/@GMHikaru" target="_blank">Hikaru Nakamura</a> – grandmaster & chess streamer</li>
+              <li><a href="https://magnuscarlsen.com/" target="_blank">Magnus Carlsen Official Site</a> – info, games, and news from a chess legend</li>
+              <li><a href="https://www.fide.com/" target="_blank">FIDE.com</a> – Official site of the International Chess Federation</li>
+            </ul>
+          </section>
 
-      <p>please help me im bad at this</p>
-    </main>
+          <p>please help me im bad at this</p>
+        </main>
+      </div>
+    </div>
   </div>
 
   <script>
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
-        document.getElementById('sidebar').innerHTML = html;
+        document.getElementById('sidebar-container').innerHTML = html;
       });
   </script>
 </body>
