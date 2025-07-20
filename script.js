@@ -4,11 +4,14 @@ const unicodePieces = {
 };
 
 let board = [];
-let selectedPiece = null;
+let selectedPiece = null; // {x, y, piece}
 let legalMoves = [];
 let turn = 'white';
 
 let history = [];
+
+let draggingPieceEl = null;
+let offsetX = 0, offsetY = 0;
 
 const startPosition = [
   ["r","n","b","q","k","b","n","r"],
@@ -59,18 +62,17 @@ function renderBoard() {
       square.style.cursor = "pointer";
       square.style.position = "relative";
 
-      // Highlight selected square
-      if (selectedPiece && selectedPiece.x === x && selectedPiece.y === y) {
-        square.style.outline = "3px solid yellow";
-      }
-
-      // Highlight legal moves squares
-      if (legalMoves.some(m => m[0] === x && m[1] === y)) {
-        square.style.outline = "3px solid limegreen";
-      }
-
       const piece = board[y][x];
-      if (piece) {
+
+      // Hide the piece in the original square when dragging to avoid duplicates
+      if (
+        selectedPiece &&
+        draggingPieceEl &&
+        selectedPiece.x === x &&
+        selectedPiece.y === y
+      ) {
+        // Don't render piece here while dragging
+      } else if (piece) {
         const pieceEl = document.createElement("div");
         pieceEl.className = "piece";
         pieceEl.textContent = unicodePieces[piece];
@@ -80,9 +82,22 @@ function renderBoard() {
         pieceEl.style.userSelect = "none";
         square.appendChild(pieceEl);
       }
+
       boardEl.appendChild(square);
     }
   }
+
+  clearHighlights();
+
+  // Highlight legal moves with dots
+  legalMoves.forEach(([mx, my]) => {
+    const square = document.querySelector(`.square[data-x='${mx}'][data-y='${my}']`);
+    if (square) {
+      const dot = document.createElement("div");
+      dot.className = "highlight";
+      square.appendChild(dot);
+    }
+  });
 }
 
 function getLegalMoves(x, y, piece) {
@@ -102,7 +117,7 @@ function getLegalMoves(x, y, piece) {
       const target = board[ny][nx];
       if (!target || (isWhite !== isWhitePiece(target))) {
         moves.push([nx, ny]);
-        return !target;
+        return !target; // continue sliding only if empty
       }
     }
     return false;
@@ -111,15 +126,16 @@ function getLegalMoves(x, y, piece) {
   if (piece.toUpperCase() === 'P') {
     const dir = isWhite ? -1 : 1;
     const startRow = isWhite ? 6 : 1;
+    // Forward 1
     if (y + dir >= 0 && y + dir < 8 && !board[y + dir][x]) moves.push([x, y + dir]);
-    if (y === startRow && !board[y + dir][x] && !board[y + 2 * dir][x]) moves.push([x, y + 2 * dir]);
+    // Forward 2 from start position
+    if (y === startRow && !board[y + dir][x] && !board[y + 2*dir][x]) moves.push([x, y + 2*dir]);
+    // Captures
     for (let dx of [-1, 1]) {
       const nx = x + dx, ny = y + dir;
       if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
         const target = board[ny][nx];
-        if (target && isWhite !== isWhitePiece(target)) {
-          moves.push([nx, ny]);
-        }
+        if (target && isWhite !== isWhitePiece(target)) moves.push([nx, ny]);
       }
     }
   } else if (piece.toUpperCase() === 'N') {
@@ -157,7 +173,7 @@ function moveToNotation(x1, y1, x2, y2, piece) {
 }
 
 function addMoveToLog(moveNotation) {
-  const log = document.getElementById("move-log");
+  const log = document.getElementById("move-log-container");
   if (!log) return;
 
   let moveNumber = Math.floor(history.length / 2) + 1;
@@ -177,7 +193,6 @@ function addMoveToLog(moveNotation) {
       log.appendChild(entry);
     }
   }
-
   log.scrollTop = log.scrollHeight;
 }
 
@@ -190,7 +205,7 @@ function undoMove() {
 
   renderBoard();
 
-  const log = document.getElementById("move-log");
+  const log = document.getElementById("move-log-container");
   if (log) {
     if (history.length === 0) {
       log.innerHTML = "";
@@ -204,27 +219,18 @@ function undoMove() {
 
   selectedPiece = null;
   legalMoves = [];
+
+  if (draggingPieceEl) {
+    draggingPieceEl.remove();
+    draggingPieceEl = null;
+  }
 }
 
-function setupUI() {
-  if (!document.getElementById("move-log")) {
-    const container = document.createElement("div");
-    container.id = "move-log";
-    container.style.marginTop = "10px";
-    container.style.maxHeight = "200px";
-    container.style.overflowY = "auto";
-    container.style.backgroundColor = "#222";
-    container.style.color = "white";
-    container.style.padding = "5px";
-    container.style.fontFamily = "monospace";
-    container.style.fontSize = "14px";
-    container.style.border = "1px solid #555";
-    container.style.width = "500px";
-    container.style.userSelect = "none";
+function clearHighlights() {
+  document.querySelectorAll('.highlight').forEach(el => el.remove());
+}
 
-    document.body.appendChild(container);
-  }
-
+function setupUndoButton() {
   if (!document.getElementById("undo-btn")) {
     const btn = document.createElement("button");
     btn.id = "undo-btn";
@@ -239,7 +245,15 @@ function setupUI() {
   }
 }
 
-// Handle clicks on the board squares
+// Updates dragging piece position following mouse
+function onMouseMove(e) {
+  if (draggingPieceEl) {
+    draggingPieceEl.style.left = e.pageX - offsetX + "px";
+    draggingPieceEl.style.top = e.pageY - offsetY + "px";
+  }
+}
+
+// When user clicks on board
 function onSquareClick(e) {
   const target = e.target.closest(".square");
   if (!target) return;
@@ -248,28 +262,31 @@ function onSquareClick(e) {
   const y = +target.dataset.y;
   const piece = board[y][x];
 
-  // If no piece selected yet
+  // If no piece selected yet, select if piece belongs to current player
   if (!selectedPiece) {
-    if (!piece) return; // clicked empty square, ignore
-    if ((turn === 'white' && !isWhitePiece(piece)) || (turn === 'black' && isWhitePiece(piece))) return; // Not your piece
+    if (!piece) return; 
+    if ((turn === 'white' && !isWhitePiece(piece)) || (turn === 'black' && isWhitePiece(piece))) return;
 
     selectedPiece = { x, y, piece };
     legalMoves = getLegalMoves(x, y, piece);
+    createDraggingPiece(e, piece);
     renderBoard();
+    document.addEventListener("mousemove", onMouseMove);
     return;
   }
 
-  // If clicking the same square again -> deselect
+  // If clicked on same piece square deselect
   if (selectedPiece.x === x && selectedPiece.y === y) {
     selectedPiece = null;
     legalMoves = [];
+    removeDraggingPiece();
     renderBoard();
+    document.removeEventListener("mousemove", onMouseMove);
     return;
   }
 
-  // If clicked on a legal move square, move the piece
+  // If clicked a legal move square, move the piece
   if (legalMoves.some(m => m[0] === x && m[1] === y)) {
-    // Save current state to history for undo
     history.push({
       board: JSON.parse(JSON.stringify(board)),
       turn,
@@ -285,20 +302,54 @@ function onSquareClick(e) {
 
     selectedPiece = null;
     legalMoves = [];
+    removeDraggingPiece();
     renderBoard();
+    document.removeEventListener("mousemove", onMouseMove);
     return;
   }
 
-  // Otherwise, clicked an invalid square -> deselect
+  // Clicked invalid square — deselect piece
   selectedPiece = null;
   legalMoves = [];
+  removeDraggingPiece();
   renderBoard();
+  document.removeEventListener("mousemove", onMouseMove);
+}
+
+function createDraggingPiece(e, piece) {
+  removeDraggingPiece();
+  draggingPieceEl = document.createElement("div");
+  draggingPieceEl.className = "dragging-piece";
+  draggingPieceEl.textContent = unicodePieces[piece];
+  draggingPieceEl.style.position = "absolute";
+  draggingPieceEl.style.pointerEvents = "none";
+  draggingPieceEl.style.fontSize = "40px";
+  draggingPieceEl.style.lineHeight = "60px";
+  draggingPieceEl.style.width = "60px";
+  draggingPieceEl.style.height = "60px";
+  draggingPieceEl.style.textAlign = "center";
+  draggingPieceEl.style.userSelect = "none";
+  draggingPieceEl.style.zIndex = 1000;
+  document.body.appendChild(draggingPieceEl);
+
+  offsetX = e.offsetX;
+  offsetY = e.offsetY;
+
+  draggingPieceEl.style.left = e.pageX - offsetX + "px";
+  draggingPieceEl.style.top = e.pageY - offsetY + "px";
+}
+
+function removeDraggingPiece() {
+  if (draggingPieceEl) {
+    draggingPieceEl.remove();
+    draggingPieceEl = null;
+  }
 }
 
 function initBoard() {
   board = JSON.parse(JSON.stringify(startPosition));
   renderBoard();
-  setupUI();
+  setupUndoButton();
 }
 
 initBoard();
