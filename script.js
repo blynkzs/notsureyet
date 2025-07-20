@@ -5,12 +5,9 @@ const unicodePieces = {
 
 let board = [];
 let selectedPiece = null;
-let isDragging = false;
 let legalMoves = [];
 let turn = 'white';
 let moveHistory = [];
-
-let offsetX = 0, offsetY = 0;
 let draggingPiece = null;
 
 const startPosition = [
@@ -86,26 +83,22 @@ function getLegalMoves(x, y, piece) {
       const target = board[ny][nx];
       if (!target || (isWhite !== isWhitePiece(target))) {
         moves.push([nx, ny]);
-        return !target; // Continue in sliding moves only if empty
+        return !target; // Continue sliding moves only if empty
       }
     }
     return false;
   }
 
   if (piece.toUpperCase() === 'P') {
-    // Pawns move
     const dir = isWhite ? -1 : 1;
     const startRow = isWhite ? 6 : 1;
 
-    // One square forward
     if (y + dir >= 0 && y + dir < 8 && !board[y + dir][x]) {
       moves.push([x, y + dir]);
-      // Two squares forward from start
       if (y === startRow && !board[y + 2 * dir][x]) {
         moves.push([x, y + 2 * dir]);
       }
     }
-    // Captures
     for (let dx of [-1, 1]) {
       const nx = x + dx, ny = y + dir;
       if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
@@ -167,30 +160,96 @@ function logMove(fromX, fromY, toX, toY, piece, captured) {
   logContainer.scrollTop = logContainer.scrollHeight;
 }
 
+function updateCapturedPieces(capturedPiece) {
+  if (!capturedPiece) return;
+
+  const isCapturedWhite = isWhitePiece(capturedPiece);
+  const containerId = isCapturedWhite ? 'white-captured-pieces' : 'black-captured-pieces';
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const capPiece = document.createElement('span');
+  capPiece.textContent = unicodePieces[capturedPiece];
+  capPiece.style.fontSize = "30px";
+  capPiece.style.margin = "2px";
+  container.appendChild(capPiece);
+}
+
+function isInCheck(color) {
+  const kingPiece = color === 'white' ? 'K' : 'k';
+  let kingX = -1, kingY = -1;
+
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      if (board[y][x] === kingPiece) {
+        kingX = x;
+        kingY = y;
+        break;
+      }
+    }
+    if (kingX !== -1) break;
+  }
+  if (kingX === -1) return false;
+
+  const opponentColor = color === 'white' ? 'black' : 'white';
+
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      const piece = board[y][x];
+      if (!piece) continue;
+      if ((opponentColor === 'white' && isWhitePiece(piece)) ||
+          (opponentColor === 'black' && !isWhitePiece(piece))) {
+        const moves = getLegalMoves(x, y, piece);
+        for (const [mx, my] of moves) {
+          if (mx === kingX && my === kingY) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function showCheckStatus() {
+  const statusEl = document.getElementById('check-status');
+  if (!statusEl) return;
+  if (isInCheck(turn)) {
+    statusEl.textContent = turn.charAt(0).toUpperCase() + turn.slice(1) + " is in check!";
+    statusEl.style.color = 'red';
+  } else {
+    statusEl.textContent = '';
+  }
+}
+
 function undoMove() {
   if (moveHistory.length === 0) return;
   const lastMove = moveHistory.pop();
 
-  // Revert board state
   board[lastMove.fromY][lastMove.fromX] = lastMove.piece;
   board[lastMove.toY][lastMove.toX] = lastMove.captured || "";
 
   turn = lastMove.turn;
 
-  // Clear move log container and reprint moves except last
   const logContainer = document.getElementById('move-log-container');
   logContainer.innerHTML = '';
   for (const move of moveHistory) {
     logMove(move.fromX, move.fromY, move.toX, move.toY, move.piece, move.captured);
   }
 
+  const whiteCaptured = document.getElementById('white-captured-pieces');
+  const blackCaptured = document.getElementById('black-captured-pieces');
+  whiteCaptured.innerHTML = '';
+  blackCaptured.innerHTML = '';
+  for (const move of moveHistory) {
+    if (move.captured) updateCapturedPieces(move.captured);
+  }
+
   renderBoard();
+  showCheckStatus();
 }
 
 function onSquareClick(e) {
-  // If clicking on a piece during dragging, ignore
-  if (isDragging) return;
-
   const target = e.target.closest('.square');
   if (!target) return;
 
@@ -198,37 +257,50 @@ function onSquareClick(e) {
   const y = +target.dataset.y;
   const piece = board[y][x];
 
-  // Clicking own piece to select
   if (piece && ((turn === 'white' && isWhitePiece(piece)) || (turn === 'black' && !isWhitePiece(piece)))) {
     selectedPiece = { x, y, piece };
     legalMoves = getLegalMoves(x, y, piece);
     highlightLegalMoves(legalMoves);
     createDraggingPiece(piece, x, y, e.pageX, e.pageY);
   } else if (selectedPiece) {
-    // Try to move selected piece here
     const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
     if (isValid) {
-      // Save move history for undo
-      moveHistory.push({
-        fromX: selectedPiece.x,
-        fromY: selectedPiece.y,
-        toX: x,
-        toY: y,
-        piece: selectedPiece.piece,
-        captured: board[y][x],
-        turn: turn
-      });
+      // Simulate move for check validation
+      const savedFrom = board[selectedPiece.y][selectedPiece.x];
+      const savedTo = board[y][x];
 
       board[y][x] = selectedPiece.piece;
       board[selectedPiece.y][selectedPiece.x] = "";
-      turn = turn === 'white' ? 'black' : 'white';
-      logMove(selectedPiece.x, selectedPiece.y, x, y, selectedPiece.piece, moveHistory[moveHistory.length-1].captured);
+
+      if (isInCheck(turn)) {
+        // Undo move, illegal because king is left in check
+        board[selectedPiece.y][selectedPiece.x] = savedFrom;
+        board[y][x] = savedTo;
+        alert("Illegal move: you cannot move into or leave your king in check!");
+      } else {
+        moveHistory.push({
+          fromX: selectedPiece.x,
+          fromY: selectedPiece.y,
+          toX: x,
+          toY: y,
+          piece: selectedPiece.piece,
+          captured: savedTo,
+          turn: turn
+        });
+
+        if (savedTo) updateCapturedPieces(savedTo);
+
+        turn = turn === 'white' ? 'black' : 'white';
+        logMove(selectedPiece.x, selectedPiece.y, x, y, selectedPiece.piece, savedTo);
+      }
+
+      selectedPiece = null;
+      legalMoves = [];
+      clearHighlights();
+      removeDraggingPiece();
+      renderBoard();
+      showCheckStatus();
     }
-    selectedPiece = null;
-    legalMoves = [];
-    clearHighlights();
-    removeDraggingPiece();
-    renderBoard();
   }
 }
 
@@ -275,12 +347,26 @@ function initBoard() {
   clearHighlights();
   renderBoard();
 
-  // Clear move log container
   const logContainer = document.getElementById('move-log-container');
   logContainer.innerHTML = '';
+  let logLabel = document.getElementById('move-log-label');
+  if (!logLabel) {
+    logLabel = document.createElement('div');
+    logLabel.id = 'move-log-label';
+    logLabel.textContent = 'Move Log';
+    logLabel.style.fontWeight = 'bold';
+    logLabel.style.marginBottom = '6px';
+    logContainer.parentNode.insertBefore(logLabel, logContainer);
+  }
+
+  const whiteCaptured = document.getElementById('white-captured-pieces');
+  const blackCaptured = document.getElementById('black-captured-pieces');
+  if(whiteCaptured) whiteCaptured.innerHTML = '';
+  if(blackCaptured) blackCaptured.innerHTML = '';
+
+  showCheckStatus();
 }
 
-// Create Undo button and hook
 function createUndoButton() {
   let undoBtn = document.getElementById('undo-button');
   if (!undoBtn) {
