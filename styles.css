@@ -240,3 +240,22 @@ header {
   position: absolute;
   z-index: 1000;
 }
+
+.piece[data-piece="P"],
+.piece[data-piece="R"],
+.piece[data-piece="N"],
+.piece[data-piece="B"],
+.piece[data-piece="Q"],
+.piece[data-piece="K"] {
+  color: white;
+}
+
+
+.piece[data-piece="p"],
+.piece[data-piece="r"],
+.piece[data-piece="n"],
+.piece[data-piece="b"],
+.piece[data-piece="q"],
+.piece[data-piece="k"] {
+  color: black;
+}
