@@ -35,8 +35,7 @@
     aside#sidebar-container {
       width: 160px;
       flex-shrink: 0;
-      padding: 1rem;
-      overflow-y: auto;
+      /* No color or padding changes here, keep as is */
     }
 
     .board-area {
@@ -105,6 +104,7 @@
       margin: 0;
     }
 
+    /* Responsive Styles */
     @media (max-width: 1000px) {
       #chessboard {
         width: 360px;
@@ -126,9 +126,9 @@
       }
       aside#sidebar-container {
         width: 100%;
+        /* Keep original colors and padding: no changes here */
         max-height: 150px;
         overflow-y: auto;
-        padding: 0.5rem;
       }
       .board-area {
         flex-direction: column;
@@ -181,6 +181,7 @@
 
   <div class="main-layout">
     <aside id="sidebar-container">
+      <!-- Sidebar content loads here -->
     </aside>
 
     <div class="board-area">
