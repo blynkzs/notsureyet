@@ -10,12 +10,14 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     html, body {
       height: 100%;
       font-family: Arial, sans-serif;
       background-color: #111;
       color: white;
     }
+
     body {
       min-height: 100vh;
     }
@@ -30,11 +32,11 @@
     .header-content {
       display: flex;
       align-items: center;
+      justify-content: center; 
       gap: 1rem;
-      justify-content: flex-start;
     }
 
-    header .logo {
+    .logo {
       height: 40px;
       width: 40px;
     }
@@ -47,7 +49,7 @@
 
     .layout {
       display: flex;
-      min-height: calc(100vh - 80px); 
+      min-height: calc(100vh - 80px);
     }
 
     .main-content {
