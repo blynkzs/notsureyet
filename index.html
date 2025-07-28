@@ -20,23 +20,25 @@
       min-height: 100vh;
     }
 
-header {
-  width: 100%;
-  background-color: #111;
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #333;
-}
+    header {
+      width: 100%;
+      background-color: #111;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #333;
+    }
 
-.header-content {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: flex-start;
+    }
+
     header .logo {
       height: 40px;
       width: 40px;
-    
     }
+
     header h1 {
       font-size: 1.5rem;
       font-weight: normal;
@@ -47,7 +49,6 @@ header {
       display: flex;
       min-height: calc(100vh - 80px); 
     }
-
 
     .main-content {
       flex-grow: 1;
@@ -91,12 +92,12 @@ header {
   </style>
 </head>
 <body>
- <header>
-  <div class="header-content">
-    <img src="logo.jpg" alt="Chess Logo" class="logo" />
-    <h1>Maybe a Chess Website or Something</h1>
-  </div>
-</header>
+  <header>
+    <div class="header-content">
+      <img src="logo.jpg" alt="Chess Logo" class="logo" />
+      <h1>Maybe a Chess Website or Something</h1>
+    </div>
+  </header>
 
   <div class="layout">
     <div class="sidebar-container" id="sidebar-container"></div>
