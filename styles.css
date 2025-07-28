@@ -63,8 +63,7 @@ header {
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  width: 100%;
-  max-width: 100vmin;
+  width: min(480px, 90vmin);
   aspect-ratio: 1 / 1;
   border: 2px solid #333;
   background-color: #333;
@@ -74,7 +73,7 @@ header {
 .square {
   aspect-ratio: 1 / 1;
   width: 100%;
-  font-size: clamp(16px, 4vw, 32px);
+  font-size: clamp(24px, 5vmin, 40px);
   display: flex;
   justify-content: center;
   align-items: center;
