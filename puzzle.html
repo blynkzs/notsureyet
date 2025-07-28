@@ -18,13 +18,13 @@
     }
     .layout {
       display: flex;
+      min-height: 100vh;
     }
     .sidebar-container {
       width: 200px;
       background: #f2f2f2;
       padding: 1em;
       box-sizing: border-box;
-      height: 100vh;
       overflow-y: auto;
     }
     .main-content {
@@ -36,26 +36,7 @@
       margin: 0 auto;
     }
     #chessboard {
-      display: grid;
-      grid-template-columns: repeat(8, 50px);
-      grid-template-rows: repeat(8, 50px);
-      border: 2px solid #333;
       margin-top: 1em;
-    }
-    .square {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      user-select: none;
-    }
-    .white {
-      background-color: #f0d9b5;
-    }
-    .black {
-      background-color: #b58863;
     }
     .puzzle-controls {
       display: flex;
@@ -102,90 +83,116 @@
     </div>
   </div>
 
-  <script>
-    const puzzles = [
-      {
-        title: "Puzzle 1: White to move and mate in 1",
-        description: "White King on e1, Queen on h5, Black King on g8. Solution: Qh7#",
-        pieces: {
-          e1: "♔",
-          h5: "♕",
-          g8: "♚"
-        }
-      },
-      {
-        title: "Puzzle 2: Black to move and win material",
-        description: "Black Rook on a8, White Queen on a1. Solution: Ra1+ wins the Queen.",
-        pieces: {
-          a1: "♕",
-          a8: "♜"
-        }
-      },
-      {
-        title: "Puzzle 3: White to move and mate in 2",
-        description: "White Rook on h1, Queen on h6, Black King on g8. Solution: Qh7+ Kg8 Rh8#",
-        pieces: {
-          h1: "♖",
-          h6: "♕",
-          g8: "♚"
-        }
-      },
-      {
-        title: "Puzzle 4: White to move and fork",
-        description: "White Knight on d5 attacks Black Queen on e7 and Rook on c7.",
-        pieces: {
-          d5: "♘",
-          e7: "♛",
-          c7: "♜"
-        }
+<script>
+  fetch('sidebar.html')
+    .then(response => response.text())
+    .then(html => {
+      document.getElementById('sidebar-container').innerHTML = html;
+    })
+    .catch(() => {
+    });
+</script>
+
+<script>
+  const puzzles = [
+    {
+      title: "Puzzle 1: White to move and mate in 1",
+      description: "White King on e1, Queen on h5, Black King on g8. Solution: Qh7#",
+      pieces: {
+        e1: "♔",
+        h5: "♕",
+        g8: "♚"
       }
-    ];
-
-    const board = document.getElementById("chessboard");
-    const titleEl = document.getElementById("puzzleTitle");
-    const descEl = document.getElementById("puzzleDescription");
-    const prevBtn = document.getElementById("prevPuzzleBtn");
-    const nextBtn = document.getElementById("nextPuzzleBtn");
-
-    let currentPuzzle = 0;
-
-    function renderBoard(puzzle) {
-      board.innerHTML = "";
-      const files = "abcdefgh";
-      for (let rank = 8; rank >= 1; rank--) {
-        for (let file = 0; file < 8; file++) {
-          const squareId = files[file] + rank;
-          const isWhite = (rank + file) % 2 === 0;
-          const square = document.createElement("div");
-          square.className = "square " + (isWhite ? "white" : "black");
-          square.textContent = puzzle.pieces[squareId] || "";
-          board.appendChild(square);
-        }
+    },
+    {
+      title: "Puzzle 2: Black to move and win material",
+      description: "Black Rook on a8, White Queen on a1. Solution: Ra1+ wins the Queen.",
+      pieces: {
+        a1: "♕",
+        a8: "♜"
+      }
+    },
+    {
+      title: "Puzzle 3: White to move and mate in 2",
+      description: "White Rook on h1, Queen on h6, Black King on g8. Solution: Qh7+ Kg8 Rh8#",
+      pieces: {
+        h1: "♖",
+        h6: "♕",
+        g8: "♚"
+      }
+    },
+    {
+      title: "Puzzle 4: White to move and fork",
+      description: "White Knight on d5 attacks Black Queen on e7 and Rook on c7.",
+      pieces: {
+        d5: "♘",
+        e7: "♛",
+        c7: "♜"
       }
     }
+  ];
 
-    function showPuzzle(index) {
-      const puzzle = puzzles[index];
-      titleEl.textContent = puzzle.title;
-      descEl.textContent = puzzle.description;
-      renderBoard(puzzle);
+  const chessboard = document.getElementById("chessboard");
+  const puzzleTitle = document.getElementById("puzzleTitle");
+  const puzzleDescription = document.getElementById("puzzleDescription");
+  const prevBtn = document.getElementById("prevPuzzleBtn");
+  const nextBtn = document.getElementById("nextPuzzleBtn");
+
+  const files = "abcdefgh";
+  let currentPuzzle = 0;
+
+  function renderBoard(puzzle) {
+    chessboard.innerHTML = "";
+    chessboard.style.display = "grid";
+    chessboard.style.gridTemplateColumns = "repeat(8, 50px)";
+    chessboard.style.gridTemplateRows = "repeat(8, 50px)";
+    chessboard.style.border = "2px solid #333";
+
+    for (let rank = 8; rank >= 1; rank--) {
+      for (let file = 0; file < 8; file++) {
+        const squareId = files[file] + rank;
+        const isWhiteSquare = (rank + file) % 2 === 0;
+
+        const square = document.createElement("div");
+        square.style.width = "50px";
+        square.style.height = "50px";
+        square.style.display = "flex";
+        square.style.alignItems = "center";
+        square.style.justifyContent = "center";
+        square.style.fontSize = "28px";
+        square.style.userSelect = "none";
+        square.style.backgroundColor = isWhiteSquare ? "#f0d9b5" : "#b58863";
+
+        square.textContent = puzzle.pieces[squareId] || "";
+
+        chessboard.appendChild(square);
+      }
     }
+  }
 
-    prevBtn.addEventListener("click", () => {
-      if (currentPuzzle > 0) {
-        currentPuzzle--;
-        showPuzzle(currentPuzzle);
-      }
-    });
+  function showPuzzle(index) {
+    const puzzle = puzzles[index];
+    puzzleTitle.textContent = puzzle.title;
+    puzzleDescription.textContent = puzzle.description;
+    renderBoard(puzzle);
+  }
 
-    nextBtn.addEventListener("click", () => {
-      if (currentPuzzle < puzzles.length - 1) {
-        currentPuzzle++;
-        showPuzzle(currentPuzzle);
-      }
-    });
+  prevBtn.addEventListener("click", () => {
+    if (currentPuzzle > 0) {
+      currentPuzzle--;
+      showPuzzle(currentPuzzle);
+    }
+  });
 
-    showPuzzle(currentPuzzle);
-  </script>
+  nextBtn.addEventListener("click", () => {
+    if (currentPuzzle < puzzles.length - 1) {
+      currentPuzzle++;
+      showPuzzle(currentPuzzle);
+    }
+  });
+
+  showPuzzle(currentPuzzle);
+</script>
+
 </body>
 </html>
