@@ -85,13 +85,7 @@ header {
 .square.dark {
   background-color: #2b2b2b;
 }
-.light {
-  background-color: #f0d9b5;
-}
 
-.dark {
-  background-color: #b58863;
-}
 
 .piece {
   cursor: pointer;
