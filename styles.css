@@ -4,273 +4,83 @@
   padding: 0;
 }
 
-body {
+html, body {
+  height: 100%;
+  min-width: 320px;
   font-family: Arial, sans-serif;
   background-color: #1a1a1a;
   color: white;
-  height: 100vh;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
 }
 
-header {
-  height: 60px;
-  line-height: 60px;
-  text-align: center;
-  color: white;
-  background-color: #222;
-}
-
-/* === layout for Rules page === */
 .layout {
   display: flex;
-  height: 100vh;
   flex-direction: row;
+  flex-wrap: wrap;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #111;
+  color: white;
+  padding: 10px;
+  flex-shrink: 0;
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
-  box-sizing: border-box;
-}
-
-.content-area {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-/* === layout for Games page === */
-
-.board-area {
-  flex: 1;
+  padding: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  overflow-y: auto;
-  flex-wrap: wrap;
-}
-
-.left-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  width: 100%;
-  max-width: 480px;
   aspect-ratio: 1 / 1;
-  border: 2px solid #333;
+  width: min(480px, 90vw);
+  max-width: 100%;
+  border: 2px solid #444;
   background-color: #333;
-  user-select: none;
 }
 
 .square {
+  width: 100%;
   aspect-ratio: 1 / 1;
-  font-size: clamp(20px, 5vw, 40px);
   display: flex;
   justify-content: center;
   align-items: center;
+  font-size: 2rem;
 }
 
 .square.light {
-  background-color: #a0a0a0;
-}
-
-.square.dark {
-  background-color: #2b2b2b;
-}
-.light {
   background-color: #f0d9b5;
 }
 
-.dark {
+.square.dark {
   background-color: #b58863;
 }
 
-.piece {
-  cursor: pointer;
-  user-select: none;
-  z-index: 1;
-}
-
-.dragging-piece {
-  position: absolute;
-  pointer-events: none;
-  z-index: 10;
-  font-size: 40px;
-}
-
-.highlight {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.3);
-  position: absolute;
-  z-index: 0;
-}
-
-.captured-box {
-  width: 160px;
-  height: 140px;
-  background-color: #e6e6e6;
-  padding: 10px;
-  font-size: 14px;
-  text-align: center;
-  color: black;
-  border-radius: 5px;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.captured-pieces {
-  font-size: 30px;
-  line-height: 1;
-}
-
-#move-log-container {
-  color: white;
-  padding: 10px;
-  background: #333;
-  border-radius: 5px;
-  width: 200px;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-#move-log-container h3 {
-  margin-top: 0;
-}
-
-#move-log-list {
-  list-style: decimal;
-  padding-left: 20px;
-  text-align: left;
-}
-
-.piece-display {
-  background-color: white;
-  padding: 15px;
-  border-radius: 8px;
-  color: black;
-  max-width: 220px;
-  text-align: center;
-}
-
-.piece-symbol {
-  font-size: 80px;
-  margin-bottom: 10px;
-}
-
-.piece-description {
-  color: black !important;
-  max-width: 200px;
-  text-align: left !important;
-}
-
-.controls {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  background-color: red;
-  border-radius: 50%;
-  display: block;
-  margin: auto;
-}
-
-.puzzle-board {
-  width: 480px;
-  height: 480px;
-  background-color: #444;
-  margin: 20px auto;
-  border: 3px solid #222;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 24px;
-}
-
-.puzzle-controls {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin: 20px 0;
-}
-
-.puzzle-controls button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  background-color: #4CAF50;
-  color: black;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.puzzle-controls button:hover {
-  background-color: #3e8e41;
-}
-
-.content-area h2,
-.content-area p {
-  text-align: center;
-}
-
-.dragging-piece {
-  pointer-events: none;
-  user-select: none;
-  cursor: grabbing;
-  font-size: 40px;
-  line-height: 60px;
-  width: 60px;
-  height: 60px;
-  text-align: center;
-  position: absolute;
-  z-index: 1000;
-}
-
-.piece[data-piece="P"],
-.piece[data-piece="R"],
-.piece[data-piece="N"],
-.piece[data-piece="B"],
-.piece[data-piece="Q"],
-.piece[data-piece="K"] {
-  color: white;
-}
-
-.piece[data-piece="p"],
-.piece[data-piece="r"],
-.piece[data-piece="n"],
-.piece[data-piece="b"],
-.piece[data-piece="q"],
-.piece[data-piece="k"] {
-  color: black;
-}
-
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .layout {
     flex-direction: column;
   }
 
-  .board-area {
-    padding: 10px;
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    padding: 5px;
   }
 
   #chessboard {
-    max-width: 95vw;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
   }
 }
