@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Chess Puzzles</title>
+  <title>Chess Puzzles</title>
   <style>
     body {
       font-family: sans-serif;
@@ -16,16 +16,31 @@
       padding: 1em;
       text-align: center;
     }
-    .main-content {
+    .layout {
+      display: flex;
+    }
+    .sidebar-container {
+      width: 200px;
+      background: #f2f2f2;
       padding: 1em;
+      box-sizing: border-box;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .main-content {
+      flex: 1;
+      padding: 1em;
+    }
+    .content-area {
       max-width: 600px;
-      margin: auto;
+      margin: 0 auto;
     }
     #chessboard {
       display: grid;
       grid-template-columns: repeat(8, 50px);
       grid-template-rows: repeat(8, 50px);
       border: 2px solid #333;
+      margin-top: 1em;
     }
     .square {
       width: 50px;
@@ -34,6 +49,7 @@
       align-items: center;
       justify-content: center;
       font-size: 28px;
+      user-select: none;
     }
     .white {
       background-color: #f0d9b5;
@@ -47,37 +63,50 @@
       margin-top: 20px;
     }
     button {
-      padding: 8px 16px;
+      padding: 10px 20px;
       font-size: 1em;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Simple Chess Puzzles</h1>
+    <h1>Chess Puzzles</h1>
   </header>
 
-  <div class="main-content">
-    <h2 id="puzzleTitle">Puzzle 1</h2>
-    <p id="puzzleDescription">White to move and mate in 1</p>
+  <div class="layout">
+    <div class="sidebar-container" id="sidebar-container">
+      <p><strong>Puzzles List</strong></p>
+      <ul>
+        <li>Puzzle 1</li>
+        <li>Puzzle 2</li>
+        <li>Puzzle 3</li>
+        <li>Puzzle 4</li>
+      </ul>
+    </div>
 
-    <div id="chessboard"></div>
+    <div class="main-content">
+      <div class="content-area">
+        <h2 id="puzzleTitle">Puzzle 1: White to move and mate in 1</h2>
+        <p id="puzzleDescription">
+          White King on e1, Queen on h5, Black King on g8. Solution: Qh7#
+        </p>
 
-    <div class="puzzle-controls">
-      <button id="prevPuzzleBtn">← Previous</button>
-      <button id="nextPuzzleBtn">Next →</button>
+        <div id="chessboard"></div>
+
+        <div class="puzzle-controls">
+          <button id="prevPuzzleBtn">← Previous</button>
+          <button id="nextPuzzleBtn">Next →</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    const board = document.getElementById("chessboard");
-    const title = document.getElementById("puzzleTitle");
-    const desc = document.getElementById("puzzleDescription");
-
     const puzzles = [
       {
-        title: "Puzzle 1",
-        description: "White to move and mate in 1",
+        title: "Puzzle 1: White to move and mate in 1",
+        description: "White King on e1, Queen on h5, Black King on g8. Solution: Qh7#",
         pieces: {
           e1: "♔",
           h5: "♕",
@@ -85,37 +114,51 @@
         }
       },
       {
-        title: "Puzzle 2",
-        description: "Black to move and capture the Queen",
+        title: "Puzzle 2: Black to move and win material",
+        description: "Black Rook on a8, White Queen on a1. Solution: Ra1+ wins the Queen.",
         pieces: {
           a1: "♕",
           a8: "♜"
         }
       },
       {
-        title: "Puzzle 3",
-        description: "White to move and checkmate in 2",
+        title: "Puzzle 3: White to move and mate in 2",
+        description: "White Rook on h1, Queen on h6, Black King on g8. Solution: Qh7+ Kg8 Rh8#",
         pieces: {
           h1: "♖",
           h6: "♕",
           g8: "♚"
         }
+      },
+      {
+        title: "Puzzle 4: White to move and fork",
+        description: "White Knight on d5 attacks Black Queen on e7 and Rook on c7.",
+        pieces: {
+          d5: "♘",
+          e7: "♛",
+          c7: "♜"
+        }
       }
     ];
+
+    const board = document.getElementById("chessboard");
+    const titleEl = document.getElementById("puzzleTitle");
+    const descEl = document.getElementById("puzzleDescription");
+    const prevBtn = document.getElementById("prevPuzzleBtn");
+    const nextBtn = document.getElementById("nextPuzzleBtn");
 
     let currentPuzzle = 0;
 
     function renderBoard(puzzle) {
       board.innerHTML = "";
       const files = "abcdefgh";
-      for (let r = 8; r >= 1; r--) {
-        for (let f = 0; f < 8; f++) {
-          const squareId = files[f] + r;
-          const isWhite = (r + f) % 2 === 0;
-          const piece = puzzle.pieces[squareId] || "";
+      for (let rank = 8; rank >= 1; rank--) {
+        for (let file = 0; file < 8; file++) {
+          const squareId = files[file] + rank;
+          const isWhite = (rank + file) % 2 === 0;
           const square = document.createElement("div");
           square.className = "square " + (isWhite ? "white" : "black");
-          square.textContent = piece;
+          square.textContent = puzzle.pieces[squareId] || "";
           board.appendChild(square);
         }
       }
@@ -123,24 +166,24 @@
 
     function showPuzzle(index) {
       const puzzle = puzzles[index];
-      title.textContent = puzzle.title;
-      desc.textContent = puzzle.description;
+      titleEl.textContent = puzzle.title;
+      descEl.textContent = puzzle.description;
       renderBoard(puzzle);
     }
 
-    document.getElementById("prevPuzzleBtn").onclick = () => {
+    prevBtn.addEventListener("click", () => {
       if (currentPuzzle > 0) {
         currentPuzzle--;
         showPuzzle(currentPuzzle);
       }
-    };
+    });
 
-    document.getElementById("nextPuzzleBtn").onclick = () => {
+    nextBtn.addEventListener("click", () => {
       if (currentPuzzle < puzzles.length - 1) {
         currentPuzzle++;
         showPuzzle(currentPuzzle);
       }
-    };
+    });
 
     showPuzzle(currentPuzzle);
   </script>
