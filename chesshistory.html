@@ -4,8 +4,106 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Chess History</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="history.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      padding: 1rem;
+      font-size: clamp(1rem, 1.5vw, 1.2rem);
+    }
+
+    header {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .layout {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .sidebar-container {
+      width: 250px;
+      padding: 1rem;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 1rem;
+    }
+
+    .content-area {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .history-section p {
+      margin-bottom: 1.5rem;
+    }
+
+    .images-and-timeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .chess-images {
+      flex: 1 1 300px;
+    }
+
+    .chess-images figure {
+      margin-bottom: 1.5rem;
+    }
+
+    .chess-images img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .timeline {
+      flex: 1 1 300px;
+    }
+
+    .timeline-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .timeline-item h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar-container {
+        width: 100%;
+        padding: 1rem 0;
+      }
+
+      .images-and-timeline {
+        flex-direction: column;
+      }
+
+      .timeline-item h3 {
+        font-size: 1.1rem;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -13,7 +111,8 @@
   </header>
   <div class="layout">
 
-    <div class="sidebar-container" id="sidebar-container"></div>
+    <div class="sidebar-container" id="sidebar-container">
+    </div>
 
     <div class="main-content">
       <div class="content-area history-section">
@@ -50,7 +149,7 @@
             </div>
 
             <div class="timeline-item">
-              <h3>7th-9th Century - Spread to Persia and the Arab World</h3>
+              <h3>7th–9th Century - Spread to Persia and the Arab World</h3>
               <p>
                 The game spread to Persia where it was called "Shatranj." After the Islamic conquest, chess spread throughout the Arab world and later into Europe via Spain and Sicily.
               </p>
