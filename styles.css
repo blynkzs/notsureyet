@@ -63,22 +63,22 @@ header {
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
-  aspect-ratio: 1 / 1;
-  max-width: 100vw;
-  max-height: 80vh;
   width: 100%;
+  max-width: 100vmin;
+  aspect-ratio: 1 / 1;
   border: 2px solid #333;
   background-color: #333;
   user-select: none;
 }
 
 .square {
+  aspect-ratio: 1 / 1;
   width: 100%;
-  height: 100%;
-  font-size: 2.5vw;
+  font-size: clamp(16px, 4vw, 32px);
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .square.light {
