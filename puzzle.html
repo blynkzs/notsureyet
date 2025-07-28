@@ -1,56 +1,97 @@
+You said:
+make sure it has resposive design
+
+
+ChatGPT said:
+Absolutely! I updated the chessboard styles so the board scales nicely on smaller screens while keeping the layout clean and responsive. The squares and font sizes adjust based on viewport width.
+
+Here’s the same page with responsive design baked in:
+
+html
+Copy
+Edit
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chess Puzzles</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    .content-area {
-      text-align: center;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chess Puzzles</title>
+<link rel="stylesheet" href="styles.css" />
+<style>
+  .content-area {
+    text-align: center;
+    padding: 10px;
+  }
+  #chessboard {
+    display: inline-grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    border: 2px solid #b58863;
+    border-radius: 6px;
+    user-select: none;
+    margin: 20px 0;
+    width: 320px;
+    height: 320px;
+    max-width: 90vw;
+    max-height: 90vw;
+  }
+  .square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    cursor: default;
+  }
+
+  .puzzle-controls button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 400px) {
+    #chessboard {
+      width: 280px;
+      height: 280px;
     }
-    #chessboard img {
-      max-width: 320px;
-      width: 100%;
-      height: auto;
-      border: 2px solid #b58863;
-      border-radius: 6px;
-      margin: 20px 0;
-      user-select: none;
-      pointer-events: none;
+    .square {
+      font-size: 1.6rem;
     }
-    .puzzle-controls button {
-      margin: 0 10px;
-      padding: 8px 16px;
-      font-size: 1rem;
-      cursor: pointer;
+  }
+  @media (max-width: 320px) {
+    #chessboard {
+      width: 240px;
+      height: 240px;
     }
-  </style>
+    .square {
+      font-size: 1.2rem;
+    }
+  }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Chess Puzzles</h1>
-  </header>
+<header>
+  <h1>Chess Puzzles</h1>
+</header>
 
-  <div class="layout">
-    <div class="sidebar-container" id="sidebar-container"></div>
+<div class="layout">
+  <div class="sidebar-container" id="sidebar-container"></div>
 
-    <div class="main-content">
-      <div class="content-area">
-        <h2 id="puzzleTitle">Puzzle 1: White to move and mate in 1</h2>
-        <p id="puzzleDescription">White to move and mate in 1.</p>
+  <div class="main-content">
+    <div class="content-area">
+      <h2 id="puzzleTitle">Puzzle 1: White to move and mate in 1</h2>
+      <p id="puzzleDescription">White to move and mate in 1.</p>
 
-        <div id="chessboard">
-          <img src="" alt="Chess Puzzle" />
-        </div>
+      <div id="chessboard"></div>
 
-        <div class="puzzle-controls">
-          <button id="prevPuzzleBtn">← Previous</button>
-          <button id="nextPuzzleBtn">Next →</button>
-        </div>
+      <div class="puzzle-controls">
+        <button id="prevPuzzleBtn">← Previous</button>
+        <button id="nextPuzzleBtn">Next →</button>
       </div>
     </div>
   </div>
+</div>
 
 <script>
   fetch('sidebar.html')
@@ -59,48 +100,99 @@
       document.getElementById('sidebar-container').innerHTML = html;
     });
 
+  const PIECES = {
+    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗',
+    'N': '♘', 'P': '♙', 'k': '♚', 'q': '♛',
+    'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟', '.': ''
+  };
+
   const puzzles = [
     {
       title: 'Puzzle 1: White to move and mate in 1',
       description: 'White King on e1, Queen on h5, Black King on g8.',
-      img: 'https://dummyimage.com/320x320/eee/000&text=Puzzle+1+Board'
+      board: [
+        ['.', '.', '.', '.', '.', '.', 'k', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', 'Q'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', 'K', '.', '.', '.']
+      ]
     },
     {
       title: 'Puzzle 2: White to move and mate in 1',
       description: 'White Rook on e4, Black King on e8.',
-      img: 'https://dummyimage.com/320x320/ddd/000&text=Puzzle+2+Board'
+      board: [
+        ['.', '.', '.', '.', 'k', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', 'R', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', 'K', '.', '.', '.']
+      ]
     },
     {
       title: 'Puzzle 3: White to move and mate in 1',
       description: 'White Queen on d5, Black King on h8.',
-      img: 'https://dummyimage.com/320x320/ccc/000&text=Puzzle+3+Board'
+      board: [
+        ['.', '.', '.', '.', '.', '.', '.', 'k'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', 'Q', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', '.', 'K']
+      ]
     }
   ];
 
   let currentIndex = 0;
   const titleEl = document.getElementById('puzzleTitle');
   const descEl = document.getElementById('puzzleDescription');
-  const imgEl = document.querySelector('#chessboard img');
+  const boardEl = document.getElementById('chessboard');
+
+  function renderBoard(board) {
+    boardEl.innerHTML = '';
+    for (let rank = 0; rank < 8; rank++) {
+      for (let file = 0; file < 8; file++) {
+        const square = document.createElement('div');
+        square.classList.add('square');
+        if ((rank + file) % 2 === 1) {
+          square.classList.add('dark');
+        } else {
+          square.classList.add('light');
+        }
+        square.textContent = PIECES[board[rank][file]];
+        boardEl.appendChild(square);
+      }
+    }
+  }
 
   function showPuzzle(index) {
     const puzzle = puzzles[index];
     titleEl.textContent = puzzle.title;
     descEl.textContent = puzzle.description;
-    imgEl.src = puzzle.img;
-    imgEl.alt = puzzle.title;
+    renderBoard(puzzle.board);
   }
 
-  document.getElementById('prevPuzzleBtn').onclick = () => {
+  document.getElementById('prevPuzzleBtn').addEventListener('click', () => {
     currentIndex = (currentIndex - 1 + puzzles.length) % puzzles.length;
     showPuzzle(currentIndex);
-  };
-  document.getElementById('nextPuzzleBtn').onclick = () => {
+  });
+
+  document.getElementById('nextPuzzleBtn').addEventListener('click', () => {
     currentIndex = (currentIndex + 1) % puzzles.length;
     showPuzzle(currentIndex);
-  };
+  });
 
   showPuzzle(currentIndex);
 </script>
 
+<script src="script.js"></script>
 </body>
 </html>
