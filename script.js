@@ -28,9 +28,12 @@ function isWhitePiece(piece) {
 function renderBoard() {
   const boardEl = document.getElementById("chessboard");
   boardEl.innerHTML = "";
+
   boardEl.style.display = "grid";
-  boardEl.style.gridTemplateColumns = "repeat(8, 60px)";
-  boardEl.style.gridTemplateRows = "repeat(8, 60px)";
+  
+  // Responsive: use fractional units so board squares scale with container
+  boardEl.style.gridTemplateColumns = "repeat(8, 1fr)";
+  boardEl.style.gridTemplateRows = "repeat(8, 1fr)";
   boardEl.style.gap = "1px";
   boardEl.style.backgroundColor = "#333";
 
@@ -40,8 +43,10 @@ function renderBoard() {
       square.className = "square " + ((x + y) % 2 === 0 ? "light" : "dark");
       square.dataset.x = x;
       square.dataset.y = y;
-      square.style.width = "60px";
-      square.style.height = "60px";
+
+      // Make squares fill grid cell, no fixed px sizing here
+      square.style.width = "100%";
+      square.style.height = "100%";
       square.style.lineHeight = "60px";
       square.style.fontSize = "40px";
       square.style.textAlign = "center";
@@ -64,6 +69,8 @@ function renderBoard() {
     }
   }
 }
+
+// Your other functions remain exactly the same (getLegalMoves, highlightLegalMoves, etc.)
 
 function getLegalMoves(x, y, piece) {
   if (!piece) return [];
