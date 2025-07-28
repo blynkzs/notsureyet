@@ -25,8 +25,8 @@ header {
 /* === layout for Rules page === */
 .layout {
   display: flex;
-  flex-direction: row;
   height: 100vh;
+  flex-direction: row;
 }
 
 .main-content {
@@ -42,22 +42,21 @@ header {
 }
 
 /* === layout for Games page === */
+
 .board-area {
   flex: 1;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  padding: 20px;
   overflow-y: auto;
-  padding: 10px;
+  flex-wrap: wrap;
 }
 
 .left-panel {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  align-items: center;
 }
 
 #chessboard {
@@ -72,9 +71,8 @@ header {
 }
 
 .square {
-  width: 100%;
   aspect-ratio: 1 / 1;
-  font-size: 40px;
+  font-size: clamp(20px, 5vw, 40px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +85,6 @@ header {
 .square.dark {
   background-color: #2b2b2b;
 }
-
 .light {
   background-color: #f0d9b5;
 }
@@ -194,9 +191,8 @@ header {
 }
 
 .puzzle-board {
-  width: 100%;
-  max-width: 480px;
-  aspect-ratio: 1 / 1;
+  width: 480px;
+  height: 480px;
   background-color: #444;
   margin: 20px auto;
   border: 3px solid #222;
@@ -212,7 +208,6 @@ header {
   justify-content: center;
   gap: 15px;
   margin: 20px 0;
-  flex-wrap: wrap;
 }
 
 .puzzle-controls button {
@@ -266,23 +261,16 @@ header {
   color: black;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 500px) {
   .layout {
     flex-direction: column;
   }
 
   .board-area {
-    flex-direction: column;
+    padding: 10px;
   }
 
   #chessboard {
-    max-width: 100vw;
-    max-height: 100vw;
-  }
-
-  .captured-box,
-  #move-log-container {
-    width: 100%;
-    max-width: 90vw;
+    max-width: 95vw;
   }
 }
