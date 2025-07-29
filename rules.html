@@ -7,7 +7,7 @@
   <meta name="description" content="to explain the rules and basics of chess to people who don't know" />
   <link rel="stylesheet" href="styles.css" />
   <style>
-       body {
+    body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #1a1a1a;
@@ -69,11 +69,21 @@
       flex-basis: 100%;
     }
 
-    button {
-      padding: 8px 16px;
+
+    .controls button {
+      padding: 10px 20px;
       font-size: 16px;
-      margin: 0 10px;
+      border: none;
+      background-color: #4CAF50;
+      color: black;
+      border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .controls button:hover {
+      background-color: #3e8e41;
     }
 
     #chessboard {
