@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Rules - Simple Chess Website</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Rules Test</title>
   <style>
     body {
       margin: 0;
@@ -12,268 +11,77 @@
       background-color: #1a1a1a;
       color: white;
     }
-
     .layout {
       display: flex;
       min-height: 100vh;
       flex-direction: row;
     }
-
     .main-content {
       flex: 1;
-      padding: 30px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
+      padding: 20px;
       overflow-y: auto;
     }
-
-    .rules-section {
-      max-width: 900px;
-      margin: 0 auto 30px;
-    }
-
-    .display-area {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      align-items: flex-start;
-    }
-
-    .piece-display-box {
-      flex: 1 1 300px;
-      max-width: 350px;
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: red;
-    }
-
-    .controls {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      margin: 0 10px;
-      cursor: pointer;
-    }
-
     #chessboard {
       display: grid;
       grid-template-columns: repeat(8, 1fr);
-      width: 100%;
-      max-width: 480px;
+      width: 320px;
       aspect-ratio: 1 / 1;
-      background-color: #333;
+      background: #333;
       border: 2px solid #333;
+      margin-top: 20px;
       user-select: none;
     }
-
     .square {
       aspect-ratio: 1 / 1;
-      font-size: 32px;
       display: flex;
       justify-content: center;
       align-items: center;
-      position: relative;
+      font-size: 24px;
+      color: white;
     }
-
     .square.light {
       background-color: #a0a0a0;
+      color: black;
     }
-
     .square.dark {
       background-color: #2b2b2b;
-    }
-
-    @media (max-width: 900px) {
-      .layout {
-        flex-direction: column;
-      }
-      .main-content {
-        padding: 20px 10px;
-        width: 100%;
-      }
-      .display-area {
-        flex-direction: column;
-        align-items: center;
-      }
-      #chessboard {
-        margin-top: 10px;
-        width: 90vw;
-        max-width: 480px;
-      }
-    }
-
-    @media (max-width: 600px) {
-      #chessboard {
-        width: 95vw !important;
-        max-width: none !important;
-        min-width: 280px;
-      }
-      .piece-display-box {
-        width: 100%;
-        max-width: none;
-        margin-bottom: 20px;
-      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Da Rules</h1>
+    <h1>Rules Test</h1>
   </header>
-
   <div class="layout">
-    <div class="sidebar-container" id="sidebar-container"></div>
-
+    <div class="sidebar-container" id="sidebar-container">Sidebar loading...</div>
     <main class="main-content">
-      <section class="rules-section">
-        <h2>Goal of the Game</h2>
-        <p>
-          The main goal is to checkmate your opponent’s king by putting them in a position where it is threatened with capture and they have no legal moves to escape.
-        </p>
-
-        <h2>The Board</h2>
-        <p>The chessboard has 8 rows (numbered 1–8) and 8 columns (labeled a–h).</p>
-
-        <h2>Starting Pieces</h2>
-        <p>1 King, 1 Queen, 2 Rooks, 2 Bishops, 2 Knights, 8 Pawns</p>
-        <p>White always moves first, and players alternate turns.</p>
-      </section>
-
-      <section class="display-area">
-        <div class="piece-display-box">
-          <div id="pieceSymbol" class="piece-symbol" style="font-size: 48px;">♙</div>
-          <div class="piece-description" id="pieceDescription" style="margin-top: 10px;">
-            Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
-          </div>
-        </div>
-
-        <div id="chessboard"></div>
-      </section>
-
-      <div class="controls">
-        <button onclick="previousPiece()">&#8592; Prev</button>
-        <span id="pieceName">Pawn</span>
-        <button onclick="nextPiece()">Next &#8594;</button>
-      </div>
+      <p>This is the rules content area.</p>
+      <div id="chessboard"></div>
     </main>
   </div>
 
   <script>
     fetch('sidebar.html')
-      .then(response => response.text())
+      .then(r => r.text())
       .then(html => {
         document.getElementById('sidebar-container').innerHTML = html;
+      })
+      .catch(() => {
+        document.getElementById('sidebar-container').innerHTML = 'Failed to load sidebar.';
       });
 
     const board = document.getElementById('chessboard');
-    const pieceName = document.getElementById('pieceName');
-    const pieceSymbol = document.getElementById('pieceSymbol');
-    const pieceDescription = document.getElementById('pieceDescription');
-
-    const pieces = [
-      {
-        name: 'Pawn',
-        symbol: '♙',
-        description: 'Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.',
-        moves: [[1, 0], [2, 0], [1, 1], [1, -1]]
-      },
-      {
-        name: 'Rook',
-        symbol: '♖',
-        description: 'Rooks move any number of squares vertically or horizontally.',
-        moves: [
-          ...Array(8).fill().map((_, i) => [i + 1, 0]),
-          ...Array(8).fill().map((_, i) => [0, i + 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, 0]),
-          ...Array(8).fill().map((_, i) => [0, -i - 1])
-        ]
-      },
-      {
-        name: 'Knight',
-        symbol: '♘',
-        description: 'Knights move in an L-shape: two squares in one direction, then one square perpendicular.',
-        moves: [[2, 1], [1, 2], [-1, 2], [-2, 1], [-2, -1], [-1, -2], [1, -2], [2, -1]]
-      },
-      {
-        name: 'Bishop',
-        symbol: '♗',
-        description: 'Bishops move diagonally any number of squares.',
-        moves: [
-          ...Array(8).fill().map((_, i) => [i + 1, i + 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, -i - 1]),
-          ...Array(8).fill().map((_, i) => [i + 1, -i - 1]),
-          ...Array(8).fill().map((_, i) => [-i - 1, i + 1])
-        ]
-      },
-      {
-        name: 'Queen',
-        symbol: '♕',
-        description: 'The queen moves any number of squares in any direction: horizontally, vertically, or diagonally.',
-        moves: []
-      },
-      {
-        name: 'King',
-        symbol: '♔',
-        description: 'The king moves one square in any direction.',
-        moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
-      }
-    ];
-    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves);
-
-    let currentPieceIndex = 0;
 
     function drawBoard() {
       board.innerHTML = '';
-      for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
+      for(let row = 0; row < 8; row++) {
+        for(let col = 0; col < 8; col++) {
           const square = document.createElement('div');
           square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
-          if (row === 3 && col === 3) {
-            square.textContent = pieces[currentPieceIndex].symbol;
-          } else {
-            for (const move of pieces[currentPieceIndex].moves) {
-              if (row === 3 + move[0] && col === 3 + move[1]) {
-                const dot = document.createElement('div');
-                dot.className = 'dot';
-                square.appendChild(dot);
-              }
-            }
-          }
+          if(row === 3 && col === 3) square.textContent = '♙';
           board.appendChild(square);
         }
       }
-      pieceName.textContent = pieces[currentPieceIndex].name;
-      pieceSymbol.textContent = pieces[currentPieceIndex].symbol;
-      pieceDescription.textContent = pieces[currentPieceIndex].description;
-    }
-
-    function previousPiece() {
-      currentPieceIndex = (currentPieceIndex - 1 + pieces.length) % pieces.length;
-      drawBoard();
-    }
-
-    function nextPiece() {
-      currentPieceIndex = (currentPieceIndex + 1) % pieces.length;
-      drawBoard();
     }
 
     drawBoard();
