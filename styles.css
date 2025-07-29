@@ -254,6 +254,7 @@ header {
   color: black;
 }
 
+/* Responsive styles */
 
 @media (max-width: 900px) {
   .main-layout {
@@ -296,6 +297,12 @@ header {
     flex-direction: column;
   }
 
+  #sidebar-container {
+    width: 100% !important;
+    height: auto !important;
+    margin-bottom: 15px;
+  }
+
   .board-area {
     flex-direction: column;
     width: 100%;
@@ -303,16 +310,16 @@ header {
     align-items: center;
   }
 
+  #chessboard {
+    width: 95vw !important;
+    max-width: none !important;
+    min-width: 280px;
+  }
+
   .left-panel,
   #move-log-container {
     width: 100% !important;
     max-width: none;
     margin: 10px 0;
-  }
-
-  #chessboard {
-    width: 95vw !important;
-    max-width: none !important;
-    min-width: 280px;
   }
 }
