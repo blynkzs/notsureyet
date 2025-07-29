@@ -36,7 +36,6 @@
       display: flex;
       flex: 1;
       overflow: hidden;
-      flex-wrap: wrap;
     }
 
     #sidebar-container {
@@ -52,7 +51,7 @@
       align-items: center;
       justify-content: center;
       overflow: auto;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .left-panel,
@@ -124,23 +123,33 @@
         width: 100% !important;
         height: auto !important;
       }
-    }
 
-    @media (max-width: 720px) {
       .board-area {
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .left-panel,
       #move-log-container {
-        width: 90% !important;
-        max-width: 480px;
+        width: 45%;
+        max-width: 240px;
+      }
+
+      #chessboard {
+        width: 90vw;
+        max-width: 90vw;
       }
 
       #move-log-container {
         height: auto;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .left-panel,
+      #move-log-container {
+        width: 90%;
+        max-width: 100%;
       }
     }
 
