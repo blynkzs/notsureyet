@@ -20,12 +20,10 @@
       text-align: center;
     }
 
-
     .layout {
       display: flex;
       height: 100vh;
     }
-
 
     .main-content {
       flex: 1;
@@ -103,9 +101,9 @@
     
     <main class="main-content">
       <div class="content-area">
-        <h2>Get in Touch</h2>
-        <p>Have a question, suggestion, or issue? Send us a message below.</p>
-        <form class="contact-form">
+        <h2>get in Touch</h2>
+        <p>have a question, suggestion, or issue? Send us a message </p>
+        <form class="contact-form" id="contactForm">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required />
 
@@ -117,6 +115,10 @@
 
           <button type="submit">Send Message</button>
         </form>
+
+        <div id="successMessage" style="color: #4CAF50; margin-top: 15px; display: none;">
+          your form was submitted
+        </div>
       </div>
     </main>
   </div>
@@ -126,6 +128,15 @@
       .then(html => {
         document.getElementById('sidebar-container').innerHTML = html;
       });
+
+    const form = document.getElementById('contactForm');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      successMessage.style.display = 'block';
+      form.reset();
+    });
   </script>
 </body>
 </html>
