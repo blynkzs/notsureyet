@@ -12,6 +12,7 @@
       background-color: #1a1a1a;
       color: white;
     }
+
     .layout {
       display: flex;
       min-height: 100vh;
@@ -26,87 +27,13 @@
       flex-direction: column;
       overflow-y: auto;
     }
-    .rules-section {
-      max-width: 900px;
-      margin: 0 auto 30px;
-    }
-    .display-area {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 30px;
-      align-items: flex-start;
-    }
-    .piece-display-box {
-      flex: 1 1 300px;
-      max-width: 350px;
-      background-color: white;
-      color: black;
-      padding: 20px;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: red;
-      position: relative;
-      top: 0;
-      left: 0;
-    }
-    .controls {
-      text-align: center;
-      margin-top: 10px;
-    }
-    button {
-      padding: 8px 16px;
-      font-size: 16px;
-      margin: 0 10px;
-      cursor: pointer;
-    }
-    #chessboard {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      width: 100%;
-      max-width: 480px;
-      aspect-ratio: 1 / 1;
-      background-color: #333;
-      border: 2px solid #333;
-      user-select: none;
-    }
-    .square {
-      aspect-ratio: 1 / 1;
-      font-size: 32px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .square.light {
-      background-color: #a0a0a0;
-    }
-    .square.dark {
-      background-color: #2b2b2b;
-    }
+
     @media (max-width: 900px) {
       .layout {
         flex-direction: column;
       }
-  
       .main-content {
-        padding: 10px 0;
-      }
-      .display-area {
-        flex-direction: column;
-        align-items: center;
-      }
-      #chessboard {
-        max-width: 90vw;
+        padding: 20px 10px;
         width: 100%;
       }
     }
@@ -135,21 +62,22 @@
         <p>White always moves first, and players alternate turns.</p>
       </section>
 
-      <section class="display-area">
-        <div class="piece-display-box">
+      <section class="display-area" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; align-items: flex-start;">
+        <div class="piece-display-box" style="flex: 1 1 300px; max-width: 350px; background-color: white; color: black; padding: 20px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
           <div id="pieceSymbol" class="piece-symbol" style="font-size: 48px; text-align: center;">♙</div>
           <div class="piece-description" id="pieceDescription" style="margin-top: 10px;">
             Pawns move forward one square at a time, but capture diagonally. On their first move, they can advance two squares.
           </div>
         </div>
 
-        <div id="chessboard" class="chessboard"></div>
+        <div id="chessboard" style="display: grid; grid-template-columns: repeat(8, 1fr); width: 100%; max-width: 480px; aspect-ratio: 1 / 1; background-color: #333; border: 2px solid #333; user-select: none;">
+        </div>
       </section>
 
-      <div class="controls">
-        <button onclick="previousPiece()">&#8592; Prev</button>
+      <div class="controls" style="text-align: center; margin-top: 10px;">
+        <button onclick="previousPiece()" style="padding: 8px 16px; font-size: 16px; margin: 0 10px; cursor: pointer;">&#8592; Prev</button>
         <span id="pieceName">Pawn</span>
-        <button onclick="nextPiece()">Next &#8594;</button>
+        <button onclick="nextPiece()" style="padding: 8px 16px; font-size: 16px; margin: 0 10px; cursor: pointer;">Next &#8594;</button>
       </div>
     </main>
   </div>
@@ -214,7 +142,7 @@
         moves: [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]
       }
     ];
-    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves); // Queen = Rook + Bishop
+    pieces[4].moves = pieces[1].moves.concat(pieces[3].moves);
 
     let currentPieceIndex = 0;
 
@@ -224,19 +152,18 @@
         for (let col = 0; col < 8; col++) {
           const square = document.createElement('div');
           square.className = 'square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
-
+          square.style.cssText = 'aspect-ratio:1/1; display:flex; justify-content:center; align-items:center; font-size:32px; position:relative; background-color:' + ((row + col) % 2 === 0 ? '#a0a0a0' : '#2b2b2b');
           if (row === 3 && col === 3) {
             square.textContent = pieces[currentPieceIndex].symbol;
           } else {
             for (const move of pieces[currentPieceIndex].moves) {
               if (row === 3 + move[0] && col === 3 + move[1]) {
                 const dot = document.createElement('div');
-                dot.className = 'dot';
+                dot.style.cssText = 'width:10px; height:10px; border-radius:50%; background:red; position:absolute;';
                 square.appendChild(dot);
               }
             }
           }
-
           board.appendChild(square);
         }
       }
