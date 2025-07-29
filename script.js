@@ -31,7 +31,6 @@ function renderBoard() {
 
   boardEl.style.display = "grid";
   
-  // Responsive: use fractional units so board squares scale with container
   boardEl.style.gridTemplateColumns = "repeat(8, 1fr)";
   boardEl.style.gridTemplateRows = "repeat(8, 1fr)";
   boardEl.style.gap = "1px";
@@ -44,7 +43,6 @@ function renderBoard() {
       square.dataset.x = x;
       square.dataset.y = y;
 
-      // Make squares fill grid cell, no fixed px sizing here
       square.style.width = "100%";
       square.style.height = "100%";
       square.style.lineHeight = "60px";
@@ -70,7 +68,6 @@ function renderBoard() {
   }
 }
 
-// Your other functions remain exactly the same (getLegalMoves, highlightLegalMoves, etc.)
 
 function getLegalMoves(x, y, piece) {
   if (!piece) return [];
@@ -90,7 +87,7 @@ function getLegalMoves(x, y, piece) {
       const target = board[ny][nx];
       if (!target || (isWhite !== isWhitePiece(target))) {
         moves.push([nx, ny]);
-        return !target; // Continue sliding moves only if empty
+        return !target; 
       }
     }
     return false;
