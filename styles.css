@@ -385,7 +385,7 @@ header {
 
 .timeline {
   flex: 1 1 600px;
-  border-left: 3px solid #f0a500;
+  border-left: 3px solid #4CAF50;
   margin-left: 0;
   padding-left: 20px;
   word-break: break-word;
