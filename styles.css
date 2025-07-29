@@ -272,10 +272,7 @@ header {
     flex-direction: column;
   }
 
-  #sidebar-container {
-    width: 100% !important;
-    height: auto !important;
-  }
+
 
   .board-area {
     width: 100%;
@@ -306,12 +303,6 @@ header {
 @media (max-width: 600px) {
   .main-layout {
     flex-direction: column;
-  }
-
-  #sidebar-container {
-    width: 100% !important;
-    height: auto !important;
-    margin-bottom: 15px;
   }
 
   .board-area {
