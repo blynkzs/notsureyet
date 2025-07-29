@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Chess Puzzles</title>
-<link rel="stylesheet" href="styles.css" />
 <style>
   .content-area {
     text-align: center;
@@ -34,11 +33,24 @@
     font-size: 2.5rem;
     cursor: default;
   }
-.white-piece {
+  .light {
+    background-color: #f0d9b5;
+  }
+  .dark {
+    background-color: #b58863;
+  }
+  .white-piece {
     color: white;
+    text-shadow:
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000;
   }
   .black-piece {
     color: black;
+    text-shadow:
+      0 0 1px #fff;
   }
   .puzzle-controls {
     margin-top: 15px;
@@ -99,20 +111,22 @@
     .then(html => {
       document.getElementById('sidebar-container').innerHTML = html;
     });
+
   const PIECES = {
     'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗',
     'N': '♘', 'P': '♙', 'k': '♚', 'q': '♛',
     'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟', '.': ''
   };
+
   const puzzles = [
     {
       title: 'Puzzle 1: White to move and mate in 1',
-      description: 'White King on e1, Queen on h5, Black King on g8.',
+      description: 'White Queen on h6, White Pawn on g7, Black King on g8. Solution: Qh7#',
       board: [
         ['.', '.', '.', '.', '.', '.', 'k', '.'],
+        ['.', '.', '.', '.', '.', '.', 'P', 'Q'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', 'Q'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
@@ -121,10 +135,10 @@
     },
     {
       title: 'Puzzle 2: White to move and mate in 1',
-      description: 'White Rook on e4, Black King on e8.',
+      description: 'White Rook on e4, White Pawn on e7, Black King on e8. Solution: Rxe8#',
       board: [
         ['.', '.', '.', '.', 'k', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', 'P', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', 'R', '.', '.', '.'],
@@ -135,11 +149,11 @@
     },
     {
       title: 'Puzzle 3: White to move and mate in 1',
-      description: 'White Queen on d5, Black King on h8.',
+      description: 'White Queen on d5, White Bishop on f6, Black King on h8. Solution: Qg8#',
       board: [
         ['.', '.', '.', '.', '.', '.', '.', 'k'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
+        ['.', '.', '.', '.', '.', '.', 'B', '.'],
         ['.', '.', '.', 'Q', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
         ['.', '.', '.', '.', '.', '.', '.', '.'],
@@ -148,10 +162,12 @@
       ]
     }
   ];
+
   let currentIndex = 0;
   const titleEl = document.getElementById('puzzleTitle');
   const descEl = document.getElementById('puzzleDescription');
   const boardEl = document.getElementById('chessboard');
+
   function renderBoard(board) {
     boardEl.innerHTML = '';
     for (let rank = 0; rank < 8; rank++) {
@@ -163,25 +179,35 @@
         } else {
           square.classList.add('light');
         }
-        square.textContent = PIECES[board[rank][file]];
+        const pieceChar = board[rank][file];
+        square.textContent = PIECES[pieceChar];
+        if (pieceChar === pieceChar.toUpperCase() && pieceChar !== '.') {
+          square.classList.add('white-piece');
+        } else if (pieceChar === pieceChar.toLowerCase() && pieceChar !== '.') {
+          square.classList.add('black-piece');
+        }
         boardEl.appendChild(square);
       }
     }
   }
+
   function showPuzzle(index) {
     const puzzle = puzzles[index];
     titleEl.textContent = puzzle.title;
     descEl.textContent = puzzle.description;
     renderBoard(puzzle.board);
   }
+
   document.getElementById('prevPuzzleBtn').addEventListener('click', () => {
     currentIndex = (currentIndex - 1 + puzzles.length) % puzzles.length;
     showPuzzle(currentIndex);
   });
+
   document.getElementById('nextPuzzleBtn').addEventListener('click', () => {
     currentIndex = (currentIndex + 1) % puzzles.length;
     showPuzzle(currentIndex);
   });
+
   showPuzzle(currentIndex);
 </script>
 </body>
