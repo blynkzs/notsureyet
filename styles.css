@@ -12,23 +12,32 @@ html, body {
   overflow-x: hidden;
 }
 
+header {
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  background-color: #222;
+  color: white;
+}
+
 .container {
   display: flex;
   flex-direction: row;
-  min-height: 100vh;
+  height: calc(100vh - 60px);
+  overflow: hidden;
   gap: 20px;
   padding: 20px;
-  flex-wrap: nowrap;
 }
 
 .sidebar {
   background-color: #fefefe;
   width: 200px;
-  min-width: 160px;
   padding: 20px;
+  text-align: left;
   border-radius: 5px;
   box-shadow: 0 0 5px #aaa;
   color: black;
+  overflow-y: auto;
   flex-shrink: 0;
 }
 
@@ -58,21 +67,23 @@ html, body {
 
 .main-content {
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+}
+
+.board-area {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
 }
 
-.board-area {
-  width: 100%;
-  max-width: 600px;
-}
-
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   width: 100%;
+  max-width: 480px;
   aspect-ratio: 1 / 1;
   background-color: #333;
 }
@@ -95,22 +106,17 @@ html, body {
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    align-items: center;
+    height: auto;
     padding: 10px;
   }
-
 
   .main-content {
-    width: 100%;
-    padding: 10px;
-  }
-
-  .board-area {
-    width: 95vw;
-    max-width: 95vw;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
   #chessboard {
-    width: 100%;
+    width: 95vw;
+    max-width: 95vw;
   }
 }
