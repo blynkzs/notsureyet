@@ -308,6 +308,11 @@ header {
     flex-direction: column;
   }
 
+  #sidebar-container {
+    width: 100% !important;
+    height: auto !important;
+    margin-bottom: 15px;
+  }
 
   .board-area {
     flex-direction: column;
