@@ -12,31 +12,23 @@ html, body {
   overflow-x: hidden;
 }
 
-header {
-  height: 60px;
-  line-height: 60px;
-  text-align: center;
-  background-color: #222;
-  color: white;
-}
-
 .container {
   display: flex;
   flex-direction: row;
-  min-height: calc(100vh - 60px);
+  min-height: 100vh;
   gap: 20px;
   padding: 20px;
+  flex-wrap: nowrap;
 }
 
 .sidebar {
   background-color: #fefefe;
   width: 200px;
+  min-width: 160px;
   padding: 20px;
-  text-align: left;
   border-radius: 5px;
   box-shadow: 0 0 5px #aaa;
   color: black;
-  overflow-y: auto;
   flex-shrink: 0;
 }
 
@@ -66,30 +58,27 @@ header {
 
 .main-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-.board-area {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
 }
 
+.board-area {
+  width: 100%;
+  max-width: 600px;
+}
+
 #chessboard {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   width: 100%;
-  max-width: 480px;
   aspect-ratio: 1 / 1;
-  border: 2px solid #333;
   background-color: #333;
 }
 
 .square {
   aspect-ratio: 1 / 1;
-  font-size: clamp(20px, 5vw, 40px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -106,28 +95,28 @@ header {
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
+    align-items: center;
     padding: 10px;
   }
 
   .sidebar {
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .nav-button {
-    margin: 5px;
-    flex: 1 1 auto;
+    max-width: 400px;
+    display: block;
+    text-align: center;
   }
 
   .main-content {
+    width: 100%;
     padding: 10px;
   }
 
-  #chessboard {
+  .board-area {
     width: 95vw;
     max-width: 95vw;
+  }
+
+  #chessboard {
+    width: 100%;
   }
 }
