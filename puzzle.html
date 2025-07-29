@@ -122,11 +122,11 @@
  const puzzles = [
   {
     title: 'Puzzle 1: White to move and mate in 1',
-    description: 'White Queen on h6, White Pawn on g7, Black King on g8. Solution: Qh7#',
+    description: 'White Queen on b7, White Pawn on f6, Black King on g8. Solution: Qg7#',
     board: [
       ['.', '.', '.', '.', '.', '.', 'k', '.'], // 8
-      ['.', '.', '.', '.', '.', '.', 'P', 'Q'], // 7
-      ['.', '.', '.', '.', '.', '.', '.', '.'], // 6
+      ['.', 'Q', '.', '.', '.', '.', '.', '.'], // 7
+      ['.', '.', '.', '.', '.', 'P', '.', '.'], // 6
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 5
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 4
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 3
@@ -136,13 +136,13 @@
   },
   {
     title: 'Puzzle 2: White to move and mate in 1',
-    description: 'White Rook on e4, White Pawn on e7, Black King on e8. Solution: Rxe8#',
+    description: 'White Rook on a7, White Rook on h4, Black King on e8. Solution: Rxh8#',
     board: [
       ['.', '.', '.', '.', 'k', '.', '.', '.'], // 8
-      ['.', '.', '.', '.', 'P', '.', '.', '.'], // 7
+      ['R', '.', '.', '.', '.', '.', '.', '.'], // 7
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 6
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 5
-      ['.', '.', '.', '.', 'R', '.', '.', '.'], // 4
+      ['.', '.', '.', '.', '.', '.', '.', 'R'], // 4
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 3
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 2
       ['.', '.', '.', '.', 'K', '.', '.', '.']  // 1
@@ -150,11 +150,11 @@
   },
   {
     title: 'Puzzle 3: White to move and mate in 1',
-    description: 'White Queen on d5, White Bishop on f6, Black King on h8. Solution: Qg8#',
+    description: 'White Queen on d5, White Bishop on f6, Black King on h8. Solution: Qd8#',
     board: [
       ['.', '.', '.', '.', '.', '.', '.', 'k'], // 8
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 7
-      ['.', '.', '.', '.', '.', '.', 'B', '.'], // 6
+      ['.', '.', '.', '.', '.', '.', 'B', 'P'], // 6
       ['.', '.', '.', 'Q', '.', '.', '.', '.'], // 5
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 4
       ['.', '.', '.', '.', '.', '.', '.', '.'], // 3
