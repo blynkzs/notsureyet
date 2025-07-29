@@ -4,14 +4,12 @@
   padding: 0;
 }
 
-body {
+html, body {
   font-family: Arial, sans-serif;
   background-color: #1a1a1a;
   color: white;
-  height: 100vh;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 header {
@@ -22,41 +20,54 @@ header {
   color: white;
 }
 
-.layout {
+.container {
   display: flex;
-  height: 100vh;
   flex-direction: row;
+  min-height: calc(100vh - 60px);
+  gap: 20px;
+  padding: 20px;
 }
 
 .sidebar {
+  background-color: #fefefe;
   width: 200px;
-  background-color: #111;
-  padding: 20px 10px;
+  padding: 20px;
+  text-align: left;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #aaa;
+  color: black;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
-.sidebar ul {
-  list-style: none;
+.logo {
+  width: 80px;
+  height: auto;
+  margin: 0 auto 20px auto;
+  display: block;
 }
 
-.sidebar ul li {
-  margin: 10px 0;
-}
-
-.sidebar ul li a {
-  color: white;
+.nav-button {
+  display: block;
+  background-color: #4CAF50;
+  color: black;
   text-decoration: none;
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #3e8e41;
 }
 
 .main-content {
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
-  box-sizing: border-box;
-}
-
-.content-area {
-  max-width: 1000px;
-  margin: 0 auto;
+  padding: 20px;
 }
 
 .board-area {
@@ -74,7 +85,6 @@ header {
   aspect-ratio: 1 / 1;
   border: 2px solid #333;
   background-color: #333;
-  user-select: none;
 }
 
 .square {
@@ -93,28 +103,26 @@ header {
   background-color: #2b2b2b;
 }
 
-@media (max-width: 720px) {
-  .layout {
+@media (max-width: 768px) {
+  .container {
     flex-direction: column;
-    align-items: center;
+    padding: 10px;
   }
 
   .sidebar {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 10px;
   }
 
-  .sidebar ul {
-    display: flex;
-    gap: 15px;
+  .nav-button {
+    margin: 5px;
+    flex: 1 1 auto;
   }
 
   .main-content {
-    padding: 10px;
-  }
-
-  .board-area {
     padding: 10px;
   }
 
