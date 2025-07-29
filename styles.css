@@ -15,6 +15,7 @@ html, body {
   text-align: center;
   display: flex;
   flex-direction: column;
+  line-height: 1.6;
 }
 
 body {
@@ -45,6 +46,7 @@ header {
 .content-area {
   max-width: 1000px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
 .main-layout {
@@ -147,6 +149,7 @@ header {
   width: 200px;
   max-height: 500px;
   overflow-y: auto;
+  line-height: 1.6;
 }
 
 #move-log-container h3 {
@@ -157,6 +160,7 @@ header {
   list-style: decimal;
   padding-left: 20px;
   text-align: left;
+  line-height: 1.6;
 }
 
 .piece-display {
@@ -166,6 +170,7 @@ header {
   color: black;
   max-width: 220px;
   text-align: center;
+  line-height: 1.6;
 }
 
 .piece-symbol {
@@ -177,6 +182,7 @@ header {
   color: black !important;
   max-width: 200px;
   text-align: left !important;
+  line-height: 1.6;
 }
 
 .controls {
@@ -234,6 +240,7 @@ header {
 .content-area h2,
 .content-area p {
   text-align: center;
+  line-height: 1.6;
 }
 
 .dragging-piece {
@@ -271,8 +278,6 @@ header {
   .main-layout {
     flex-direction: column;
   }
-
-
 
   .board-area {
     width: 100%;
