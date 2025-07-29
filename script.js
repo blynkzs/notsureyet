@@ -280,7 +280,7 @@ function onSquareClick(e) {
         // Undo move, illegal because king is left in check
         board[selectedPiece.y][selectedPiece.x] = savedFrom;
         board[y][x] = savedTo;
-        alert("Illegal move: you cannot move into or leave your king in check!");
+        alert("illegal move: you cannot move into or leave your king in check");
       } else {
         moveHistory.push({
           fromX: selectedPiece.x,
