@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Rules - Simple Chess Website</title>
   <link rel="stylesheet" href="styles.css" />
-   <style>
+ <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -16,6 +16,19 @@
     .layout {
       display: flex;
       min-height: 100vh;
+      flex-direction: row;
+    }
+
+    .sidebar-container {
+      width: 200px;
+      flex-shrink: 0;
+      background-color: #fefefe;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #aaa;
+      color: black;
+      overflow-y: auto;
+      margin-right: 20px;
     }
 
     .main-content {
@@ -53,9 +66,6 @@
       text-align: center;
     }
 
-
-
-
     .dot {
       width: 10px;
       height: 10px;
@@ -76,6 +86,21 @@
     }
 
     @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar-container {
+        width: 100% !important;
+        height: auto !important;
+        margin: 0 0 20px 0;
+        box-shadow: none;
+      }
+
+      .main-content {
+        padding: 10px 0;
+      }
+
       .display-area {
         flex-direction: column;
         align-items: center;
