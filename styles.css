@@ -254,42 +254,65 @@ header {
   color: black;
 }
 
-@media (max-width: 500px) {
-  .layout {
+
+@media (max-width: 900px) {
+  .main-layout {
     flex-direction: column;
   }
 
+  #sidebar-container {
+    width: 100% !important;
+    height: auto !important;
+  }
+
   .board-area {
-    padding: 10px;
-  }
-
-  #chessboard {
-    max-width: 95vw;
-  }
-}
-
-@media (max-width: 720px) {
-  .board-area {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  #chessboard {
-    width: 90vw !important;
-    max-width: 90vw !important;
-    aspect-ratio: 1 / 1;
-    min-width: 240px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px 0;
   }
 
   .left-panel,
   #move-log-container {
-    width: 90% !important;
+    width: 45%;
+    max-width: 240px;
+    margin: 10px;
+  }
+
+  #chessboard {
+    width: 90vw;
     max-width: 480px;
-    margin: 10px 0;
+    aspect-ratio: 1 / 1;
   }
 
   #move-log-container {
-    max-height: none;
     height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .board-area {
+    flex-direction: column;
+    width: 100%;
+    padding: 0 10px 20px 10px;
+    align-items: center;
+  }
+
+  .left-panel,
+  #move-log-container {
+    width: 100% !important;
+    max-width: none;
+    margin: 10px 0;
+  }
+
+  #chessboard {
+    width: 95vw !important;
+    max-width: none !important;
+    min-width: 280px;
   }
 }
