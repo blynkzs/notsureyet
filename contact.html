@@ -97,12 +97,12 @@
     <h1>Contact Us</h1>
   </header>
   <div class="layout">
-   <div class="sidebar-container" id="sidebar-container"></div>
-    
+    <div class="sidebar-container" id="sidebar-container"></div>
+
     <main class="main-content">
       <div class="content-area">
-        <h2>get in Touch</h2>
-        <p>have a question, suggestion, or issue? Send us a message </p>
+        <h2>Get in Touch</h2>
+        <p>Have a question, suggestion, or issue? Send us a message below.</p>
         <form class="contact-form" id="contactForm">
           <label for="name">Name</label>
           <input type="text" id="name" name="name" required />
@@ -115,14 +115,10 @@
 
           <button type="submit">Send Message</button>
         </form>
-
-        <div id="successMessage" style="color: #4CAF50; margin-top: 15px; display: none;">
-          your form was submitted
-        </div>
       </div>
     </main>
   </div>
-   <script>
+  <script>
     fetch('sidebar.html')
       .then(response => response.text())
       .then(html => {
@@ -130,11 +126,10 @@
       });
 
     const form = document.getElementById('contactForm');
-    const successMessage = document.getElementById('successMessage');
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      successMessage.style.display = 'block';
+      alert('Thank you! Your message was sent successfully.');
       form.reset();
     });
   </script>
