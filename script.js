@@ -371,24 +371,38 @@ function initBoard() {
   showCheckStatus();
 }
 
-function createUndoButton() {
-  let undoBtn = document.getElementById('undo-button');
-  if (!undoBtn) {
-    undoBtn = document.createElement('button');
-    undoBtn.id = 'undo-button';
-    undoBtn.textContent = 'Undo';
-    undoBtn.style.marginTop = '10px';
-    undoBtn.style.padding = '6px 12px';
-    undoBtn.style.fontSize = '16px';
-    undoBtn.style.cursor = 'pointer';
-    undoBtn.style.display = 'block';
+function undoMove() {
+  if (moveHistory.length === 0) return;
 
-    const boardEl = document.getElementById('chessboard');
-    boardEl.parentNode.insertBefore(undoBtn, boardEl.nextSibling);
+  const lastMove = moveHistory.pop();
 
-    undoBtn.addEventListener('click', undoMove);
+  board[lastMove.fromY][lastMove.fromX] = lastMove.piece;
+  board[lastMove.toY][lastMove.toX] = lastMove.captured || "";
+
+  turn = lastMove.turn;
+
+  const logContainer = document.getElementById('move-log-container');
+  logContainer.innerHTML = '';
+  for (const move of moveHistory) {
+    logMove(move.fromX, move.fromY, move.toX, move.toY, move.piece, move.captured);
   }
+
+  const whiteCaptured = document.getElementById('white-captured-pieces');
+  const blackCaptured = document.getElementById('black-captured-pieces');
+  whiteCaptured.innerHTML = '';
+  blackCaptured.innerHTML = '';
+  for (const move of moveHistory) {
+    if (move.captured) updateCapturedPieces(move.captured);
+  }
+
+  clearHighlights();
+  renderBoard();
+  showCheckStatus();
+
+  selectedPiece = null;
+  legalMoves = [];
 }
+
 
 document.getElementById("chessboard").addEventListener("click", onSquareClick);
 
