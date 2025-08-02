@@ -1,4 +1,4 @@
-here is the script const unicodePieces = { 
+const unicodePieces = { 
   P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔",
   p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚"
 };
