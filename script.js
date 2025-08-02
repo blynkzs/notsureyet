@@ -168,7 +168,7 @@ function updateCapturedPieces(capturedPiece) {
   if (!capturedPiece) return;
 
   const isCapturedWhite = isWhitePiece(capturedPiece);
-  const containerId = isCapturedWhite ? 'white-captured' : 'black-captured';
+  const containerId = isCapturedWhite ? 'black-captured' : 'white-captured';
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -363,10 +363,10 @@ function initBoard() {
     logContainer.parentNode.insertBefore(logLabel, logContainer);
   }
 
-const whiteCaptured = document.getElementById('white-captured');
 const blackCaptured = document.getElementById('black-captured');
-  if(whiteCaptured) whiteCaptured.innerHTML = '';
+const whiteCaptured = document.getElementById('white-captured');
   if(blackCaptured) blackCaptured.innerHTML = '';
+  if(whiteCaptured) whiteCaptured.innerHTML = '';
 
   showCheckStatus();
 }
