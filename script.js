@@ -168,7 +168,7 @@ function updateCapturedPieces(capturedPiece) {
   if (!capturedPiece) return;
 
   const isCapturedWhite = isWhitePiece(capturedPiece);
-  const containerId = isCapturedWhite ? 'white-captured-pieces' : 'black-captured-pieces';
+  const containerId = isCapturedWhite ? 'white-captured' : 'black-captured';
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -363,8 +363,8 @@ function initBoard() {
     logContainer.parentNode.insertBefore(logLabel, logContainer);
   }
 
-  const whiteCaptured = document.getElementById('white-captured-pieces');
-  const blackCaptured = document.getElementById('black-captured-pieces');
+const whiteCaptured = document.getElementById('white-captured');
+const blackCaptured = document.getElementById('black-captured');
   if(whiteCaptured) whiteCaptured.innerHTML = '';
   if(blackCaptured) blackCaptured.innerHTML = '';
 
