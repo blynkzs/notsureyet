@@ -403,6 +403,28 @@ function undoMove() {
   legalMoves = [];
 }
 
+function createUndoButton() {
+  let undoBtn = document.getElementById('undo-button');
+  if (!undoBtn) {
+    undoBtn = document.createElement('button');
+    undoBtn.id = 'undo-button';
+    undoBtn.textContent = 'Undo';
+    undoBtn.style.marginTop = '10px';
+    undoBtn.style.padding = '6px 12px';
+    undoBtn.style.fontSize = '16px';
+    undoBtn.style.cursor = 'pointer';
+    undoBtn.style.display = 'block';
+    undoBtn.style.clear = 'both';
+
+    const boardEl = document.getElementById('chessboard');
+    boardEl.parentNode.insertBefore(undoBtn, boardEl.nextSibling);
+
+    undoBtn.addEventListener('click', undoMove);
+  }
+}
+
+
+
 
 document.getElementById("chessboard").addEventListener("click", onSquareClick);
 
