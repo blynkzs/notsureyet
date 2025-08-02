@@ -21,20 +21,15 @@ const startPosition = [
   ["R","N","B","Q","K","B","N","R"]
 ];
 
+// Check if a piece is white
 function isWhitePiece(piece) {
   return piece && piece === piece.toUpperCase();
 }
 
+// Draw the chessboard and pieces
 function renderBoard() {
   const boardEl = document.getElementById("chessboard");
   boardEl.innerHTML = "";
-
-  boardEl.style.display = "grid";
-  
-  boardEl.style.gridTemplateColumns = "repeat(8, 1fr)";
-  boardEl.style.gridTemplateRows = "repeat(8, 1fr)";
-  boardEl.style.gap = "1px";
-  boardEl.style.backgroundColor = "#333";
 
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
@@ -42,7 +37,6 @@ function renderBoard() {
       square.className = "square " + ((x + y) % 2 === 0 ? "light" : "dark");
       square.dataset.x = x;
       square.dataset.y = y;
-
       square.style.width = "100%";
       square.style.height = "100%";
       square.style.lineHeight = "60px";
@@ -68,7 +62,7 @@ function renderBoard() {
   }
 }
 
-
+// Calculate legal moves for a piece
 function getLegalMoves(x, y, piece) {
   if (!piece) return [];
   const moves = [];
@@ -139,6 +133,7 @@ function getLegalMoves(x, y, piece) {
   return moves;
 }
 
+// Show legal moves on board
 function highlightLegalMoves(moves) {
   clearHighlights();
   for (const [x, y] of moves) {
@@ -151,10 +146,12 @@ function highlightLegalMoves(moves) {
   }
 }
 
+// Remove move highlights
 function clearHighlights() {
   document.querySelectorAll('.highlight').forEach(el => el.remove());
 }
 
+// Log moves to the move log container
 function logMove(fromX, fromY, toX, toY, piece, captured) {
   const logContainer = document.getElementById('move-log-container');
   const moveText = `${unicodePieces[piece]}: ${String.fromCharCode(97 + fromX)}${8 - fromY} → ${String.fromCharCode(97 + toX)}${8 - toY}${captured ? ` x${unicodePieces[captured]}` : ''}`;
@@ -164,6 +161,7 @@ function logMove(fromX, fromY, toX, toY, piece, captured) {
   logContainer.scrollTop = logContainer.scrollHeight;
 }
 
+// Add captured pieces to their container
 function updateCapturedPieces(capturedPiece) {
   if (!capturedPiece) return;
 
@@ -179,6 +177,7 @@ function updateCapturedPieces(capturedPiece) {
   container.appendChild(capPiece);
 }
 
+// Check if a color is in check
 function isInCheck(color) {
   const kingPiece = color === 'white' ? 'K' : 'k';
   let kingX = -1, kingY = -1;
@@ -215,6 +214,7 @@ function isInCheck(color) {
   return false;
 }
 
+// Show check status if applicable
 function showCheckStatus() {
   const statusEl = document.getElementById('check-status');
   if (!statusEl) return;
@@ -226,6 +226,7 @@ function showCheckStatus() {
   }
 }
 
+// Undo last move
 function undoMove() {
   if (moveHistory.length === 0) return;
   const lastMove = moveHistory.pop();
@@ -253,6 +254,7 @@ function undoMove() {
   showCheckStatus();
 }
 
+// Handle clicks or taps on squares
 function onSquareClick(e) {
   const target = e.target.closest('.square');
   if (!target) return;
@@ -269,7 +271,6 @@ function onSquareClick(e) {
   } else if (selectedPiece) {
     const isValid = legalMoves.some(m => m[0] === x && m[1] === y);
     if (isValid) {
-      // Simulate move for check validation
       const savedFrom = board[selectedPiece.y][selectedPiece.x];
       const savedTo = board[y][x];
 
@@ -277,7 +278,6 @@ function onSquareClick(e) {
       board[selectedPiece.y][selectedPiece.x] = "";
 
       if (isInCheck(turn)) {
-        // Undo move, illegal because king is left in check
         board[selectedPiece.y][selectedPiece.x] = savedFrom;
         board[y][x] = savedTo;
         alert("illegal move: you cannot move into or leave your king in check");
@@ -308,6 +308,7 @@ function onSquareClick(e) {
   }
 }
 
+// Create a piece that follows the cursor or touch point when dragging
 function createDraggingPiece(piece, x, y, pageX, pageY) {
   removeDraggingPiece();
   draggingPiece = document.createElement("div");
@@ -319,7 +320,6 @@ function createDraggingPiece(piece, x, y, pageX, pageY) {
   draggingPiece.style.left = (pageX - 30) + "px";
   draggingPiece.style.top = (pageY - 30) + "px";
 
-  // Color style based on piece color
   if (isWhitePiece(piece)) {
     draggingPiece.style.color = "white";
     draggingPiece.style.textShadow = "0 0 5px black";
@@ -331,20 +331,28 @@ function createDraggingPiece(piece, x, y, pageX, pageY) {
   document.body.appendChild(draggingPiece);
 
   function onMove(ev) {
-    draggingPiece.style.left = (ev.pageX - 30) + "px";
-    draggingPiece.style.top = (ev.pageY - 30) + "px";
+    //  touch and mouse events
+    const moveX = ev.touches ? ev.touches[0].pageX : ev.pageX;
+    const moveY = ev.touches ? ev.touches[0].pageY : ev.pageY;
+    draggingPiece.style.left = (moveX - 30) + "px";
+    draggingPiece.style.top = (moveY - 30) + "px";
   }
 
-  function onUp(ev) {
+  function onEnd(ev) {
     document.removeEventListener("mousemove", onMove);
-    document.removeEventListener("mouseup", onUp);
+    document.removeEventListener("mouseup", onEnd);
+    document.removeEventListener("touchmove", onMove);
+    document.removeEventListener("touchend", onEnd);
     removeDraggingPiece();
   }
 
   document.addEventListener("mousemove", onMove);
-  document.addEventListener("mouseup", onUp);
+  document.addEventListener("mouseup", onEnd);
+  document.addEventListener("touchmove", onMove);
+  document.addEventListener("touchend", onEnd);
 }
 
+// Remove the dragging piece element
 function removeDraggingPiece() {
   if (draggingPiece) {
     draggingPiece.remove();
@@ -352,6 +360,7 @@ function removeDraggingPiece() {
   }
 }
 
+// Initialize the board and reset game state
 function initBoard() {
   board = JSON.parse(JSON.stringify(startPosition));
   turn = 'white';
@@ -381,6 +390,7 @@ function initBoard() {
   showCheckStatus();
 }
 
+// Create Undo button 
 function createUndoButton() {
   let undoBtn = document.getElementById('undo-button');
   if (!undoBtn) {
@@ -396,10 +406,15 @@ function createUndoButton() {
   }
 }
 
-// Run init and undo button after DOM is ready
 window.addEventListener('DOMContentLoaded', () => {
   initBoard();
   createUndoButton();
 
-  document.getElementById("chessboard").addEventListener("click", onSquareClick);
+  const chessboard = document.getElementById("chessboard");
+  chessboard.addEventListener("click", onSquareClick);
+  // touchscreen support
+  chessboard.addEventListener("touchstart", e => {
+    e.preventDefault();
+    onSquareClick(e);
+  });
 });
