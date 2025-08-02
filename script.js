@@ -377,11 +377,15 @@ function createUndoButton() {
     undoBtn = document.createElement('button');
     undoBtn.id = 'undo-button';
     undoBtn.textContent = 'Undo';
-    undoBtn.style.margin = '10px';
+    undoBtn.style.marginTop = '10px';
     undoBtn.style.padding = '6px 12px';
     undoBtn.style.fontSize = '16px';
     undoBtn.style.cursor = 'pointer';
-    document.body.insertBefore(undoBtn, document.getElementById('chessboard'));
+    undoBtn.style.display = 'block';
+
+    const boardEl = document.getElementById('chessboard');
+    boardEl.parentNode.insertBefore(undoBtn, boardEl.nextSibling);
+
     undoBtn.addEventListener('click', undoMove);
   }
 }
