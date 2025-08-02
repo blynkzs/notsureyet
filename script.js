@@ -168,7 +168,7 @@ function updateCapturedPieces(capturedPiece) {
   if (!capturedPiece) return;
 
   const isCapturedWhite = isWhitePiece(capturedPiece);
-  const containerId = isCapturedWhite ? 'white-captured-pieces' : 'black-captured-pieces';
+  const containerId = isCapturedWhite ? 'white-captured' : 'black-captured';
   const container = document.getElementById(containerId);
   if (!container) return;
 
@@ -241,8 +241,8 @@ function undoMove() {
     logMove(move.fromX, move.fromY, move.toX, move.toY, move.piece, move.captured);
   }
 
-  const whiteCaptured = document.getElementById('white-captured-pieces');
-  const blackCaptured = document.getElementById('black-captured-pieces');
+  const whiteCaptured = document.getElementById('white-captured');
+  const blackCaptured = document.getElementById('black-captured');
   whiteCaptured.innerHTML = '';
   blackCaptured.innerHTML = '';
   for (const move of moveHistory) {
@@ -318,6 +318,16 @@ function createDraggingPiece(piece, x, y, pageX, pageY) {
   draggingPiece.style.fontSize = "40px";
   draggingPiece.style.left = (pageX - 30) + "px";
   draggingPiece.style.top = (pageY - 30) + "px";
+
+  // Color style based on piece color
+  if (isWhitePiece(piece)) {
+    draggingPiece.style.color = "white";
+    draggingPiece.style.textShadow = "0 0 5px black";
+  } else {
+    draggingPiece.style.color = "black";
+    draggingPiece.style.textShadow = "0 0 5px white";
+  }
+
   document.body.appendChild(draggingPiece);
 
   function onMove(ev) {
@@ -363,8 +373,8 @@ function initBoard() {
     logContainer.parentNode.insertBefore(logLabel, logContainer);
   }
 
-  const whiteCaptured = document.getElementById('white-captured-pieces');
-  const blackCaptured = document.getElementById('black-captured-pieces');
+  const whiteCaptured = document.getElementById('white-captured');
+  const blackCaptured = document.getElementById('black-captured');
   if(whiteCaptured) whiteCaptured.innerHTML = '';
   if(blackCaptured) blackCaptured.innerHTML = '';
 
@@ -386,7 +396,10 @@ function createUndoButton() {
   }
 }
 
-document.getElementById("chessboard").addEventListener("click", onSquareClick);
+// Run init and undo button after DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  initBoard();
+  createUndoButton();
 
-initBoard();
-createUndoButton();
+  document.getElementById("chessboard").addEventListener("click", onSquareClick);
+});
