@@ -142,7 +142,7 @@ function getLegalMoves(x, y, piece) {
 function highlightLegalMoves(moves) {
   clearHighlights();
   for (const [x, y] of moves) {
-    const square = document.querySelector(.square[data-x='${x}'][data-y='${y}']);
+    const square = document.querySelector(`.square[data-x='${x}'][data-y='${y}']`);
     if (square) {
       const dot = document.createElement('div');
       dot.className = 'highlight';
@@ -157,7 +157,7 @@ function clearHighlights() {
 
 function logMove(fromX, fromY, toX, toY, piece, captured) {
   const logContainer = document.getElementById('move-log-container');
-  const moveText = ${unicodePieces[piece]}: ${String.fromCharCode(97 + fromX)}${8 - fromY} → ${String.fromCharCode(97 + toX)}${8 - toY}${captured ?  x${unicodePieces[captured]} : ''};
+  const moveText = `${unicodePieces[piece]}: ${String.fromCharCode(97 + fromX)}${8 - fromY} → ${String.fromCharCode(97 + toX)}${8 - toY}${captured ? ` x${unicodePieces[captured]}` : ''}`;
   const entry = document.createElement('div');
   entry.textContent = moveText;
   logContainer.appendChild(entry);
